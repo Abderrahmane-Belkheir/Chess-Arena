@@ -5,9 +5,7 @@ import lombok.Data;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Data
 @Builder
@@ -18,6 +16,7 @@ public class TokenRequest {
     private final String redirectUri;
     private final String codeVerifier;
     private final String refreshToken;
+    private final String audience;
 
 
     public String toUrlEncoded() {
@@ -27,7 +26,9 @@ public class TokenRequest {
                 + (code != null ? "&" + buildParam("code", code) : "")
                 + (redirectUri != null ? "&" + buildParam("redirect_uri", redirectUri) : "")
                 + (codeVerifier != null ? "&" + buildParam("code_verifier", codeVerifier) : "")
-                + (refreshToken != null ? "&" + buildParam("refresh_token", refreshToken) : "");
+                + (refreshToken != null ? "&" + buildParam("refresh_token", refreshToken) : "")
+                + (audience != null ? "&" + buildParam("audience", audience) : "");
+
     }
 
     private String buildParam(String key, String value) {
@@ -35,4 +36,5 @@ public class TokenRequest {
                 + "=" +
                 URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
+
 }

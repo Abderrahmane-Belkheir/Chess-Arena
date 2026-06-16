@@ -4,9 +4,9 @@ import javafx.animation.FadeTransition;
 import javafx.application.HostServices;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import lombok.SneakyThrows;
 import org.Core.Auth.AuthService;
 import org.Core.Auth.TokenStorage;
+import org.Core.Shared.NetworkClient;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -17,14 +17,16 @@ public class AppController {
     private final HostServices hostServices;
     private final AuthService authService;
     private final TokenStorage tokenStorage;
+    private final NetworkClient networkClient;
 
     public AppController(StackPane root,
                          HostServices hostServices,
-                         AuthService authService,TokenStorage tokenStorage) {
+                         AuthService authService,TokenStorage tokenStorage,NetworkClient networkClient) {
         this.root = root;
         this.hostServices = hostServices;
         this.authService=authService;
         this.tokenStorage=tokenStorage;
+        this.networkClient=networkClient;
     }
 
     public void start() {
@@ -66,6 +68,7 @@ public class AppController {
                  transitionTo(showAuthView());
               }
     }
+
 
     // ---------------- AUTH ----------------
     private StackPane showAuthView() {

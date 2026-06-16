@@ -1,7 +1,6 @@
 package org.Core;
 
 
-
 import org.Core.Internals.ChessArenaGame;
 
 public class Launcher {

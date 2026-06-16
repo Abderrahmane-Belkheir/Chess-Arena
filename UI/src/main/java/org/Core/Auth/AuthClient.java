@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.rmi.RemoteException;
 
 
 @Slf4j
@@ -38,6 +37,7 @@ public class AuthClient {
         TokenRequest request = TokenRequest.builder()
                 .grantType("refresh_token")
                 .refreshToken(token)
+                .audience("https://chess-api/")
                 .clientId(clientId)
                 .build();
         return executeExchange(request);
@@ -50,6 +50,7 @@ public class AuthClient {
                 .code(code)
                 .redirectUri(localUrl)
                 .codeVerifier(codeVerifier)
+                .audience("https://chess-api/")
                 .build();
        return executeExchange(request);
     }

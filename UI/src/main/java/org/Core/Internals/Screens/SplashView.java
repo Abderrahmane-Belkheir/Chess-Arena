@@ -8,6 +8,13 @@ import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import lombok.Getter;
 
+import javafx.animation.PauseTransition;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
+import lombok.Getter;
+
 @Getter
 public class SplashView {
 
@@ -21,9 +28,9 @@ public class SplashView {
                         .toExternalForm())
         );
 
-        bg.setFitWidth(1100);
-        bg.setFitHeight(700);
         bg.setPreserveRatio(false);
+        bg.fitWidthProperty().bind(view.widthProperty());
+        bg.fitHeightProperty().bind(view.heightProperty());
 
         view.getChildren().add(bg);
 
