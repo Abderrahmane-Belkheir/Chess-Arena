@@ -4,6 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import lombok.Getter;
 
 /**
  * LobbyView — main screen after login.
@@ -21,7 +22,8 @@ import javafx.scene.control.*;
 public class LobbyView {
 
     private final StackPane root = new StackPane();  // ← changed
-
+    @Getter
+    private final StackPane overlay = new StackPane();
     private final NavBar        navBar;
     private final FriendsPanel  friendsPanel;
     private final HeroPanel     heroPanel;
@@ -29,7 +31,7 @@ public class LobbyView {
 
     public LobbyView(LobbyController controller) {
 
-        BorderPane layout = new BorderPane();  // ← layout stays BorderPane internally
+        BorderPane layout = new BorderPane();
         layout.setStyle("-fx-background-color: #0a0a0a;");
 
         navBar       = new NavBar(controller);
@@ -49,7 +51,9 @@ public class LobbyView {
         );
 
         layout.setCenter(body);
-        root.getChildren().add(layout);  // ← wrap it
+        overlay.setVisible(false);
+        overlay.setPickOnBounds(false);
+        root.getChildren().addAll(layout,overlay);
     }
 
     public void setUser(String username, int elo, String avatarInitials) {

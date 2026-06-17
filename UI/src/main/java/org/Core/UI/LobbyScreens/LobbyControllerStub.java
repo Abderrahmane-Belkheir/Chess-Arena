@@ -21,28 +21,46 @@ import org.Core.Auth.UserSession;
  *   LobbyView lobby = new LobbyView(ctrl);
  *   scene.setRoot(lobby.getView());
  */
-public class LobbyControllerStub implements LobbyController {
+public class LobbyControllerStub implements LobbyController, ProfileCardController {
 
-    private final StackPane appRoot; // reference to main root to swap views
+    private final StackPane appRoot;
+    private LobbyView lobbyView;
+    private UserSession currentSession;
 
     public LobbyControllerStub(StackPane appRoot) {
         this.appRoot = appRoot;
     }
-    @Override
-    public StackPane start(UserSession userSession) {
-        LobbyView lobby = new LobbyView(this);
-        lobby.setUser(userSession.getUsername(), userSession.getElo(), userSession.getAvatarUrl());
-        return lobby.getView();
-    }
 
     @Override
-    public void onPlayClicked() {
-        System.out.println("[LobbyController] Play clicked");
+    public StackPane start(UserSession userSession) {
+        this.currentSession = userSession;
+        lobbyView = new LobbyView(this);
+        lobbyView.setUser(userSession.getUsername(), userSession.getElo(), userSession.getAvatarUrl());
+        return lobbyView.getView();
     }
 
     @Override
     public void onProfileClicked() {
+        StackPane overlay = lobbyView.getOverlay(); // we'll add this method below
+        ProfileCard card = new ProfileCard(currentSession, this, overlay);
+        card.show();
+    }
 
+    // ── ProfileCardController ─────────────────────────────────────────
+
+    @Override
+    public void onChangeAvatar() {
+        // TODO: open file picker, upload to server, update avatar URL
+        System.out.println("[Profile] Change avatar clicked");
+    }
+
+
+
+
+
+    @Override
+    public void onPlayClicked() {
+        System.out.println("[LobbyController] Play clicked");
     }
 
     @Override
