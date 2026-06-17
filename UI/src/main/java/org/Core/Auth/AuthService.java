@@ -1,15 +1,22 @@
 package org.Core.Auth;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.Shared.AppConfig;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +27,7 @@ import java.security.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class AuthService {
@@ -75,6 +83,7 @@ public class AuthService {
                     tokens.getRefreshToken()
             );
 
+            // FETCHING USER PROFILE
             return true;
 
         } catch (TokenExpiredException e) {
@@ -137,7 +146,9 @@ public class AuthService {
 
                         exchangeCodeForToken(code);
 
-                        send(exchange, "Login successful. You can close this window.");
+                        exchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+
+                        send(exchange, loadLoginSuccess("/login-success.html"));
 
                         future.complete(true);
                         server.stop(0);
@@ -161,6 +172,21 @@ public class AuthService {
 
         return future;
     }
+
+
+    public String loadLoginSuccess(String path) {
+        try (InputStream is = getClass().getResourceAsStream(path)) {
+            if (is == null) throw new IllegalArgumentException("File not found: " + path);
+
+            return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void send(HttpExchange exchange, String msg) throws IOException {
         byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(200, bytes.length);
@@ -260,4 +286,5 @@ public class AuthService {
 
         return result;
     }
+
 }

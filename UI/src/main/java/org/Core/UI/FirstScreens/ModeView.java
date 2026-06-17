@@ -1,4 +1,4 @@
-package org.Core.Internals.Screens;
+package org.Core.UI.FirstScreens;
 
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
@@ -107,23 +107,6 @@ public class ModeView {
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(36, 40, 40, 40));
 
-        // Live pill
-        HBox pill = new HBox(7);
-        pill.setAlignment(Pos.CENTER);
-        pill.setStyle("""
-            -fx-background-color: rgba(255,255,255,0.08);
-            -fx-background-radius: 20;
-            -fx-border-color: rgba(255,255,255,0.12);
-            -fx-border-radius: 20;
-            -fx-padding: 5 14;
-        """);
-//        Region dot = new Region();
-//        dot.setPrefSize(7, 7);
-//        dot.setStyle("-fx-background-color: #81b64c; -fx-background-radius: 4;");
-//        Label pillLbl = new Label("142,308 players online now");
-//        pillLbl.setStyle("-fx-text-fill: #cccccc; -fx-font-size: 12px; -fx-font-weight: 600;");
-//        pill.getChildren().addAll(dot, pillLbl);
-
         Label title = new Label("Your next move\nstarts here");
         title.setStyle("""
             -fx-text-fill: #ffffff;
@@ -131,6 +114,7 @@ public class ModeView {
             -fx-font-weight: 900;
             -fx-text-alignment: center;
             -fx-alignment: center;
+            
         """);
         title.setTextAlignment(TextAlignment.CENTER);
 
@@ -142,7 +126,7 @@ public class ModeView {
         """);
         sub.setTextAlignment(TextAlignment.CENTER);
 
-        content.getChildren().addAll(pill, title, sub);
+        content.getChildren().addAll(title, sub);
 
         hero.getChildren().addAll(board, vignette, content);
         return hero;

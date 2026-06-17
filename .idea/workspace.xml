@@ -5,35 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Server/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/.github/workflows/main.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/ChessServer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Security/SecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/controllers/controller.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/dto/UserRegistrationDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/Game.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/Player.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Persistence/UserRepo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserRegistrationService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Core/src/main/java/org/Core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/Core/src/main/java/org/Core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Server/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/UI/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/dto/UserSummary.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/LoadingView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/FriendsPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/HeroPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/NavBar.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/RecentGames.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/resources/login-success.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/ChessServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/ChessServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/controllers/controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/controllers/controller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/dto/UserRegistrationDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/dto/UserRegistration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/Player.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Persistence/UserRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Persistence/UserRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserRegistrationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserRegistrationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/ChessArenaGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/ChessArenaGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/AppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/AppController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/AuthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/AuthView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/ModeView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/ModeView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/SplashView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/SplashView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/ChessArenaGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/AppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AppController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/AuthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AuthView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/ModeView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/ModeView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Internals/Screens/SplashView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/SplashView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,21 +59,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.ChessArenaGame.executor": "Run",
-    "Application.ChessServer.executor": "Run",
-    "Application.Launcher.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/HP/IdeaProjects/Chess",
-    "onboarding.tips.debug.path": "C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ChessArenaGame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ChessServer.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Launcher.executor&quot;: &quot;Run&quot;,
+    &quot;Application.UI.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java&quot;
   }
-}]]></component>
-  <component name="RunManager">
+}</component>
+  <component name="RunManager" selected="Application.UI">
     <configuration name="ChessServer" type="Application" factoryName="Application">
       <option name="envFilePaths">
         <option value="$PROJECT_DIR$/Server/.env" />
@@ -83,6 +86,17 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="UI" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.Core.Launcher" />
+      <module name="Chess-UI" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.ChessServer" />
+      <item itemvalue="Application.UI" />
+    </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>

@@ -1,4 +1,4 @@
-package org.Core.Internals;
+package org.Core.UI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -8,27 +8,23 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
-import javafx.animation.*;
 import javafx.application.Application;
 
 import javafx.scene.Scene;
 
-import javafx.scene.layout.*;
-
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import javafx.stage.StageStyle;
+import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthService;;
 import org.Core.Auth.TokenStorage;
-import org.Core.Internals.Screens.AppController;
+import org.Core.UI.FirstScreens.AppController;
 import org.Core.Shared.AppModule;
 
 
 
 
 import javafx.scene.layout.StackPane;
-import org.Core.Shared.NetworkClient;
 
 
 public class ChessArenaGame extends Application {
@@ -43,9 +39,9 @@ public class ChessArenaGame extends Application {
         scene.setFill(Color.web("#0a0a0a"));
 
         AuthService authService = injector.getInstance(AuthService.class);
-        TokenStorage tokenStorage = injector.getInstance(TokenStorage.class);
+        AuthClient authClient=injector.getInstance(AuthClient.class);
         AppController controller =
-                new AppController(root, getHostServices(), authService, tokenStorage, injector.getInstance(NetworkClient.class));
+                new AppController(root, getHostServices(), authService,authClient);
         stage.setScene(scene);
         stage.setTitle("Chess Desktop");
         stage.show();

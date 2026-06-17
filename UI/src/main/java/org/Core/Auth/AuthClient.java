@@ -1,6 +1,7 @@
 package org.Core.Auth;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -19,18 +20,24 @@ public class AuthClient {
     private final NetworkClient networkClient;
     private final AppConfig appConfig;
     private final ObjectMapper objectMapper;
+    private final TokenStorage tokenStorage;
+
     private final String issuerUrl;
     private final String clientId;
     private final String localUrl;
+    private final String serverUrl;
 
     @Inject
-    public AuthClient( NetworkClient networkClient,AppConfig appConfig,ObjectMapper objectMapper) {
+    public AuthClient( NetworkClient networkClient,AppConfig appConfig,ObjectMapper objectMapper,TokenStorage tokenStorage) {
         this.networkClient=networkClient;
         this.appConfig=appConfig;
         this.objectMapper=objectMapper;
+        this.tokenStorage=tokenStorage;
         this.issuerUrl = appConfig.get("auth.issuer.url");
         this.clientId = appConfig.get("client.id");
         this.localUrl = appConfig.get("local.callback.url");
+        this.serverUrl=appConfig.get("server.url");
+
     }
 
     public AuthTokens exchangeRefreshToken(String token) throws IOException, InterruptedException {
@@ -83,5 +90,20 @@ public class AuthClient {
            throw new RuntimeException(e);
         }
     }
+
+    public UserSession getUserSession() throws IOException, InterruptedException {
+        HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl+"/api/v1/users/me"))
+                .header("Content-Type", "application/json")
+                .header("Authorization","Bearer "+tokenStorage.getAccessToken())
+                .GET()
+                .build();
+        HttpResponse<String> response =
+                networkClient.getClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper mapper=new ObjectMapper();
+        return  mapper.readValue(response.body(),UserSession.class);
+    }
+
 
 }

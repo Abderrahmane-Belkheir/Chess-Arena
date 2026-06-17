@@ -1,12 +1,5 @@
 
-package org.Core.Internals.Screens;
-
-import javafx.animation.PauseTransition;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
-import lombok.Getter;
+package org.Core.UI.FirstScreens;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;

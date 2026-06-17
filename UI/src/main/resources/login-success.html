@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Inter', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .check {
+            width: 60px;
+            height: 60px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+        }
+        h2 { font-weight: 600; margin: 0; letter-spacing: -0.5px; }
+        p { color: #888; margin-top: 10px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="check">✓</div>
+    <h2>Connected</h2>
+    <p>You can now return to the app.</p>
+</div>
+<script>setTimeout(() => window.close(), 1500);</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package org.Core.Internals.Screens;
+package org.Core.UI.FirstScreens;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

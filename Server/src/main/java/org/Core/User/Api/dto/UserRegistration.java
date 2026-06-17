@@ -1,9 +1,9 @@
 package  org.Core.User.Api.dto;
 
 import lombok.Data;
-import org.springframework.web.bind.annotation.RequestBody;
+
 @Data
-public class UserRegistrationDTO {
+public class UserRegistration {
     private String userId;
     private String email;
     private String name;
