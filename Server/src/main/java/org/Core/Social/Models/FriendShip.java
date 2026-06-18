@@ -25,15 +25,22 @@ public class FriendShip {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
-    private User sender;
+    private User userOne;
 
 
     @ManyToOne(fetch =FetchType.LAZY)
     @JoinColumn
-    private User recipient;
+    private User userTwo;
 
     @CreatedDate
     private Instant createdAt;
 
     private int gamePlayed;
+
+    public FriendShip(String userOneId,String userTwoId){
+        this.userOne=new User(userOneId);
+        this.userTwo=new User(userTwoId);
+    }
+
+     record score(int userOneWin,int userTwoWin,int draw){}
 }

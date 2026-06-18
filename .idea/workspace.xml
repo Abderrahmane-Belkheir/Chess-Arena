@@ -5,23 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Game.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipManagerController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip_Request.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShipRepo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/AuthenticatedUserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/controllers/controller.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Controllers/controller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/dto/UserRegistration.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Dto/UserRegistration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/dto/UserSummary.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Dto/UserSummary.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/Game.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserRegistrationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserRegistrationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipManagerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip_Request.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip_Request.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShipRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShipRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/FriendsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/FriendsPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,23 +42,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Chess-UI.executor": "Run",
-    "Application.ChessArenaGame.executor": "Run",
-    "Application.ChessServer.executor": "Run",
-    "Application.Launcher.executor": "Run",
-    "Application.UI.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/HP/IdeaProjects/Chess",
-    "onboarding.tips.debug.path": "C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Chess-Server.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Chess-UI.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ChessArenaGame.executor&quot;: &quot;Run&quot;,
+    &quot;Application.ChessServer.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Launcher.executor&quot;: &quot;Run&quot;,
+    &quot;Application.UI.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="org.Core.Auth.Exceptions" />

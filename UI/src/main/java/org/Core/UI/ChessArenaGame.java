@@ -15,9 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthService;;
-import org.Core.Auth.TokenStorage;
 import org.Core.Auth.UserSessionManager;
 import org.Core.UI.FirstScreens.AppController;
 import org.Core.Shared.AppModule;
@@ -90,5 +88,10 @@ public class ChessArenaGame extends Application {
                 // Not Windows, or an OS version that doesn't support it — title bar just stays default.
             }
         }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
     }
 }

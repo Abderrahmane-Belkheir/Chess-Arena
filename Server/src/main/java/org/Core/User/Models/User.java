@@ -33,4 +33,8 @@ public class User {
     @Builder.Default
     private int elo=1200;
 
+    public User(String id) {
+        this.id=id
+    }
+
 }

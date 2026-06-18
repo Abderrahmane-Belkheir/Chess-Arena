@@ -12,4 +12,13 @@ public class FriendShipQuery {
 
     private final FriendShipRepo friendShipRepo;
     private final FriendShip_RequestRepo friendShip_requestRepo;
+
+    public void getActiveFriends(String cursor){
+
+    }
+
+    public void getFriends(String cursor){
+
+    }
+
 }
