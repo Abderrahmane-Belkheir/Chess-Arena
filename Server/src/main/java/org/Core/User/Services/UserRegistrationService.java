@@ -1,12 +1,10 @@
 package org.Core.User.Services;
 
 import lombok.RequiredArgsConstructor;
-import org.Core.User.Api.dto.UserRegistration;
+import org.Core.User.Api.Dto.UserRegistration;
 import org.Core.User.Models.User;
 import org.Core.User.Persistence.UserRepo;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor

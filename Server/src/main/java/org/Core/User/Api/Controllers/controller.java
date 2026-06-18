@@ -1,7 +1,7 @@
-package org.Core.User.Api.controllers;
+package org.Core.User.Api.Controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.Core.User.Api.dto.UserSummary;
+import org.Core.User.Api.Dto.UserSummary;
 import org.Core.User.Models.User;
 import org.Core.User.Persistence.UserRepo;
 import org.Core.User.Services.UserRegistrationService;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.Core.User.Api.dto.UserRegistration;
+import org.Core.User.Api.Dto.UserRegistration;
 
 @RestController
 @RequiredArgsConstructor

@@ -22,12 +22,14 @@ import java.util.List;
  */
 public class FriendsPanel {
 
+    public enum status{InLobby,InGame}
+
     // ── Data model ────────────────────────────────────────────────────
     public record FriendEntry(
-            String username,   // display name
-            int    elo,        // current rating
-            boolean online,    // true = green dot
-            String avatarColor // hex, e.g. "#7c5c3e" — derive from username hash
+            String username,
+            int    elo,
+            status status,
+            String avatarUrl
     ) {}
 
     // ── UI ────────────────────────────────────────────────────────────
@@ -100,7 +102,6 @@ public class FriendsPanel {
 
         root.getChildren().addAll(header, sep, scroll);
 
-        // Load placeholder data — replace with controller.getFriends()
         setFriends(placeholderFriends());
     }
 
@@ -109,8 +110,8 @@ public class FriendsPanel {
     public void setFriends(List<FriendEntry> friends) {
         listContainer.getChildren().clear();
 
-        long onlineCount = friends.stream().filter(FriendEntry::online).count();
-        onlineCountLabel.setText(onlineCount + " online");
+
+        onlineCountLabel.setText(friends.size()+ " online");
 
         for (FriendEntry f : friends) {
             listContainer.getChildren().add(buildRow(f));
@@ -127,70 +128,66 @@ public class FriendsPanel {
         row.setPadding(new Insets(10, 16, 10, 16));
         row.setStyle("-fx-cursor: hand;");
 
-        // Avatar with online dot overlay
-        StackPane avatarWrap = new StackPane();
-        avatarWrap.setMinSize(38, 38);
-        avatarWrap.setPrefSize(38, 38);
+        // Container for Avatar + Status Dot side-by-side
+        HBox avatarContainer = new HBox(8);
+        avatarContainer.setAlignment(Pos.CENTER_LEFT);
 
+        // Avatar
         Label initials = new Label(initials(f.username()));
-        StackPane avatar = NavBar.buildAvatar(initials, f.avatarColor());
+        StackPane avatar = NavBar.buildAvatar(initials, f.avatarUrl());
 
-        // Online status dot (bottom-right of avatar)
+        // Status Dot
         Region statusDot = new Region();
         statusDot.setPrefSize(9, 9);
         statusDot.setStyle(String.format("""
-            -fx-background-color: %s;
-            -fx-background-radius: 5;
-            -fx-border-color: #111111;
-            -fx-border-radius: 5;
-            -fx-border-width: 1.5;
-        """, f.online() ? "#81b64c" : "#555555"));
-        StackPane.setAlignment(statusDot, Pos.BOTTOM_RIGHT);
+        -fx-background-color: %s;
+        -fx-background-radius: 5;
+        -fx-border-color: #111111;
+        -fx-border-radius: 5;
+        -fx-border-width: 1.5;
+    """, getStatusColor(f.status())));
 
-        avatarWrap.getChildren().addAll(avatar, statusDot);
+        avatarContainer.getChildren().addAll(avatar, statusDot);
 
         // Name + elo
         VBox info = new VBox(2);
         Label name = new Label(f.username());
-        name.setStyle("""
-            -fx-text-fill: #e0e0e0;
-            -fx-font-size: 13px;
-            -fx-font-weight: 600;
-        """);
+        name.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 13px; -fx-font-weight: 600;");
         Label elo = new Label(String.valueOf(f.elo()));
         elo.setStyle("-fx-text-fill: #555555; -fx-font-size: 11px;");
         info.getChildren().addAll(name, elo);
 
-        row.getChildren().addAll(avatarWrap, info);
+        row.getChildren().addAll(avatarContainer, info);
 
-        // Hover
+        // Interaction
         row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: #1a1a1a; -fx-cursor: hand;"));
         row.setOnMouseExited(e -> row.setStyle("-fx-cursor: hand;"));
-        row.setOnMouseClicked(e -> controller.onFriendClicked(f.username())); // TODO: open challenge dialog
+        row.setOnMouseClicked(e -> controller.onFriendClicked(f.username()));
 
-        // Separator
-        VBox wrapper = new VBox(0);
-        Region rowSep = new Region();
-        rowSep.setPrefHeight(1);
-        rowSep.setMaxWidth(Double.MAX_VALUE);
-        rowSep.setStyle("-fx-background-color: #1a1a1a;");
-        wrapper.getChildren().addAll(row, rowSep);
-        // We return row; caller adds wrapper — easier done inline:
         return row;
+    }
+
+    // Helper method to keep your layout code clean
+    private String getStatusColor(status status) {
+        return switch (status) {
+            case InGame  -> "#81b64c"; // Green
+            case InLobby -> "#3498db"; // Blue
+            default      -> "#555555"; // Grey
+        };
     }
 
     // ── placeholder data (replace with real API call) ─────────────────
 
     private List<FriendEntry> placeholderFriends() {
         return List.of(
-            new FriendEntry("knight_rider",    1685, true,  "#5c3e7c"),
-            new FriendEntry("queens_gambit",   1502, true,  "#7c3e3e"),
-            new FriendEntry("pawnstar",        1340, true,  "#3e5c7c"),
-            new FriendEntry("rook_n_roll",     1899, true,  "#7c5c3e"),
-            new FriendEntry("checkmate_chad",  1210, true,  "#3e7c5c"),
-            new FriendEntry("bishop_bash",     1455, false, "#7c3e5c"),
-            new FriendEntry("endgame_emma",    2050, false, "#3e7c7c"),
-            new FriendEntry("casual_carl",      980, false, "#5c7c3e")
+            new FriendEntry("knight_rider",    1685, status.InLobby,  "#5c3e7c"),
+            new FriendEntry("queens_gambit",   1502, status.InGame,  "#7c3e3e"),
+            new FriendEntry("pawnstar",        1340, status.InGame,  "#3e5c7c"),
+            new FriendEntry("rook_n_roll",     1899, status.InLobby,  "#7c5c3e"),
+            new FriendEntry("checkmate_chad",  1210, status.InGame,  "#3e7c5c"),
+            new FriendEntry("bishop_bash",     1455, status.InLobby, "#7c3e5c"),
+            new FriendEntry("endgame_emma",    2050, status.InLobby, "#3e7c7c"),
+            new FriendEntry("casual_carl",      980, status.InLobby, "#5c7c3e")
         );
     }
 

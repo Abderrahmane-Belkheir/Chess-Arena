@@ -1,4 +1,4 @@
-package  org.Core.User.Api.dto;
+package  org.Core.User.Api.Dto;
 
 import lombok.Data;
 

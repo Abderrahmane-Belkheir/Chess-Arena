@@ -4,6 +4,8 @@ package org.Core.UI.LobbyScreens;
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
 
+import java.util.ArrayList;
+
 /**
  * LobbyControllerStub — drop-in no-op implementation of LobbyController.
  *
