@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthService;;
 import org.Core.Auth.TokenStorage;
+import org.Core.Auth.UserSessionManager;
 import org.Core.UI.FirstScreens.AppController;
 import org.Core.Shared.AppModule;
 
@@ -39,9 +40,9 @@ public class ChessArenaGame extends Application {
         scene.setFill(Color.web("#0a0a0a"));
 
         AuthService authService = injector.getInstance(AuthService.class);
-        AuthClient authClient=injector.getInstance(AuthClient.class);
+        UserSessionManager sessionManager=injector.getInstance(UserSessionManager.class);
         AppController controller =
-                new AppController(root, getHostServices(), authService,authClient);
+                new AppController(root, getHostServices(), authService,sessionManager);
         stage.setScene(scene);
         stage.setTitle("Chess Desktop");
         stage.show();

@@ -2,7 +2,7 @@
 package org.Core.UI.LobbyScreens;
 
 import javafx.scene.layout.StackPane;
-import org.Core.Auth.UserSession;
+import org.Core.Auth.DTO.UserSession;
 
 /**
  * LobbyController — every button / action in the lobby calls through here.

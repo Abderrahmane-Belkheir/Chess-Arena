@@ -9,7 +9,8 @@ import javafx.util.Duration;
 import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthService;
 import org.Core.Auth.TokenStorage;
-import org.Core.Auth.UserSession;
+import org.Core.Auth.DTO.UserSession;
+import org.Core.Auth.UserSessionManager;
 import org.Core.UI.LobbyScreens.LobbyController;
 import org.Core.UI.LobbyScreens.LobbyControllerStub;
 import org.Core.UI.LobbyScreens.LobbyView;
@@ -22,17 +23,17 @@ public class AppController {
     private final StackPane root;
     private final HostServices hostServices;
     private final AuthService authService;
-    private final AuthClient authClient;
+    private final UserSessionManager sessionManager;
     private final LobbyController lobbyController;
 
 
     public AppController(StackPane root,
                          HostServices hostServices,
-                         AuthService authService,AuthClient authClient) {
+                         AuthService authService,UserSessionManager sessionManager) {
         this.root = root;
         this.hostServices = hostServices;
         this.authService=authService;
-        this.authClient=authClient;
+        this.sessionManager=sessionManager;
         this.lobbyController=new LobbyControllerStub(root);
     }
 
@@ -78,7 +79,7 @@ public class AppController {
 
                     Platform.runLater(() -> loading.setMessage("Loading your profile...", 1));
 
-                   UserSession userSession=authClient.getUserSession();
+                   UserSession userSession=sessionManager.getUserSession();
 
 
 
@@ -122,7 +123,7 @@ public class AppController {
                                 try {
                                     Platform.runLater(() -> loading.setMessage("Loading your profile...", 1));
 
-                                    UserSession userSession=authClient.getUserSession();
+                                    UserSession userSession=sessionManager.getUserSession();
 
                                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 

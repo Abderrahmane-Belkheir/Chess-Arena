@@ -5,12 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCard.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCardController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/UserSessionManager.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/ApiClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/DTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenExpiredException.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/Exceptions/TokenExpiredException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenStorage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/UserSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/DTO/UserSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/AppModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/AppModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/NetworkClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AppController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCard.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +61,12 @@
     &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.Core.Auth.Exceptions" />
+      <recent name="org.Core.Auth.DTO" />
+    </key>
+  </component>
   <component name="RunManager" selected="Application.UI">
     <configuration name="ChessServer" type="Application" factoryName="Application">
       <option name="envFilePaths">

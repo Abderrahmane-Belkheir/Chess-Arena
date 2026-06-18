@@ -49,7 +49,7 @@ public class TokenStorage {
         }
     }
 
-    protected void setAccessToken(String accessToken){
+    public void setAccessToken(String accessToken){
         this.accessToken=accessToken;
     }
 

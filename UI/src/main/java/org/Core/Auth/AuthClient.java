@@ -1,35 +1,39 @@
 package org.Core.Auth;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import org.Core.Auth.DTO.UserSession;
+import org.Core.Auth.Exceptions.TokenExpiredException;
 import org.Core.Shared.AppConfig;
-import org.Core.Shared.NetworkClient;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 
 
 @Slf4j
 public class AuthClient {
 
-    private final NetworkClient networkClient;
+
     private final AppConfig appConfig;
     private final ObjectMapper objectMapper;
     private final TokenStorage tokenStorage;
-
+    private final HttpClient httpClient;
     private final String issuerUrl;
     private final String clientId;
     private final String localUrl;
     private final String serverUrl;
 
     @Inject
-    public AuthClient( NetworkClient networkClient,AppConfig appConfig,ObjectMapper objectMapper,TokenStorage tokenStorage) {
-        this.networkClient=networkClient;
+    public AuthClient(AppConfig appConfig,ObjectMapper objectMapper,TokenStorage tokenStorage) {
+       this.httpClient= HttpClient.newBuilder()
+               .connectTimeout(Duration.ofSeconds(10))
+               .build();;
         this.appConfig=appConfig;
         this.objectMapper=objectMapper;
         this.tokenStorage=tokenStorage;
@@ -70,7 +74,7 @@ public class AuthClient {
                 .build();
 
         HttpResponse<String> response =
-                networkClient.getClient().send(request, HttpResponse.BodyHandlers.ofString());
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if(response.statusCode()<500&&400<=response.statusCode()){
             if(tokenRequest.getRefreshToken()!=null) System.out.println("REFRESH TOKEN EXPIRED ");
@@ -91,19 +95,6 @@ public class AuthClient {
         }
     }
 
-    public UserSession getUserSession() throws IOException, InterruptedException {
-        HttpRequest request = java.net.http.HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl+"/api/v1/users/me"))
-                .header("Content-Type", "application/json")
-                .header("Authorization","Bearer "+tokenStorage.getAccessToken())
-                .GET()
-                .build();
-        HttpResponse<String> response =
-                networkClient.getClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-        ObjectMapper mapper=new ObjectMapper();
-        return  mapper.readValue(response.body(),UserSession.class);
-    }
 
 
 }

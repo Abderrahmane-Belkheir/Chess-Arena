@@ -5,11 +5,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import org.Core.Auth.UserSession;
+import org.Core.Auth.DTO.UserSession;
 
 public class ProfileCard {
 

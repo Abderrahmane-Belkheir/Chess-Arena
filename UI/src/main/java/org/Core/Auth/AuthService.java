@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
+import org.Core.Auth.Exceptions.TokenExpiredException;
 import org.Core.Shared.AppConfig;
 
 import java.io.BufferedReader;
