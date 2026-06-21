@@ -19,6 +19,8 @@ public class User {
     @Id
     private String id;
 
+    @Column(unique = true)
+    private int publicId;
 
     @CreatedDate
     private Instant created_at;
@@ -34,7 +36,7 @@ public class User {
     private int elo=1200;
 
     public User(String id) {
-        this.id=id
+        this.id=id;
     }
 
 }

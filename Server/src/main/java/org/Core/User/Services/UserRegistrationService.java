@@ -6,6 +6,8 @@ import org.Core.User.Models.User;
 import org.Core.User.Persistence.UserRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 @RequiredArgsConstructor
 public class UserRegistrationService {
@@ -19,6 +21,7 @@ public class UserRegistrationService {
 
             User user = User.builder()
                     .id(userRegistrationDTO.getUserId())
+                    .publicId(generateUniquePublicId())
                     .username(userRegistrationDTO.getName())
                     .email(userRegistrationDTO.getEmail())
                     .build();
@@ -29,6 +32,17 @@ public class UserRegistrationService {
 
             e.printStackTrace();
         }
+    }
+
+    private int generateUniquePublicId() {
+        int id;
+
+        do {
+            id = ThreadLocalRandom.current()
+                    .nextInt(100000, 1000000);
+        } while (userRepo.existsByPublicId(id));
+
+        return id;
     }
 
 }

@@ -3,6 +3,7 @@ package org.Core.UI.LobbyScreens;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
+import org.Core.Social.FriendShipClient;
 
 import java.util.ArrayList;
 
@@ -34,9 +35,9 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
     }
 
     @Override
-    public StackPane start(UserSession userSession) {
+    public StackPane start(UserSession userSession, FriendShipClient friendShipClient) {
         this.currentSession = userSession;
-        lobbyView = new LobbyView(this);
+        lobbyView = new LobbyView(this,friendShipClient);
         lobbyView.setUser(userSession.getUsername(), userSession.getElo(), userSession.getAvatarUrl());
         return lobbyView.getView();
     }

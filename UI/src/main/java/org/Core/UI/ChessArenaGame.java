@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import org.Core.Auth.AuthService;;
 import org.Core.Auth.UserSessionManager;
+import org.Core.Social.FriendShipClient;
 import org.Core.UI.FirstScreens.AppController;
 import org.Core.Shared.AppModule;
 
@@ -39,8 +40,9 @@ public class ChessArenaGame extends Application {
 
         AuthService authService = injector.getInstance(AuthService.class);
         UserSessionManager sessionManager=injector.getInstance(UserSessionManager.class);
+        FriendShipClient friendShipClient=injector.getInstance(FriendShipClient.class);
         AppController controller =
-                new AppController(root, getHostServices(), authService,sessionManager);
+                new AppController(root, getHostServices(), authService,sessionManager,friendShipClient);
         stage.setScene(scene);
         stage.setTitle("Chess Desktop");
         stage.show();

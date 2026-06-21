@@ -2,7 +2,6 @@ package org.Core.User.Api.Controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.Core.User.Api.Dto.UserSummary;
-import org.Core.User.Models.User;
 import org.Core.User.Services.UserQueryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +24,7 @@ public class UserQueryController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<UserSummary> search(@RequestParam String publicId){
+    public ResponseEntity<UserSummary> search(@RequestParam int publicId){
         return ResponseEntity.ok(userQueryService.search(publicId));
     }
 

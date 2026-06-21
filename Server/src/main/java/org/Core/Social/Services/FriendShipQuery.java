@@ -1,6 +1,8 @@
 package org.Core.Social.Services;
 
 import lombok.RequiredArgsConstructor;
+import org.Core.Social.Api.Dto.FriendsPage;
+import org.Core.Social.Api.Dto.InvitationsPage;
 import org.Core.Social.Persistence.FriendShipRepo;
 import org.Core.Social.Persistence.FriendShip_RequestRepo;
 
@@ -13,12 +15,17 @@ public class FriendShipQuery {
     private final FriendShipRepo friendShipRepo;
     private final FriendShip_RequestRepo friendShip_requestRepo;
 
-    public void getActiveFriends(String cursor){
+    public FriendsPage getOnlineFriends(String cursor){
 
+        return null;
     }
 
-    public void getFriends(String cursor){
+    public FriendsPage getOfflineFriends(String cursor){
 
+        return null;
     }
 
+    public InvitationsPage getInvitations(String cursor){
+        return null;
+    }
 }

@@ -210,7 +210,7 @@ public class ProfileCard {
 
         fields.getChildren().addAll(
                 buildLockedField("USERNAME",session.getUsername(),false),
-                buildLockedField("PLAYER ID",  session.getId(),true),
+                buildLockedField("PLAYER ID",  String.valueOf(session.getId()),true),
                 buildLockedField("ELO RATING", session.getElo() + " · Beginner",false)
         );
         return fields;

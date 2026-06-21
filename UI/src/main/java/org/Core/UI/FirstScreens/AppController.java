@@ -11,6 +11,7 @@ import org.Core.Auth.AuthService;
 import org.Core.Auth.TokenStorage;
 import org.Core.Auth.DTO.UserSession;
 import org.Core.Auth.UserSessionManager;
+import org.Core.Social.FriendShipClient;
 import org.Core.UI.LobbyScreens.LobbyController;
 import org.Core.UI.LobbyScreens.LobbyControllerStub;
 import org.Core.UI.LobbyScreens.LobbyView;
@@ -25,16 +26,18 @@ public class AppController {
     private final AuthService authService;
     private final UserSessionManager sessionManager;
     private final LobbyController lobbyController;
+    private final FriendShipClient friendShipClient;
 
 
     public AppController(StackPane root,
                          HostServices hostServices,
-                         AuthService authService,UserSessionManager sessionManager) {
+                         AuthService authService, UserSessionManager sessionManager, FriendShipClient friendShipClient) {
         this.root = root;
         this.hostServices = hostServices;
         this.authService=authService;
         this.sessionManager=sessionManager;
         this.lobbyController=new LobbyControllerStub(root);
+        this.friendShipClient=friendShipClient;
     }
 
     public void start() {
@@ -76,19 +79,16 @@ public class AppController {
 
                 if (authenticated) {
 
-
                     Platform.runLater(() -> loading.setMessage("Loading your profile...", 1));
 
-                   UserSession userSession=sessionManager.getUserSession();
-
-
-
+                    UserSession userSession=sessionManager.getUserSession();
 
                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 
                     Thread.sleep(600);
 
-                    Platform.runLater(() -> transitionTo(lobbyController.start(userSession)));
+
+                    Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
 
                 } else {
 
@@ -129,7 +129,7 @@ public class AppController {
 
                                     Thread.sleep(600);
 
-                                    Platform.runLater(() -> transitionTo(lobbyController.start(userSession)));
+                                    Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
 
                                 } catch (Exception e) {
                                     Platform.runLater(() -> transitionTo(showAuthView()));

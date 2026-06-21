@@ -37,9 +37,9 @@ public class FriendShip {
 
     private int gamePlayed;
 
-    public FriendShip(String userOneId,String userTwoId){
-        this.userOne=new User(userOneId);
-        this.userTwo=new User(userTwoId);
+    public FriendShip(User userOne,User userTwo){
+        this.userOne=userOne;
+        this.userTwo=userTwo;
     }
 
      record score(int userOneWin,int userTwoWin,int draw){}

@@ -1,10 +1,8 @@
 package org.Core.UI.LobbyScreens;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.layout.*;
-import javafx.scene.control.*;
 import lombok.Getter;
+import org.Core.Social.FriendShipClient;
 
 /**
  * LobbyView — main screen after login.
@@ -25,17 +23,17 @@ public class LobbyView {
     @Getter
     private final StackPane overlay = new StackPane();
     private final NavBar        navBar;
-    private final FriendsPanel  friendsPanel;
+    private final FriendsPanel friendsPanel;
     private final HeroPanel     heroPanel;
     private final RecentGames   recentGames;
 
-    public LobbyView(LobbyController controller) {
+    public LobbyView(LobbyController controller, FriendShipClient friendShipClient) {
 
         BorderPane layout = new BorderPane();
         layout.setStyle("-fx-background-color: #0a0a0a;");
 
         navBar       = new NavBar(controller);
-        friendsPanel = new FriendsPanel(controller);
+        friendsPanel = new FriendsPanel(friendShipClient,controller);
         heroPanel    = new HeroPanel(controller);
         recentGames  = new RecentGames(controller);
 
@@ -60,9 +58,7 @@ public class LobbyView {
         navBar.setUser(username, elo, avatarInitials);
     }
 
-    public void setFriends(java.util.List<FriendsPanel.FriendEntry> friends) {
-        friendsPanel.setFriends(friends);
-    }
+
 
     public void setRecentGames(java.util.List<RecentGames.GameEntry> games) {
         recentGames.setGames(games);

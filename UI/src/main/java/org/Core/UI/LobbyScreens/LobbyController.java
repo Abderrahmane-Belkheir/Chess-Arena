@@ -3,6 +3,7 @@ package org.Core.UI.LobbyScreens;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
+import org.Core.Social.FriendShipClient;
 
 /**
  * LobbyController — every button / action in the lobby calls through here.
@@ -14,7 +15,7 @@ import org.Core.Auth.DTO.UserSession;
  */
 public interface LobbyController {
 
-    StackPane start(UserSession userSession);
+    StackPane start(UserSession userSession, FriendShipClient friendShipClient);
     // ── Hero ──────────────────────────────────────────────────────────
 
     /** User clicked the big green "Play" button. */

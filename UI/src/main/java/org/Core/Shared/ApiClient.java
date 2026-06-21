@@ -19,15 +19,19 @@ public class ApiClient {
     private final ObjectMapper objectMapper;
     private final TokenStorage tokenStorage;
     private final AuthClient authClient;
+    private final AppConfig appConfig;
+    private final String serverUrl;
 
     @Inject
-    public ApiClient(ObjectMapper objectMapper, TokenStorage tokenStorage,AuthClient authClient) {
+    public ApiClient(ObjectMapper objectMapper, TokenStorage tokenStorage,AuthClient authClient,AppConfig appConfig) {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .build();
         this.objectMapper=objectMapper;
         this.tokenStorage=tokenStorage;
         this.authClient=authClient;
+        this.appConfig=appConfig;
+        this.serverUrl=appConfig.get("server.url");
     }
 
     public <T extends DTO> T GET(String url,Class<T> clazz) throws IOException, InterruptedException {
@@ -60,6 +64,10 @@ public class ApiClient {
                 throw new AuthenticationException();
             }
         }
+        System.out.println(response.body());
+
+        if(clazz==null) return null;
+
         return objectMapper.readValue(response.body(),clazz);
     }
 
@@ -89,7 +97,7 @@ public class ApiClient {
 
     private HttpRequest buildRequest(String url, String method, String body) {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(URI.create(serverUrl+url))
                 .header("Authorization", "Bearer " + tokenStorage.getAccessToken())
                 .header("Content-Type", "application/json");
 
@@ -107,8 +115,5 @@ public class ApiClient {
         return json != null
                 ? HttpRequest.BodyPublishers.ofString(json)
                 : HttpRequest.BodyPublishers.noBody();
-    }
-    public HttpClient getClient() {
-        return httpClient;
     }
 }

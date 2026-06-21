@@ -6,6 +6,7 @@ import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthService;
 import org.Core.Auth.TokenStorage;
 import org.Core.Auth.UserSessionManager;
+import org.Core.Social.FriendShipClient;
 
 public class AppModule extends AbstractModule {
     @Override
@@ -16,5 +17,6 @@ public class AppModule extends AbstractModule {
         bind(AppConfig.class).in(Scopes.SINGLETON);
         bind(ApiClient.class).in(Scopes.SINGLETON);
         bind(UserSessionManager.class).in(Scopes.SINGLETON);
+        bind(FriendShipClient.class).in(Scopes.SINGLETON);
     }
 }
