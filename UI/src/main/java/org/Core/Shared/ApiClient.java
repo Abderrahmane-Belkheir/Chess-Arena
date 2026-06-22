@@ -64,7 +64,6 @@ public class ApiClient {
                 throw new AuthenticationException();
             }
         }
-        System.out.println(response.body());
 
         if(clazz==null) return null;
 

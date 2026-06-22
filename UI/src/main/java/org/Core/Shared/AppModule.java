@@ -6,6 +6,7 @@ import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthService;
 import org.Core.Auth.TokenStorage;
 import org.Core.Auth.UserSessionManager;
+import org.Core.Realtime.Websocket;
 import org.Core.Social.FriendShipClient;
 
 public class AppModule extends AbstractModule {
@@ -18,5 +19,6 @@ public class AppModule extends AbstractModule {
         bind(ApiClient.class).in(Scopes.SINGLETON);
         bind(UserSessionManager.class).in(Scopes.SINGLETON);
         bind(FriendShipClient.class).in(Scopes.SINGLETON);
+        bind(Websocket.class).in(Scopes.SINGLETON);
     }
 }

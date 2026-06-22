@@ -1,43 +1,43 @@
-package org.Core.UI.FirstScreens;
+package org.Core.UI.OpeningScreens;
 
 import javafx.animation.FadeTransition;
 import javafx.application.HostServices;
 import javafx.application.Platform;
-import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
-import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthService;
-import org.Core.Auth.TokenStorage;
+
 import org.Core.Auth.DTO.UserSession;
 import org.Core.Auth.UserSessionManager;
+import org.Core.Realtime.Websocket;
 import org.Core.Social.FriendShipClient;
-import org.Core.UI.LobbyScreens.LobbyController;
-import org.Core.UI.LobbyScreens.LobbyControllerStub;
-import org.Core.UI.LobbyScreens.LobbyView;
+import org.Core.UI.LobbyScreens.Lobby.LobbyController;
+import org.Core.UI.LobbyScreens.Lobby.LobbyControllerStub;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+
 
 public class AppController {
 
     private final StackPane root;
     private final HostServices hostServices;
+    private final LobbyController lobbyController;
+
+    private final Websocket websocket;
+    private final FriendShipClient friendShipClient;
     private final AuthService authService;
     private final UserSessionManager sessionManager;
-    private final LobbyController lobbyController;
-    private final FriendShipClient friendShipClient;
-
 
     public AppController(StackPane root,
                          HostServices hostServices,
-                         AuthService authService, UserSessionManager sessionManager, FriendShipClient friendShipClient) {
+                         AuthService authService, UserSessionManager sessionManager, FriendShipClient friendShipClient,Websocket websocket) {
         this.root = root;
         this.hostServices = hostServices;
         this.authService=authService;
         this.sessionManager=sessionManager;
-        this.lobbyController=new LobbyControllerStub(root);
+        this.lobbyController=new LobbyControllerStub(root,websocket);
         this.friendShipClient=friendShipClient;
+        this.websocket=websocket;
     }
 
     public void start() {
@@ -75,6 +75,7 @@ public class AppController {
             try {
 
                 Platform.runLater(() -> loading.setMessage("Checking session...", 0));
+
                 boolean authenticated = authService.isUserAuthenticated();
 
                 if (authenticated) {
@@ -85,11 +86,10 @@ public class AppController {
 
                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 
-                    Thread.sleep(600);
-
-
-                    Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
-
+                    websocket.connect().thenAccept(u -> {
+                        Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
+                        websocket.startLobbyPING();
+                    }  );
                 } else {
 
                     Thread.sleep(800);
@@ -114,7 +114,6 @@ public class AppController {
 
                 login.thenAccept(ok -> {
                     if (ok) {
-
                         Platform.runLater(() -> {
                             LoadingView loading = new LoadingView();
                             transitionTo(loading.getView());
@@ -123,27 +122,25 @@ public class AppController {
                                 try {
                                     Platform.runLater(() -> loading.setMessage("Loading your profile...", 1));
 
-                                    UserSession userSession=sessionManager.getUserSession();
+                                    UserSession userSession = sessionManager.getUserSession();
 
                                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 
-                                    Thread.sleep(600);
+                                    websocket.connect().thenAccept(u -> {
+                                        Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
+                                        websocket.startLobbyPING();
+                                    }  );
 
-                                    Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
 
                                 } catch (Exception e) {
                                     Platform.runLater(() -> transitionTo(showAuthView()));
                                 }
                             });
                         });
-
-                    } else {
-                        Platform.runLater(() -> {
-                            // TODO: show error message on auth view
-                            System.out.println("LOGIN FAILED");
-                        });
+                    }else {
+                        //TODO
                     }
-                });
+                });;
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

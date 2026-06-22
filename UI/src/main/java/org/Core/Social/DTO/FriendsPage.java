@@ -1,6 +1,8 @@
 package org.Core.Social.DTO;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.Core.Shared.DTO;
 
 

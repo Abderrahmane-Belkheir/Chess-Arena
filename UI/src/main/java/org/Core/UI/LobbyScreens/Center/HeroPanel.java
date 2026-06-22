@@ -1,28 +1,16 @@
-package org.Core.UI.LobbyScreens;
+package org.Core.UI.LobbyScreens.Center;
 
-import javafx.animation.*;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import org.Core.UI.LobbyScreens.Lobby.LobbyController;
 
-/**
- * HeroPanel — center section of the lobby.
- *
- * Screenshot breakdown:
- *  - Dark card with rounded corners, subtle border
- *  - Faint chess piece silhouettes scattered as background decoration
- *  - Chessboard tile texture at very low opacity
- *  - Green radial glow emanating from behind the Play button
- *  - "LIVE NOW" pill badge at top-center
- *  - "Make your move" — massive heavy white title
- *  - Subtitle in muted gray
- *  - Large pill-shaped white "▶ Play" button with green glow
- *  - Two small stats below: "12,505 playing | ~8s avg. match"
- */
 public class HeroPanel {
 
     private final StackPane root = new StackPane();

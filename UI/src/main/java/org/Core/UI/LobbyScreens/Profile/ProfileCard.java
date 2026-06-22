@@ -1,12 +1,17 @@
-package org.Core.UI.LobbyScreens;
+package org.Core.UI.LobbyScreens.Profile;
 
-import javafx.animation.*;
+import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
+import javafx.animation.PauseTransition;
+import javafx.animation.ScaleTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import org.Core.Auth.DTO.UserSession;
+
 
 public class ProfileCard {
 

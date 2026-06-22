@@ -1,5 +1,5 @@
 
-package org.Core.UI.FirstScreens;
+package org.Core.UI.OpeningScreens;
 
 import javafx.animation.PauseTransition;
 import javafx.scene.image.Image;

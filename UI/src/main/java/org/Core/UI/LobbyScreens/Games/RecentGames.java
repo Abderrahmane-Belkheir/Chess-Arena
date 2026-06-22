@@ -1,9 +1,13 @@
-package org.Core.UI.LobbyScreens;
+package org.Core.UI.LobbyScreens.Games;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import org.Core.UI.LobbyScreens.Lobby.LobbyController;
+import org.Core.UI.LobbyScreens.Profile.NavBar;
+
 
 import java.util.List;
 

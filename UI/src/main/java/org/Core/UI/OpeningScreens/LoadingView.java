@@ -1,7 +1,6 @@
-package org.Core.UI.FirstScreens;
+package org.Core.UI.OpeningScreens;
 
 import javafx.animation.*;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -10,25 +9,9 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import org.springframework.web.socket.messaging.WebSocketStompClient;
 
-/**
- * LoadingView — shown while exchanging auth code for access token
- * and fetching user profile.
- *
- * Stages:
- *   1. "Signing you in..."        ← token exchange
- *   2. "Loading your profile..."  ← fetching user data
- *   3. "Almost there..."          ← final setup
- *
- * Usage:
- *   LoadingView loading = new LoadingView();
- *   transitionTo(loading.getView());
- *
- *   // update message as steps complete
- *   loading.setMessage("Loading your profile...");
- *
- *   // when done → transitionTo(lobbyController.buildView())
- */
+
 public class LoadingView {
 
     private final StackPane root = new StackPane();
@@ -61,11 +44,11 @@ public class LoadingView {
         arc.setStrokeWidth(3);
         arc.setStrokeLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
 
-        // chess piece in the center
+
         Label piece = new Label("♟");
         piece.setStyle("-fx-text-fill: #ffffff; -fx-font-size: 22px;");
 
-        // pulse the piece
+
         ScaleTransition piecePulse = new ScaleTransition(Duration.seconds(1.4), piece);
         piecePulse.setFromX(0.85); piecePulse.setToX(1.0);
         piecePulse.setFromY(0.85); piecePulse.setToY(1.0);
@@ -113,7 +96,7 @@ public class LoadingView {
         root.getChildren().add(content);
     }
 
-    // ── public API ────────────────────────────────────────────────────
+
 
     /**
      * Update the main message and highlight the matching step dot.
@@ -123,16 +106,16 @@ public class LoadingView {
      * @param step     0 = token exchange, 1 = profile fetch, 2 = almost there
      */
     public void setMessage(String message, int step) {
+
         messageLabel.setText(message);
 
-        // update dot highlights
         HBox dots = (HBox) ((VBox) root.getChildren().get(0)).getChildren().get(2);
         for (int i = 0; i < dots.getChildren().size(); i++) {
             Circle dot = (Circle) dots.getChildren().get(i);
             dot.setFill(Color.web(i == step ? "#81b64c" : "#2a2a2a"));
         }
 
-        // update subtitle per step
+
         switch (step) {
             case 0 -> subLabel.setText("Securely exchanging credentials");
             case 1 -> subLabel.setText("Fetching your profile and rating");

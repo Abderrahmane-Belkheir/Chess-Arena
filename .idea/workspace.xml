@@ -5,43 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/FriendsPage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/InvitationsPage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Exceptions/InvitationRequestException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/InvitationsPage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/UserSummary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Utilities/PageResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/text.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/Avatar.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FooterViews.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendRow.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendSection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendsPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OfflineFriendsSection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OnlineFriendsSection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/PlayerSearchBar.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestRow.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestsSection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SearchResultCard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SectionState.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/Styles.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/TabBar.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCardController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipManagerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip_Request.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Models/FriendShip_Request.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShipRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShipRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Controllers/UserQueryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Controllers/UserQueryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Dto/UserRegistration.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Dto/UserRegistration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Dto/UserSummary.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Dto/UserSummary.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Persistence/UserRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Persistence/UserRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserQueryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserQueryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserRegistrationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Services/UserRegistrationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/DTO/UserSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/DTO/UserSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/UserSessionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/UserSessionManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Server/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Security/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/UI/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/ApiClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/ApiClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/AppModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Shared/AppModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AppController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/FriendsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/FriendsPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/AppController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/AuthView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/AuthView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/LoadingView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/LoadingView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/ModeView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/ModeView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/FirstScreens/SplashView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/SplashView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/FriendsPanel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/HeroPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Center/HeroPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyControllerStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyControllerStub.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/LobbyView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/NavBar.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/NavBar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/ProfileCardController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/RecentGames.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Games/RecentGames.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Utilities/PageResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/PageResult.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,28 +71,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.Chess-Server.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Chess-UI.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ChessArenaGame.executor&quot;: &quot;Run&quot;,
-    &quot;Application.ChessServer.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Launcher.executor&quot;: &quot;Run&quot;,
-    &quot;Application.UI.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Chess-Server.executor": "Run",
+    "Application.Chess-UI.executor": "Run",
+    "Application.ChessArenaGame.executor": "Run",
+    "Application.ChessServer.executor": "Run",
+    "Application.Launcher.executor": "Run",
+    "Application.UI.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/HP/IdeaProjects/Chess/Server/src/main/java/org/Core/Configurations/Websocket",
+    "onboarding.tips.debug.path": "C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\Configurations\Websocket" />
+      <recent name="C:\Users\HP\IdeaProjects\Chess\UI\src\main\java\org\Core\UI\LobbyScreens\Friends" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="org.Core.Auth.Exceptions" />
-      <recent name="org.Core.Auth.DTO" />
+      <recent name="org.Core.UI.LobbyScreens.Center" />
+      <recent name="org.Core.UI.LobbyScreens.Friends" />
+      <recent name="org.Core.UI.LobbyScreens.Games" />
+      <recent name="org.Core.UI.LobbyScreens.Lobby" />
+      <recent name="org.Core.UI.LobbyScreens.ProfileCard" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Chess-UI">

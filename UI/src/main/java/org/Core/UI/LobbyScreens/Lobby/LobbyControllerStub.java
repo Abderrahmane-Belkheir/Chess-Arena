@@ -1,11 +1,13 @@
 
-package org.Core.UI.LobbyScreens;
+package org.Core.UI.LobbyScreens.Lobby;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
+import org.Core.Realtime.Websocket;
 import org.Core.Social.FriendShipClient;
+import org.Core.UI.LobbyScreens.Profile.ProfileCard;
+import org.Core.UI.LobbyScreens.Profile.ProfileCardController;
 
-import java.util.ArrayList;
 
 /**
  * LobbyControllerStub — drop-in no-op implementation of LobbyController.
@@ -27,11 +29,13 @@ import java.util.ArrayList;
 public class LobbyControllerStub implements LobbyController, ProfileCardController {
 
     private final StackPane appRoot;
-    private LobbyView lobbyView;
+    private org.Core.UI.LobbyScreens.Lobby.LobbyView lobbyView;
     private UserSession currentSession;
+    private Websocket websocket;
 
-    public LobbyControllerStub(StackPane appRoot) {
+    public LobbyControllerStub(StackPane appRoot,Websocket websocket) {
         this.appRoot = appRoot;
+        this.websocket=websocket;
     }
 
     @Override
@@ -63,7 +67,7 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
 
     @Override
     public void onPlayClicked() {
-        System.out.println("[LobbyController] Play clicked");
+        websocket.startPlayPING();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.Core.UI.LobbyScreens.Utilities;
+package org.Core.UI.LobbyScreens.Friends;
 
 import java.util.List;
 

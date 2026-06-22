@@ -1,4 +1,5 @@
-package org.Core.UI.LobbyScreens;
+
+package org.Core.UI.LobbyScreens.Profile;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -6,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
+import org.Core.UI.LobbyScreens.Lobby.LobbyController;
 
 /**
  * NavBar — top bar.
@@ -127,7 +129,7 @@ public class NavBar {
 
     // ── helpers ───────────────────────────────────────────────────────
 
-    static StackPane buildAvatar(Label initials, String bgColor) {
+    public static StackPane buildAvatar(Label initials, String bgColor) {
         StackPane pane = new StackPane();
         pane.setPrefSize(36, 36);
         pane.setMinSize(36, 36);

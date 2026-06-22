@@ -1,5 +1,5 @@
 
-package org.Core.UI.LobbyScreens;
+package org.Core.UI.LobbyScreens.Lobby;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;

@@ -5,7 +5,8 @@ import org.Core.Shared.ApiClient;
 import org.Core.Social.DTO.FriendsPage;
 import org.Core.Social.DTO.InvitationsPage;
 import org.Core.Social.DTO.UserSummary;
-import org.Core.UI.LobbyScreens.Utilities.PageResult;
+import org.Core.UI.LobbyScreens.Friends.PageResult;
+
 
 import java.io.IOException;
 
@@ -46,7 +47,6 @@ public class FriendShipClient {
 
     public PageResult<FriendsPage.FriendEntry> fetchOnlineFriends(String cursor) throws IOException, InterruptedException {
        FriendsPage onlineFriendsPage= apiClient.GET(baseUrl+"/social/friends?cursor="+cursor, FriendsPage.class);
-       System.out.println(onlineFriendsPage);
         return new PageResult<>(onlineFriendsPage.getFriends(),onlineFriendsPage.getNextCursor(),onlineFriendsPage.isHasMore());
     }
 

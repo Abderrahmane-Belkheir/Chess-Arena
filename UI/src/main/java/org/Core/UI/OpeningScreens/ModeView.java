@@ -1,4 +1,4 @@
-package org.Core.UI.FirstScreens;
+package org.Core.UI.OpeningScreens;
 
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;

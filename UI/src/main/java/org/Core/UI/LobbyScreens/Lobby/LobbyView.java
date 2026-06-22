@@ -1,31 +1,26 @@
-package org.Core.UI.LobbyScreens;
+package org.Core.UI.LobbyScreens.Lobby;
 
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import org.Core.Social.FriendShipClient;
+import org.Core.UI.LobbyScreens.Center.HeroPanel;
+import org.Core.UI.LobbyScreens.Friends.FriendsPanel;
+import org.Core.UI.LobbyScreens.Games.RecentGames;
+import org.Core.UI.LobbyScreens.Profile.NavBar;
 
-/**
- * LobbyView — main screen after login.
- *
- * Layout (mirrors the screenshot):
- * ┌─────────────────────────────────────────────────────┐
- * │  NavBar  (logo left | profile + elo right)          │
- * ├──────────┬──────────────────────────┬───────────────┤
- * │ Friends  │      HeroPanel           │ Recent Games  │
- * │ sidebar  │  (chess bg + Play btn)   │ sidebar       │
- * └──────────┴──────────────────────────┴───────────────┘
- *
- * Inject real logic via the LobbyController interface.
- */
+
 public class LobbyView {
 
     private final StackPane root = new StackPane();  // ← changed
     @Getter
     private final StackPane overlay = new StackPane();
-    private final NavBar        navBar;
+    private final NavBar navBar;
     private final FriendsPanel friendsPanel;
-    private final HeroPanel     heroPanel;
-    private final RecentGames   recentGames;
+    private final HeroPanel heroPanel;
+    private final RecentGames recentGames;
 
     public LobbyView(LobbyController controller, FriendShipClient friendShipClient) {
 

@@ -15,10 +15,11 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import org.Core.Auth.AuthService;;
+import org.Core.Auth.AuthService;
 import org.Core.Auth.UserSessionManager;
+import org.Core.Realtime.Websocket;
 import org.Core.Social.FriendShipClient;
-import org.Core.UI.FirstScreens.AppController;
+import org.Core.UI.OpeningScreens.AppController;
 import org.Core.Shared.AppModule;
 
 
@@ -31,6 +32,7 @@ public class ChessArenaGame extends Application {
 
     @Override
     public void start(Stage stage) {
+
         Injector injector = Guice.createInjector(new AppModule());
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: #0a0a0a;");
@@ -41,8 +43,9 @@ public class ChessArenaGame extends Application {
         AuthService authService = injector.getInstance(AuthService.class);
         UserSessionManager sessionManager=injector.getInstance(UserSessionManager.class);
         FriendShipClient friendShipClient=injector.getInstance(FriendShipClient.class);
+        Websocket websocket=injector.getInstance(Websocket.class);
         AppController controller =
-                new AppController(root, getHostServices(), authService,sessionManager,friendShipClient);
+                new AppController(root, getHostServices(), authService,sessionManager,friendShipClient,websocket);
         stage.setScene(scene);
         stage.setTitle("Chess Desktop");
         stage.show();
@@ -50,8 +53,6 @@ public class ChessArenaGame extends Application {
 
         controller.start();
     }
-
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -61,7 +62,7 @@ public class ChessArenaGame extends Application {
 
 
 
-    private final class DarkTitleBar {
+   final class DarkTitleBar {
 
         private interface Dwmapi extends StdCallLibrary {
             Dwmapi INSTANCE = Native.load("dwmapi", Dwmapi.class, W32APIOptions.DEFAULT_OPTIONS);
@@ -69,11 +70,10 @@ public class ChessArenaGame extends Application {
         }
 
         private static final int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-        private static final int DWMWA_CAPTION_COLOR = 35; // Windows 11 22H2+ only
+        private static final int DWMWA_CAPTION_COLOR = 35;
 
         private DarkTitleBar() {}
 
-        /** Call AFTER stage.show(). bgrColor example: 0x000a0a0a for #0a0a0a. */
         public static void apply(Stage stage, int bgrColor) {
             try {
                 long hwndLong = Window.getWindows().get(0).getNativeHandle();
@@ -92,8 +92,4 @@ public class ChessArenaGame extends Application {
         }
     }
 
-    @Override
-    public void stop() throws Exception {
-        super.stop();
     }
-}
