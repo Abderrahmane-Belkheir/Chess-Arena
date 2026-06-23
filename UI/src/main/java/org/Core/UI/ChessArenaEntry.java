@@ -2,6 +2,7 @@ package org.Core.UI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Scopes;
 import com.sun.glass.ui.Window;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -9,17 +10,11 @@ import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 import javafx.application.Application;
-
 import javafx.scene.Scene;
 
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import org.Core.Auth.AuthService;
-import org.Core.Auth.UserSessionManager;
-import org.Core.Realtime.Websocket;
-import org.Core.Social.FriendShipClient;
-import org.Core.UI.OpeningScreens.AppController;
+import org.Core.UI.OpeningScreens.GameController;
 import org.Core.Shared.AppModule;
 
 
@@ -28,31 +23,24 @@ import org.Core.Shared.AppModule;
 import javafx.scene.layout.StackPane;
 
 
-public class ChessArenaGame extends Application {
+public class ChessArenaEntry extends Application {
 
     @Override
     public void start(Stage stage) {
-
-        Injector injector = Guice.createInjector(new AppModule());
         StackPane root = new StackPane();
         root.setStyle("-fx-background-color: #0a0a0a;");
 
         Scene scene = new Scene(root, 1100, 700);
         scene.setFill(Color.web("#0a0a0a"));
-
-        AuthService authService = injector.getInstance(AuthService.class);
-        UserSessionManager sessionManager=injector.getInstance(UserSessionManager.class);
-        FriendShipClient friendShipClient=injector.getInstance(FriendShipClient.class);
-        Websocket websocket=injector.getInstance(Websocket.class);
-        AppController controller =
-                new AppController(root, getHostServices(), authService,sessionManager,friendShipClient,websocket);
         stage.setScene(scene);
         stage.setTitle("Chess Desktop");
         stage.show();
         DarkTitleBar.apply(stage, 0x000a0a0a);
-
-        controller.start();
+        Injector injector=Guice.createInjector(new AppModule(root,getHostServices()));
+        injector.getInstance(GameController.class).start();
     }
+
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -62,7 +50,7 @@ public class ChessArenaGame extends Application {
 
 
 
-   final class DarkTitleBar {
+   private final class DarkTitleBar {
 
         private interface Dwmapi extends StdCallLibrary {
             Dwmapi INSTANCE = Native.load("dwmapi", Dwmapi.class, W32APIOptions.DEFAULT_OPTIONS);

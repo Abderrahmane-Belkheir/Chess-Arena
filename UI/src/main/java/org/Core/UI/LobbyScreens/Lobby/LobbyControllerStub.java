@@ -3,44 +3,33 @@ package org.Core.UI.LobbyScreens.Lobby;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
-import org.Core.Realtime.Websocket;
+import org.Core.Realtime.RealtimeGateway;
 import org.Core.Social.FriendShipClient;
+import org.Core.UI.LobbyScreens.Game.MatchmakingView;
 import org.Core.UI.LobbyScreens.Profile.ProfileCard;
 import org.Core.UI.LobbyScreens.Profile.ProfileCardController;
+import org.Core.UI.Shared.ViewNavigator;
 
 
-/**
- * LobbyControllerStub — drop-in no-op implementation of LobbyController.
- *
- * Use this during UI development so everything compiles and runs.
- * Replace each method body with your real application logic:
- *
- *   - onPlayClicked()    → start matchmaking flow
- *   - onProfileClicked() → open profile / settings screen
- *   - onFriendClicked()  → open challenge / chat dialog
- *   - onGameClicked()    → open board replay viewer
- *
- * Usage in your main App / Router:
- *
- *   LobbyController ctrl = new LobbyControllerStub(); // swap for real impl later
- *   LobbyView lobby = new LobbyView(ctrl);
- *   scene.setRoot(lobby.getView());
- */
 public class LobbyControllerStub implements LobbyController, ProfileCardController {
 
     private final StackPane appRoot;
     private org.Core.UI.LobbyScreens.Lobby.LobbyView lobbyView;
     private UserSession currentSession;
-    private Websocket websocket;
+    private final RealtimeGateway websocket;
+    private  FriendShipClient friendShipClient;
+    private final ViewNavigator viewNavigator;
 
-    public LobbyControllerStub(StackPane appRoot,Websocket websocket) {
+    public LobbyControllerStub(StackPane appRoot, RealtimeGateway websocket) {
         this.appRoot = appRoot;
         this.websocket=websocket;
+        this.viewNavigator=new ViewNavigator(appRoot);
     }
 
     @Override
     public StackPane start(UserSession userSession, FriendShipClient friendShipClient) {
         this.currentSession = userSession;
+        this.friendShipClient=friendShipClient;
         lobbyView = new LobbyView(this,friendShipClient);
         lobbyView.setUser(userSession.getUsername(), userSession.getElo(), userSession.getAvatarUrl());
         return lobbyView.getView();
@@ -53,7 +42,6 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
         card.show();
     }
 
-    // ── ProfileCardController ─────────────────────────────────────────
 
     @Override
     public void onChangeAvatar() {
@@ -67,7 +55,14 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
 
     @Override
     public void onPlayClicked() {
-        websocket.startPlayPING();
+        MatchmakingView matchmaking = new MatchmakingView(() -> {
+            websocket.stopGameSearching();
+            viewNavigator.transitionTo(lobbyView.getView());
+        });
+
+        viewNavigator.transitionTo(matchmaking.getView());
+
+        websocket.startGameSearching();
     }
 
     @Override

@@ -8,7 +8,7 @@ import lombok.Getter;
 import org.Core.Social.FriendShipClient;
 import org.Core.UI.LobbyScreens.Center.HeroPanel;
 import org.Core.UI.LobbyScreens.Friends.FriendsPanel;
-import org.Core.UI.LobbyScreens.Games.RecentGames;
+import org.Core.UI.LobbyScreens.Game.RecentGames;
 import org.Core.UI.LobbyScreens.Profile.NavBar;
 
 

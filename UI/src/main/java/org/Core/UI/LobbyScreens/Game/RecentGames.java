@@ -1,4 +1,4 @@
-package org.Core.UI.LobbyScreens.Games;
+package org.Core.UI.LobbyScreens.Game;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

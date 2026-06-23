@@ -1,43 +1,46 @@
 package org.Core.UI.OpeningScreens;
 
-import javafx.animation.FadeTransition;
+import com.google.inject.Inject;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 import org.Core.Auth.AuthService;
 
 import org.Core.Auth.DTO.UserSession;
 import org.Core.Auth.UserSessionManager;
-import org.Core.Realtime.Websocket;
+import org.Core.Realtime.RealtimeGateway;
 import org.Core.Social.FriendShipClient;
 import org.Core.UI.LobbyScreens.Lobby.LobbyController;
 import org.Core.UI.LobbyScreens.Lobby.LobbyControllerStub;
+import org.Core.UI.Shared.ViewNavigator;
 
 import java.util.concurrent.CompletableFuture;
 
 
-public class AppController {
+public class GameController {
 
     private final StackPane root;
     private final HostServices hostServices;
     private final LobbyController lobbyController;
+    private final ViewNavigator viewNavigator;
 
-    private final Websocket websocket;
+    private final RealtimeGateway realtimeGateway;
     private final FriendShipClient friendShipClient;
     private final AuthService authService;
     private final UserSessionManager sessionManager;
 
-    public AppController(StackPane root,
-                         HostServices hostServices,
-                         AuthService authService, UserSessionManager sessionManager, FriendShipClient friendShipClient,Websocket websocket) {
+    @Inject
+    public GameController(StackPane root,
+                          HostServices hostServices,
+                          AuthService authService, UserSessionManager sessionManager, FriendShipClient friendShipClient, RealtimeGateway websocket) {
         this.root = root;
         this.hostServices = hostServices;
+        this.lobbyController=new LobbyControllerStub(root,websocket);
+        this.viewNavigator=new ViewNavigator(root);
         this.authService=authService;
         this.sessionManager=sessionManager;
-        this.lobbyController=new LobbyControllerStub(root,websocket);
         this.friendShipClient=friendShipClient;
-        this.websocket=websocket;
+        this.realtimeGateway =websocket;
     }
 
     public void start() {
@@ -47,7 +50,7 @@ public class AppController {
 
     private void showSplash() {
         SplashView splash = new SplashView(() -> {
-            transitionTo(showModeView());
+            viewNavigator.transitionTo(showModeView());
         });
 
         root.getChildren().setAll(splash.getView());
@@ -69,7 +72,7 @@ public class AppController {
     private void handleOnline() {
 
         LoadingView loading = new LoadingView();
-        transitionTo(loading.getView());
+        viewNavigator.transitionTo(loading.getView());
 
         CompletableFuture.runAsync(() -> {
             try {
@@ -86,20 +89,20 @@ public class AppController {
 
                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 
-                    websocket.connect().thenAccept(u -> {
-                        Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
-                        websocket.startLobbyPING();
+                    realtimeGateway.connect().thenAccept(u -> {
+                        Platform.runLater(() -> viewNavigator.transitionTo(lobbyController.start(userSession,friendShipClient)));
+                        realtimeGateway.startLobbyPING();
                     }  );
                 } else {
 
                     Thread.sleep(800);
                     Platform.runLater(()->loading.setMessage("No Session Found",0));
                     Thread.sleep(500);
-                    Platform.runLater(() -> transitionTo(showAuthView()));
+                    Platform.runLater(() -> viewNavigator.transitionTo(showAuthView()));
                 }
 
             } catch (Exception e) {
-                Platform.runLater(() -> transitionTo(showAuthView()));
+                Platform.runLater(() -> viewNavigator.transitionTo(showAuthView()));
             }
         });
     }
@@ -116,7 +119,7 @@ public class AppController {
                     if (ok) {
                         Platform.runLater(() -> {
                             LoadingView loading = new LoadingView();
-                            transitionTo(loading.getView());
+                            viewNavigator.transitionTo(loading.getView());
 
                             CompletableFuture.runAsync(() -> {
                                 try {
@@ -126,14 +129,14 @@ public class AppController {
 
                                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 
-                                    websocket.connect().thenAccept(u -> {
-                                        Platform.runLater(() -> transitionTo(lobbyController.start(userSession,friendShipClient)));
-                                        websocket.startLobbyPING();
+                                    realtimeGateway.connect().thenAccept(u -> {
+                                        Platform.runLater(() -> viewNavigator.transitionTo(lobbyController.start(userSession,friendShipClient)));
+                                        realtimeGateway.startLobbyPING();
                                     }  );
 
 
                                 } catch (Exception e) {
-                                    Platform.runLater(() -> transitionTo(showAuthView()));
+                                    Platform.runLater(() -> viewNavigator.transitionTo(showAuthView()));
                                 }
                             });
                         });
@@ -150,32 +153,4 @@ public class AppController {
         return view.getView();
     }
 
-
-    private void transitionTo(StackPane newView) {
-
-        StackPane old = root.getChildren().isEmpty()
-                ? null
-                : (StackPane) root.getChildren().get(0);
-
-        if (old == null) {
-            root.getChildren().setAll(newView);
-            return;
-        }
-
-        newView.setOpacity(0);
-        root.getChildren().add(newView);
-
-        FadeTransition out = new FadeTransition(Duration.millis(200), old);
-        out.setFromValue(1);
-        out.setToValue(0);
-
-        FadeTransition in = new FadeTransition(Duration.millis(200), newView);
-        in.setFromValue(0);
-        in.setToValue(1);
-
-        out.setOnFinished(e -> root.getChildren().remove(old));
-
-        out.play();
-        in.play();
-    }
 }

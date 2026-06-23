@@ -1,6 +1,6 @@
 package org.Core;
 
-import org.Core.UI.ChessArenaGame;
+import org.Core.UI.ChessArenaEntry;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeoutException;
 
 public class Launcher {
     public static void main(String[] args){
-        ChessArenaGame.main(args);
+        ChessArenaEntry.main(args);
     }
     public class WebSocketTest {
 
