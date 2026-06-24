@@ -1,4 +1,4 @@
-package org.Core.Shared;
+package org.Core.Config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;

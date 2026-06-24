@@ -31,12 +31,13 @@ public class MatchmakingView {
             "Still looking — won't be long...",
             "Matching by ELO range..."
         },
-        {
-            "Almost there, finding the best match...",
-            "Hang tight — a game is close...",
-            "Finalizing opponent selection..."
-        }
     };
+
+//    {
+//        "Almost there, finding the best match...",
+//                "Hang tight — a game is close...",
+//                "Finalizing opponent selection..."
+//    }
 
     public MatchmakingView(Runnable onCancel) {
         this.onCancel = onCancel;
@@ -194,7 +195,7 @@ public class MatchmakingView {
             timerLabel.setText(m + ":" + (s < 10 ? "0" : "") + s);
 
             if (seconds % 8 == 0) {
-                step = Math.min(step + 1, 2);
+                step = Math.min(step + 1, 1);
                 String[] pool = MESSAGES[step];
                 msgLabel.setText(pool[rng.nextInt(pool.length)]);
                 updateDots(dots, step);

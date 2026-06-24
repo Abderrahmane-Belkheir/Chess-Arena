@@ -2,7 +2,6 @@ package org.Core.UI;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Scopes;
 import com.sun.glass.ui.Window;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -15,7 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.Core.UI.OpeningScreens.GameController;
-import org.Core.Shared.AppModule;
+import org.Core.Config.AppModule;
 
 
 

@@ -1,7 +1,7 @@
 package org.Core.Auth.DTO;
 
 import lombok.Data;
-import org.Core.Shared.DTO;
+import org.Core.Config.DTO;
 
 @Data
 public class UserSession extends DTO  {

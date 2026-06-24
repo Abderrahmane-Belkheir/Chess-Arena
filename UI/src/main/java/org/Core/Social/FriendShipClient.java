@@ -1,7 +1,7 @@
 package org.Core.Social;
 
 import com.google.inject.Inject;
-import org.Core.Shared.ApiClient;
+import org.Core.Config.ApiClient;
 import org.Core.Social.DTO.FriendsPage;
 import org.Core.Social.DTO.InvitationsPage;
 import org.Core.Social.DTO.UserSummary;

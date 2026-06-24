@@ -30,13 +30,14 @@ public class GameController {
     private final UserSessionManager sessionManager;
 
     @Inject
-    public GameController(StackPane root,
-                          HostServices hostServices,
-                          AuthService authService, UserSessionManager sessionManager, FriendShipClient friendShipClient, RealtimeGateway websocket) {
+    public GameController(StackPane root, HostServices hostServices, AuthService authService,
+                          UserSessionManager sessionManager, FriendShipClient friendShipClient,
+                          RealtimeGateway websocket,ViewNavigator viewNavigator)
+    {
         this.root = root;
         this.hostServices = hostServices;
-        this.lobbyController=new LobbyControllerStub(root,websocket);
-        this.viewNavigator=new ViewNavigator(root);
+        this.viewNavigator=viewNavigator;
+        this.lobbyController=new LobbyControllerStub(root,websocket,viewNavigator);
         this.authService=authService;
         this.sessionManager=sessionManager;
         this.friendShipClient=friendShipClient;
@@ -85,7 +86,7 @@ public class GameController {
 
                     Platform.runLater(() -> loading.setMessage("Loading your profile...", 1));
 
-                    UserSession userSession=sessionManager.getUserSession();
+                    UserSession userSession=sessionManager.getUserSession(true);
 
                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 
@@ -125,7 +126,7 @@ public class GameController {
                                 try {
                                     Platform.runLater(() -> loading.setMessage("Loading your profile...", 1));
 
-                                    UserSession userSession = sessionManager.getUserSession();
+                                    UserSession userSession = sessionManager.getUserSession(true);
 
                                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 

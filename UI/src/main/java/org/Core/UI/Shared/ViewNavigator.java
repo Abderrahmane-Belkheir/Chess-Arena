@@ -1,5 +1,6 @@
 package org.Core.UI.Shared;
 
+import com.google.inject.Inject;
 import javafx.animation.FadeTransition;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
@@ -8,14 +9,15 @@ public class ViewNavigator {
 
     private final StackPane root;
 
+    @Inject
     public ViewNavigator(StackPane root) {
         this.root = root;
     }
 
     public void transitionTo(StackPane newView) {
-        StackPane old = root.getChildren().isEmpty()
+        javafx.scene.Node old = root.getChildren().isEmpty()
                 ? null
-                : (StackPane) root.getChildren().get(0);
+                : root.getChildren().get(0);
 
         if (old == null) {
             root.getChildren().setAll(newView);

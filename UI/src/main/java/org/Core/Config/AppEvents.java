@@ -1,9 +1,7 @@
-package org.Core.Shared;
+package org.Core.Config;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
-import lombok.Getter;
 import org.Core.Game.Services.GameSessionService;
 
 

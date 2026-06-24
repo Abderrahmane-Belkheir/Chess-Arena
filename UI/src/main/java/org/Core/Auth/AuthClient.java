@@ -4,9 +4,8 @@ package org.Core.Auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.Core.Auth.DTO.UserSession;
 import org.Core.Auth.Exceptions.TokenExpiredException;
-import org.Core.Shared.AppConfig;
+import org.Core.Config.AppConfig;
 
 import java.io.IOException;
 import java.net.URI;

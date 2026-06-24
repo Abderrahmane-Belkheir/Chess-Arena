@@ -1,11 +1,13 @@
 package org.Core.Realtime;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import org.Core.Auth.TokenStorage;
 import org.Core.Game.Events.GameFound;
 import org.Core.Game.Events.GameMove;
-import org.Core.Shared.AppEvents;
-import org.springframework.messaging.converter.*;
+import org.Core.Config.AppEvents;
+import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
@@ -24,7 +26,7 @@ public class RealtimeGateway {
 
     private final AppEvents appEvents;
     private final TokenStorage tokenStorage;
-
+    private final ObjectMapper objectMapper;
 
     private final ScheduledExecutorService executorService= Executors.newScheduledThreadPool(1);
     private  ScheduledFuture<?> lobbyPinging;
@@ -32,24 +34,20 @@ public class RealtimeGateway {
 
 
     @Inject
-    public RealtimeGateway(TokenStorage tokenStorage, AppEvents appEvents){
+    public RealtimeGateway(TokenStorage tokenStorage, AppEvents appEvents,ObjectMapper objectMapper){
         this.tokenStorage=tokenStorage;
         this.appEvents=appEvents;
+        this.objectMapper=objectMapper;
     }
 
     public CompletableFuture<Void>  connect() {
+        WebSocketStompClient stompClient=new WebSocketStompClient(new StandardWebSocketClient());
+        stompClient.setMessageConverter(new StringMessageConverter());
+        WebSocketHttpHeaders httpHeaders = new WebSocketHttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + tokenStorage.getAccessToken());
 
-                WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
-
-            stompClient.setMessageConverter(new StringMessageConverter());
-
-
-            WebSocketHttpHeaders httpHeaders = new WebSocketHttpHeaders();
-            httpHeaders.add("Authorization", "Bearer " + tokenStorage.getAccessToken());
-
-            StompHeaders stompHeaders = new StompHeaders();
-            stompHeaders.add("Authorization", "Bearer " +tokenStorage.getAccessToken());
-
+        StompHeaders stompHeaders = new StompHeaders();
+        stompHeaders.add("Authorization", "Bearer " +tokenStorage.getAccessToken());
             return stompClient
                     .connectAsync(
                             "ws://localhost:8080/ws",
@@ -59,11 +57,14 @@ public class RealtimeGateway {
 
                                 @Override
                                 public void afterConnected(StompSession s, StompHeaders connectedHeaders) {
-                                    session = s;
+                                    System.out.println("CONNECTED: " + s.getSessionId());
                                 }
                             })
                 .orTimeout(10, TimeUnit.SECONDS)
-                    .thenAccept(this::subscribe)
+                    .thenAccept(s -> {
+                        this.session = s;
+                        subscribe(s);
+                    })
                 .exceptionally(ex -> {
                     System.err.println(">>> Connection failed: " + ex.getMessage());
                     return null;
@@ -84,32 +85,38 @@ public class RealtimeGateway {
     session.send("/app/stop.search","");
     }
 
-    private void subscribe(StompSession session){
-        try {
-            subscribeToSingle(session,"/user/queue/matchmaking", GameFound.class);
-            subscribeToSingle(session,"/user/queue/game.move",GameMove.class);
-        }catch (Throwable e){
-            System.out.println(e.getMessage());
-            throw e;
-        }
+    private void subscribe(StompSession s){
+            subscribeToSingle(s, "/user/queue/matchmaking", GameFound.class);
+            subscribeToSingle(s, "/user/queue/game.move", GameMove.class);
     }
 
-    private  void subscribeToSingle(StompSession session,String destination,Class<?> clazz){
-        session.subscribe(
+    private  void subscribeToSingle(StompSession s,String destination,Class<?> clazz){
+        s.subscribe(
                 destination,
                 new StompFrameHandler() {
 
                     @Override
                     public Type getPayloadType(StompHeaders headers) {
-                        return clazz;
+                        return String.class;
                     }
 
                     @Override
                     public void handleFrame(
                             StompHeaders headers,
                             Object payload) {
-                        System.out.println(payload);
-                        appEvents.post((payload));
+                        if (!(payload instanceof String)) {
+                            System.err.println("Unexpected payload type: " + payload.getClass());
+                            return;
+                        }
+                        String json = (String) payload;
+                        Object event = null;
+
+                        try {
+                            event = objectMapper.readValue(json, clazz);
+                        }catch (JsonProcessingException e) {
+                            throw new RuntimeException(e);
+                        }
+                        appEvents.post(event);
                     }
                 });
     }

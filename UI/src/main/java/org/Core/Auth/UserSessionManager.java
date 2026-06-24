@@ -2,9 +2,7 @@ package org.Core.Auth;
 
 import com.google.inject.Inject;
 import org.Core.Auth.DTO.UserSession;
-import org.Core.Shared.ApiClient;
-import org.Core.Shared.AppConfig;
-import org.Core.Social.DTO.UserSummary;
+import org.Core.Config.ApiClient;
 
 import java.io.IOException;
 
@@ -12,15 +10,17 @@ import java.io.IOException;
 public class UserSessionManager {
 
     private final ApiClient apiClient;
-
+    private UserSession userSession;
 
     @Inject
     public UserSessionManager(ApiClient apiClient) {
         this.apiClient=apiClient;
     }
 
-    public UserSession getUserSession() throws IOException, InterruptedException {
-       return  apiClient.GET("/api/v1/users/me",UserSession.class);
+    public UserSession getUserSession(boolean fetchNew) throws IOException, InterruptedException {
+        if(!fetchNew&&userSession!=null) return userSession;
+        this.userSession=apiClient.GET("/api/v1/users/me",UserSession.class);
+       return  userSession;
     }
 
 }

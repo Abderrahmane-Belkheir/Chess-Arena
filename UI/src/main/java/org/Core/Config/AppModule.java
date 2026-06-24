@@ -1,5 +1,6 @@
-package org.Core.Shared;
+package org.Core.Config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import javafx.application.HostServices;
@@ -12,6 +13,7 @@ import org.Core.Game.Services.GameSessionService;
 import org.Core.Realtime.RealtimeGateway;
 import org.Core.Social.FriendShipClient;
 import org.Core.UI.OpeningScreens.GameController;
+import org.Core.UI.Shared.ViewNavigator;
 
 public class AppModule extends AbstractModule {
 
@@ -27,7 +29,9 @@ public class AppModule extends AbstractModule {
     protected void configure() {
         bind(StackPane.class).toInstance(root);
         bind(HostServices.class).toInstance(hostServices);
+        bind(ViewNavigator.class).in(Scopes.SINGLETON);
         bind(GameController.class).in(Scopes.SINGLETON);
+        bind(ObjectMapper.class).in(Scopes.SINGLETON);
         bind(AuthClient.class).in(Scopes.SINGLETON);
         bind(AuthService.class).in(Scopes.SINGLETON);
         bind(TokenStorage.class).in(Scopes.SINGLETON);

@@ -20,7 +20,7 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
     private  FriendShipClient friendShipClient;
     private final ViewNavigator viewNavigator;
 
-    public LobbyControllerStub(StackPane appRoot, RealtimeGateway websocket) {
+    public LobbyControllerStub(StackPane appRoot, RealtimeGateway websocket,ViewNavigator viewNavigator) {
         this.appRoot = appRoot;
         this.websocket=websocket;
         this.viewNavigator=new ViewNavigator(appRoot);

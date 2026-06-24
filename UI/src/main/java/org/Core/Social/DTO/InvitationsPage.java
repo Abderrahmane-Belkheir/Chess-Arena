@@ -1,7 +1,7 @@
 package org.Core.Social.DTO;
 
 import lombok.Data;
-import org.Core.Shared.DTO;
+import org.Core.Config.DTO;
 
 import java.util.List;
 @Data

@@ -1,4 +1,4 @@
-package org.Core.Shared;
+package org.Core.Config;
 
 import java.io.IOException;
 import java.io.InputStream;

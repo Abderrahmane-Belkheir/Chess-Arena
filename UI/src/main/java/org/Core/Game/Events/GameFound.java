@@ -1,21 +1,14 @@
 package org.Core.Game.Events;
 
+import lombok.Data;
+@Data
 public class GameFound {
-    private boolean isFound;
+    private boolean found;
     private String id;
     private Opponent opponent;
     private String fen;
-
-    @Override
-    public String toString() {
-        return "GameFound{" +
-                "isFound=" + isFound +
-                ", id='" + id + '\'' +
-                ", opponent=" + opponent +
-                ", fen='" + fen + '\'' +
-                '}';
-    }
-
+    private PlayerColor playerColor;
+    @Data
     public static class Opponent{
         private int id;
         private String username;
@@ -23,4 +16,5 @@ public class GameFound {
         private String avatarUrl;
     }
 
+    public enum PlayerColor{WHITE,BLACK}
 }

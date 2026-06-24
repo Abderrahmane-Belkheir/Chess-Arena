@@ -1,4 +1,4 @@
-package org.Core.Shared;
+package org.Core.Config;
 
 public abstract class DTO {
 }
