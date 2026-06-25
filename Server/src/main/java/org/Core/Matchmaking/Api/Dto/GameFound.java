@@ -1,6 +1,8 @@
 package org.Core.Matchmaking.Api.Dto;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.bhlangonijr.chesslib.Side;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,8 @@ public class GameFound {
     private String id;
     private Opponent opponent;
     private String fen;
-    private PlayerColor playerColor;
+    @JsonProperty("mySide")
+    private Side playerSide;
 
 
 @AllArgsConstructor

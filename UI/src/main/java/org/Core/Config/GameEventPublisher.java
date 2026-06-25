@@ -3,15 +3,18 @@ package org.Core.Config;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import org.Core.Game.Services.GameSessionService;
+import org.Core.Realtime.RealtimeGateway;
 
 
-public class AppEvents {
+public class GameEventPublisher {
 
     private final EventBus eventBus=new EventBus();
+
     @Inject
-    public AppEvents(GameSessionService gameSessionService){
+    public GameEventPublisher(GameSessionService gameSessionService){
         register(gameSessionService);
     }
+
     public void post(Object event){
         eventBus.post(event);
     }

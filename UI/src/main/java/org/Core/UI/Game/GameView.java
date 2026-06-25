@@ -13,19 +13,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import org.Core.Auth.DTO.UserSession;
 import org.Core.Game.Events.GameFound;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.github.bhlangonijr.chesslib.*;
-import javafx.animation.*;
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.image.*;
 import javafx.scene.layout.*;
-import org.Core.UI.Shared.ViewNavigator;
+import org.Core.Game.Events.OpponentMove;
+import org.Core.Game.Services.GameSessionService;
 
 import java.util.*;
 
@@ -49,22 +47,37 @@ import java.util.*;
  *   // reconnect:
  *   view.renderFromFen(currentFen);
  */
+import com.github.bhlangonijr.chesslib.*;
+import javafx.animation.*;
+import javafx.geometry.*;
+import javafx.scene.effect.*;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import javafx.util.Duration;
+import java.util.*;
+
+
 public class GameView {
 
-    // ── Color constants (never change) ────────────────────────────────
-    private static final String LIGHT_SQUARE = "#f0d9b5";
-    private static final String DARK_SQUARE  = "#779952";
-    private static final String HIGHLIGHT    = "#f6f669";
-    private static final String SELECT_COLOR = "#81b64c";
+    // ── Board palette (chess.com-inspired) ────────────────────────────
+    private static final String LIGHT_SQUARE      = "#eeeed2";
+    private static final String DARK_SQUARE       = "#769656";
+    private static final String SELECT_COLOR      = "#f6f669";
+    private static final String SELECT_DARK       = "#baca2b";
+    private static final String LAST_MOVE_LIGHT   = "#cdd16e";
+    private static final String LAST_MOVE_DARK    = "#aaa23a";
 
-    // Sidebar proportions relative to board size
-    private static final double LEFT_RATIO   = 0.26;  // left sidebar = 26% of board size
-    private static final double RIGHT_RATIO  = 0.09;  // right sidebar = 9% of board size
+    private static final double LEFT_RATIO   = 0.26;
+    private static final double RIGHT_RATIO  = 0.09;
     private static final int    MIN_SQUARE   = 48;
     private static final int    MAX_SQUARE   = 120;
 
+    private static final double MOVE_ANIM_MS = 160;
+
     // ── State ─────────────────────────────────────────────────────────
-    private final Board              board        = new Board();
+    private final Board              board          = new Board();
     private final UserSession        session;
     private Square                   selectedSquare = null;
     private List<Square>             legalTargets   = new ArrayList<>();
@@ -73,22 +86,22 @@ public class GameView {
     private boolean                  myTurn;
     private String                   fen;
     private final GameFound.Opponent opponent;
+    private final Side               mySide;
 
-    // Current computed square size (pixels) — updated on resize
     private double squareSize = 96;
 
-
-    // ── UI nodes (kept as fields so applySize can reach them) ─────────
+    // ── UI nodes ──────────────────────────────────────────────────────
     private final StackPane      root         = new StackPane();
     private final GridPane       boardGrid    = new GridPane();
     private final StackPane[][]  squares      = new StackPane[8][8];
     private final StackPane      boardWrap    = new StackPane();
+    private final Pane           floatPane    = new Pane();
 
     // Sidebars
     private final VBox           leftSidebar  = new VBox(0);
     private final VBox           rightSidebar = new VBox(12);
 
-    // Player / clock widgets — refs needed for resize
+    // Player / clock widgets
     private final StackPane      oppAvatarPane;
     private final StackPane      myAvatarPane;
     private final Label          oppNameLbl;
@@ -104,14 +117,18 @@ public class GameView {
     private final StackPane      drawBtn;
     private final StackPane      resignBtn;
 
+    private final GameSessionService gameSessionService;
+
     // ── Constructor ───────────────────────────────────────────────────
-    public GameView(String fen, UserSession session, GameFound.Opponent opponent) {
+    public GameView(String fen, UserSession session, Side playerColor,
+                    GameFound.Opponent opponent, GameSessionService gameSessionService) {
         this.fen      = fen;
         this.session  = session;
         this.opponent = opponent;
-        this.myTurn   = true; // TODO: replace with real color assignment
+        this.mySide   = playerColor;
+        this.myTurn   = mySide == Side.WHITE;
+        this.gameSessionService = gameSessionService;
 
-        // Pre-build label/avatar refs so buildLayout can wire them in
         oppAvatarPane = buildAvatar(opponent.getAvatarUrl(),
                 initials(opponent.getUsername()), avatarColor(opponent.getUsername()), 44);
         myAvatarPane  = buildAvatar(session.getAvatarUrl(),
@@ -122,7 +139,7 @@ public class GameView {
         oppEloLbl  = styledLabel(opponent.getElo() + " ELO", "#7a7672", 12, 600);
         myEloLbl   = styledLabel(session.getElo()  + " ELO", "#7a7672", 12, 600);
 
-        drawBtn   = buildActionBtn("½", "#888888", () -> System.out.println("Draw offered"));
+        drawBtn   = buildActionBtn("½", "#a0a090", () -> System.out.println("Draw offered"));
         resignBtn = buildActionBtn("⚑", "#e05555", () -> System.out.println("Resigned"));
 
         buildLayout();
@@ -140,25 +157,21 @@ public class GameView {
         legalTargets.clear();
     }
 
-    public void applyServerMove(String from, String to, String newFen) {
+    public void applyOpponentMove(OpponentMove gameMove) {
         Platform.runLater(() -> {
-            Move move = new Move(
-                    Square.fromValue(from.toUpperCase()),
-                    Square.fromValue(to.toUpperCase()));
-            board.doMove(move);
+            Square from = Square.fromValue(gameMove.getFrom().toUpperCase());
+            Square to   = Square.fromValue(gameMove.getTo().toUpperCase());
 
-            if (!board.getFen().equals(newFen)) {
-                board.loadFromFen(newFen);
-                drawAllPieces();
-            } else {
-                redrawSquare(from);
-                redrawSquare(to);
-            }
+            animateMove(from, to, () -> {
+                Move move = new Move(from, to);
+                board.doMove(move);
 
-            lastMoveFrom = from;
-            lastMoveTo   = to;
-            applyLastMoveHighlight();
-            myTurn = board.getSideToMove() == Side.WHITE; // TODO: use real color
+                lastMoveFrom = from.value().toLowerCase();
+                lastMoveTo   = to.value().toLowerCase();
+                redrawSquare(lastMoveFrom);
+                redrawSquare(lastMoveTo);
+                myTurn = true;
+            });
         });
     }
 
@@ -171,13 +184,12 @@ public class GameView {
 
     public StackPane getView() { return root; }
 
-    // ── Layout (structure only — no hard sizes here) ──────────────────
+    // ── Layout ────────────────────────────────────────────────────────
 
     private void buildLayout() {
         root.setStyle("-fx-background-color: #262421;");
         root.setMinSize(0, 0);
 
-        // Board squares grid
         boardGrid.setGridLinesVisible(false);
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -190,14 +202,23 @@ public class GameView {
                 boardGrid.add(sq, col, row);
             }
         }
-        boardWrap.getChildren().add(boardGrid);
+
+        addCoordinateLabels();
+
+        floatPane.setMouseTransparent(true);
+        floatPane.setStyle("-fx-background-color: transparent;");
+
+        boardWrap.getChildren().addAll(boardGrid, floatPane);
         boardWrap.setStyle("-fx-background-color: transparent;");
 
-        // Left sidebar structure
+        floatPane.prefWidthProperty().bind(boardWrap.widthProperty());
+        floatPane.prefHeightProperty().bind(boardWrap.heightProperty());
+
+        // Left sidebar
         leftSidebar.setAlignment(Pos.TOP_LEFT);
         leftSidebar.setStyle("-fx-background-color: #1e1c1a;");
 
-        VBox oppInfo = buildPlayerInfoBox(oppAvatarPane, oppNameLbl, oppEloLbl);
+        VBox oppInfo     = buildPlayerInfoBox(oppAvatarPane, oppNameLbl, oppEloLbl);
         oppCaptured.setPadding(new Insets(2, 0, 4, 0));
         oppCaptured.setAlignment(Pos.CENTER_LEFT);
         VBox oppClockBox = wrapClock(oppClockLabel);
@@ -208,17 +229,17 @@ public class GameView {
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        VBox myClockBox = wrapClock(myClockLabel);
+        VBox myClockBox  = wrapClock(myClockLabel);
         myCaptured.setPadding(new Insets(4, 0, 2, 0));
         myCaptured.setAlignment(Pos.CENTER_LEFT);
-        VBox myInfo = buildPlayerInfoBox(myAvatarPane, myNameLbl, myEloLbl);
+        VBox myInfo      = buildPlayerInfoBox(myAvatarPane, myNameLbl, myEloLbl);
 
         VBox bottomGroup = new VBox(6);
         bottomGroup.getChildren().addAll(myClockBox, myCaptured, myInfo);
 
         leftSidebar.getChildren().addAll(topGroup, spacer, bottomGroup);
 
-        // Right sidebar structure
+        // Right sidebar
         rightSidebar.setAlignment(Pos.CENTER);
         rightSidebar.setStyle("-fx-background-color: #1e1c1a;");
         rightSidebar.getChildren().addAll(drawBtn, resignBtn);
@@ -232,31 +253,53 @@ public class GameView {
         StackPane.setAlignment(centerRow, Pos.CENTER);
     }
 
-    // ── Resize logic ──────────────────────────────────────────────────
+    private void addCoordinateLabels() {
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                boolean isLight = (row + col) % 2 != 0;
+                String textColor = isLight ? DARK_SQUARE : LIGHT_SQUARE;
 
-    /**
-     * Hook into the Scene's dimensions so shrinking the window actually fires.
-     * root.widthProperty() never shrinks because StackPane grows to fit content;
-     * scene.widthProperty() / heightProperty() always reflect the real window size.
-     */
+                if (col == 0) {
+                    int rankNum = (mySide == Side.WHITE) ? (8 - row) : (row + 1);
+                    Label rankLbl = new Label(String.valueOf(rankNum));
+                    rankLbl.setStyle("-fx-text-fill: " + textColor + "; -fx-font-size: 10px; -fx-font-weight: 700;");
+                    rankLbl.setMouseTransparent(true);
+                    rankLbl.setUserData("coord");
+                    StackPane.setAlignment(rankLbl, Pos.TOP_LEFT);
+                    StackPane.setMargin(rankLbl, new Insets(2, 0, 0, 2));
+                    squares[row][col].getChildren().add(rankLbl);
+                }
+
+                if (row == 7) {
+                    char fileLetter = (mySide == Side.WHITE) ? (char)('a' + col) : (char)('h' - col);
+                    Label fileLbl = new Label(String.valueOf(fileLetter));
+                    fileLbl.setStyle("-fx-text-fill: " + textColor + "; -fx-font-size: 10px; -fx-font-weight: 700;");
+                    fileLbl.setMouseTransparent(true);
+                    fileLbl.setUserData("coord");
+                    StackPane.setAlignment(fileLbl, Pos.BOTTOM_RIGHT);
+                    StackPane.setMargin(fileLbl, new Insets(0, 2, 2, 0));
+                    squares[row][col].getChildren().add(fileLbl);
+                }
+            }
+        }
+    }
+
+    // ── Resize ────────────────────────────────────────────────────────
+
     private void attachResizeListeners() {
         ChangeListener<Number> sizeListener = (obs, oldVal, newVal) -> recomputeSize();
-
         root.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
                 newScene.widthProperty().addListener(sizeListener);
                 newScene.heightProperty().addListener(sizeListener);
-                recomputeSize(); // run once immediately with real scene dimensions
+                recomputeSize();
             }
         });
-
-        // Also listen on root in case the scene is already attached at build time
         root.widthProperty().addListener(sizeListener);
         root.heightProperty().addListener(sizeListener);
     }
 
     private void recomputeSize() {
-        // Prefer scene dimensions (shrink-aware); fall back to root if scene not ready
         double w, h;
         if (root.getScene() != null) {
             w = root.getScene().getWidth();
@@ -267,28 +310,18 @@ public class GameView {
         }
         if (w <= 0 || h <= 0) return;
 
-        // Board must fit in: width minus both sidebars, and full height
-        // sidebars are a ratio of board size, so: boardPx + board*LEFT + board*RIGHT <= w
-        // => boardPx <= w / (1 + LEFT_RATIO + RIGHT_RATIO)
         double maxFromWidth  = w / (1.0 + LEFT_RATIO + RIGHT_RATIO);
-        double maxFromHeight = h;  // board can use full height
+        double maxFromHeight = h;
         double boardPx = Math.min(maxFromWidth, maxFromHeight);
 
         double sq = Math.floor(boardPx / 8.0);
         sq = Math.max(MIN_SQUARE, Math.min(MAX_SQUARE, sq));
 
-        if (Math.abs(sq - squareSize) < 0.1) return; // no meaningful change
+        if (Math.abs(sq - squareSize) < 0.1) return;
         squareSize = sq;
-
         applySize(squareSize);
     }
 
-    /**
-     * Apply a new square size to every sized element imperatively.
-     * Layout/colors update every frame; piece images reload only after
-     * the resize gesture settles (150 ms debounce) so image decoding
-     * never blocks the drag.
-     */
     private void applySize(double sq) {
         double boardPx      = sq * 8;
         double leftWidth    = Math.round(boardPx * LEFT_RATIO);
@@ -300,7 +333,6 @@ public class GameView {
         double clockFont    = Math.max(14, Math.round(sq * 0.27));
         double btnSize      = Math.max(32, Math.round(sq * 0.46));
 
-        // ── Board squares ─────────────────────────────────────────────
         boardWrap.setPrefSize(boardPx, boardPx);
         boardWrap.setMinSize(boardPx, boardPx);
         boardWrap.setMaxSize(boardPx, boardPx);
@@ -313,7 +345,6 @@ public class GameView {
             }
         }
 
-        // ── Left sidebar ──────────────────────────────────────────────
         leftSidebar.setPrefSize(leftWidth, boardPx);
         leftSidebar.setMinSize(leftWidth, boardPx);
         leftSidebar.setMaxSize(leftWidth, boardPx);
@@ -331,7 +362,6 @@ public class GameView {
         styleClockLabel(oppClockLabel, clockFont, clockWidth);
         styleClockLabel(myClockLabel,  clockFont, clockWidth);
 
-        // ── Right sidebar ─────────────────────────────────────────────
         rightSidebar.setPrefSize(rightWidth, boardPx);
         rightSidebar.setMinSize(rightWidth, boardPx);
         rightSidebar.setMaxSize(rightWidth, boardPx);
@@ -340,19 +370,301 @@ public class GameView {
         resizeActionBtn(resignBtn, btnSize);
 
         clearHighlights();
-        // Pieces scale automatically via property bindings — no redraw needed here.
     }
 
-    // ── Resize helpers ────────────────────────────────────────────────
+    // ── Piece rendering ───────────────────────────────────────────────
+
+    private void drawAllPieces() {
+        for (Square square : Square.values()) {
+            if (square == Square.NONE) continue;
+            int[] rc = squareToRowCol(square);
+            clearSquareUI(rc[0], rc[1]);
+            Piece piece = board.getPiece(square);
+            if (piece != Piece.NONE) placePiece(piece, rc[0], rc[1]);
+        }
+    }
+
+    /**
+     * Redraws a single square: resets its background color then redraws piece.
+     * Resetting color here is the key fix — clearSquareUI only removes children,
+     * it never touches the -fx-background-color style.
+     */
+    private void redrawSquare(String squareName) {
+        Square sq = Square.fromValue(squareName.toUpperCase());
+        if (sq == Square.NONE) return;
+        int[] rc = squareToRowCol(sq);
+        resetSquareColor(rc[0], rc[1]);   // ← fix: reset color before redrawing
+        clearSquareUI(rc[0], rc[1]);
+        Piece piece = board.getPiece(sq);
+        if (piece != Piece.NONE) placePiece(piece, rc[0], rc[1]);
+    }
+
+    private void placePiece(Piece piece, int row, int col) {
+        final int PIECE_LOAD_SIZE = 96;
+        try {
+            Image img = new Image(
+                    Objects.requireNonNull(
+                            getClass().getResourceAsStream("/Pieces/" + piece.name() + ".png")),
+                    PIECE_LOAD_SIZE, PIECE_LOAD_SIZE, true, true);
+            ImageView iv = new ImageView(img);
+            iv.setPreserveRatio(true);
+            iv.setSmooth(true);
+            iv.setMouseTransparent(true);
+
+            DropShadow shadow = new DropShadow();
+            shadow.setColor(Color.color(0, 0, 0, 0.45));
+            shadow.setRadius(6);
+            shadow.setOffsetY(2);
+            iv.setEffect(shadow);
+
+            StackPane sq = squares[row][col];
+            iv.fitWidthProperty().bind(sq.widthProperty().subtract(8));
+            iv.fitHeightProperty().bind(sq.heightProperty().subtract(8));
+            sq.getChildren().add(iv);
+        } catch (Exception e) {
+            Label fallback = new Label(piece.getFenSymbol());
+            fallback.setStyle("-fx-text-fill: white; -fx-font-size: 28px;");
+            fallback.setMouseTransparent(true);
+            squares[row][col].getChildren().add(fallback);
+        }
+    }
+
+    private void clearSquareUI(int row, int col) {
+        squares[row][col].getChildren().removeIf(n -> !"coord".equals(n.getUserData()));
+    }
+
+    // ── Color helpers (targeted — never loop all 64) ──────────────────
+
+    /** Resets a single square to its natural light/dark board color. */
+    private void resetSquareColor(int row, int col) {
+        boolean isLight = (row + col) % 2 != 0;
+        squares[row][col].setStyle(
+                "-fx-background-color: " + (isLight ? LIGHT_SQUARE : DARK_SQUARE) + ";");
+    }
+
+    private void resetSquareColorByName(String squareName) {
+        if (squareName == null) return;
+        Square sq = Square.fromValue(squareName.toUpperCase());
+        if (sq == Square.NONE) return;
+        int[] rc = squareToRowCol(sq);
+        resetSquareColor(rc[0], rc[1]);
+    }
+
+    /**
+     * Clears only the squares that were actually highlighted:
+     * the selected square, legal-move dots, and the previous last-move tint.
+     * Never loops all 64.
+     */
+    private void clearHighlights() {
+        // 1. Reset selected square
+        if (selectedSquare != null) {
+            int[] rc = squareToRowCol(selectedSquare);
+            resetSquareColor(rc[0], rc[1]);
+        }
+
+        // 2. Reset legal-move target squares and remove dots/rings
+        for (Square target : legalTargets) {
+            int[] rc = squareToRowCol(target);
+            resetSquareColor(rc[0], rc[1]);
+            squares[rc[0]][rc[1]].getChildren().removeIf(n -> "dot".equals(n.getUserData()));
+        }
+
+        // 3. Reset previous last-move tint
+        resetSquareColorByName(lastMoveFrom);
+        resetSquareColorByName(lastMoveTo);
+
+//        // 4. Re-apply last-move gold tint (keeps it visible after selection clears)
+//        refreshLastMoveHighlight();
+    }
+
+    private void refreshLastMoveHighlight() {
+        if (lastMoveFrom != null) tintLastMove(lastMoveFrom);
+        if (lastMoveTo   != null) tintLastMove(lastMoveTo);
+    }
+
+    private void tintLastMove(String squareName) {
+        Square sq = Square.fromValue(squareName.toUpperCase());
+        if (sq == Square.NONE) return;
+        int[] rc = squareToRowCol(sq);
+        boolean isLight = (rc[0] + rc[1]) % 2 != 0;
+        squares[rc[0]][rc[1]].setStyle(
+                "-fx-background-color: " + (isLight ? LAST_MOVE_LIGHT : LAST_MOVE_DARK) + ";");
+    }
+
+    // ── Animated move ─────────────────────────────────────────────────
+
+    private void animateMove(Square from, Square to, Runnable onDone) {
+        int[] fromRC = squareToRowCol(from);
+        int[] toRC   = squareToRowCol(to);
+
+        Piece piece = board.getPiece(from);
+        if (piece == Piece.NONE) { onDone.run(); return; }
+
+        ImageView iv = buildPieceImageView(piece, (int) squareSize);
+        if (iv == null) { onDone.run(); return; }
+
+        double startX = fromRC[1] * squareSize;
+        double startY = fromRC[0] * squareSize;
+        double endX   = toRC[1]   * squareSize;
+        double endY   = toRC[0]   * squareSize;
+
+        iv.setLayoutX(startX);
+        iv.setLayoutY(startY);
+        iv.setFitWidth(squareSize - 8);
+        iv.setFitHeight(squareSize - 8);
+
+        DropShadow flyingShadow = new DropShadow();
+        flyingShadow.setColor(Color.color(0, 0, 0, 0.55));
+        flyingShadow.setRadius(14);
+        flyingShadow.setOffsetY(5);
+        iv.setEffect(flyingShadow);
+
+        iv.setScaleX(1.12);
+        iv.setScaleY(1.12);
+
+        floatPane.getChildren().add(iv);
+
+        clearSquareUI(fromRC[0], fromRC[1]);
+        resetSquareColor(fromRC[0], fromRC[1]);  // ← add this line
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(MOVE_ANIM_MS), iv);
+        tt.setFromX(0);
+        tt.setFromY(0);
+        tt.setToX(endX - startX);
+        tt.setToY(endY - startY);
+        tt.setInterpolator(Interpolator.EASE_BOTH);
+
+        tt.setOnFinished(evt -> {
+            floatPane.getChildren().remove(iv);
+            onDone.run();
+        });
+
+        tt.play();
+    }
+
+    private ImageView buildPieceImageView(Piece piece, int size) {
+        try {
+            Image img = new Image(
+                    Objects.requireNonNull(
+                            getClass().getResourceAsStream("/Pieces/" + piece.name() + ".png")),
+                    size, size, true, true);
+            ImageView iv = new ImageView(img);
+            iv.setPreserveRatio(true);
+            iv.setSmooth(true);
+            iv.setMouseTransparent(true);
+            return iv;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // ── Click & move logic ────────────────────────────────────────────
+
+    private void handleSquareClick(int row, int col) {
+        Square clicked = rowColToSquare(row, col);
+
+        if (selectedSquare == null) {
+            Piece piece = board.getPiece(clicked);
+            if (piece == Piece.NONE) return;
+            if (!myTurn) return;
+            if (piece.getPieceSide() != mySide) return;
+            selectedSquare = clicked;
+            legalTargets = board.legalMoves().stream()
+                    .filter(m -> m.getFrom() == clicked)
+                    .map(Move::getTo)
+                    .collect(Collectors.toList());
+
+            highlightSelected(row, col);
+            highlightLegalMoves();
+        }else {
+                clearHighlights();
+                selectedSquare = null;
+                legalTargets.clear();
+
+                Piece piece = board.getPiece(clicked);
+                if (piece != Piece.NONE && myTurn && piece.getPieceSide() == mySide) {
+                    handleSquareClick(row, col);
+                }
+            }
+        }
+
+
+    private void commitMove(Square from, Square to) {
+        clearHighlights();
+        selectedSquare = null;
+        legalTargets.clear();
+
+        animateMove(from, to, () -> {
+            Move move = new Move(from, to);
+            board.doMove(move);
+            String fromName = from.value().toLowerCase();
+            String toName   = to.value().toLowerCase();
+            lastMoveFrom = fromName;
+            lastMoveTo   = toName;
+            redrawSquare(fromName);
+            redrawSquare(toName);
+            myTurn = false;
+            System.out.println("MOVE: " + fromName + " → " + toName);
+        });
+    }
+
+    // ── Highlights ────────────────────────────────────────────────────
+
+    private void highlightSelected(int row, int col) {
+        boolean isLight = (row + col) % 2 != 0;
+        squares[row][col].setStyle(
+                "-fx-background-color: " + (isLight ? SELECT_COLOR : SELECT_DARK) + ";");
+    }
+
+    private void highlightLegalMoves() {
+        for (Square target : legalTargets) {
+            int[] rc = squareToRowCol(target);
+            Piece piece = board.getPiece(target);
+
+            if (piece != Piece.NONE) {
+                Circle ring = new Circle(squareSize * 0.48);
+                ring.setFill(Color.TRANSPARENT);
+                ring.setStroke(Color.color(0, 0, 0, 0.22));
+                ring.setStrokeWidth(squareSize * 0.09);
+                ring.setMouseTransparent(true);
+                ring.setUserData("dot");
+                squares[rc[0]][rc[1]].getChildren().add(ring);
+            } else {
+                double radius = Math.max(6, squareSize * 0.14);
+                Circle dot = new Circle(radius);
+                dot.setFill(Color.color(0, 0, 0, 0.20));
+                dot.setMouseTransparent(true);
+                dot.setUserData("dot");
+                squares[rc[0]][rc[1]].getChildren().add(dot);
+            }
+        }
+    }
+
+    // ── Coordinate helpers ────────────────────────────────────────────
+
+    private int[] squareToRowCol(Square square) {
+        int file = square.getFile().ordinal();
+        int rank = square.getRank().ordinal();
+        if (mySide == Side.WHITE) return new int[]{7 - rank, file};
+        return new int[]{rank, 7 - file};
+    }
+
+    private Square rowColToSquare(int row, int col) {
+        int rank, file;
+        if (mySide == Side.WHITE) { rank = 7 - row; file = col; }
+        else                       { rank = row;     file = 7 - col; }
+        String name = "" + (char)('a' + file) + (rank + 1);
+        return Square.fromValue(name.toUpperCase());
+    }
+
+    // ── Widget builders ───────────────────────────────────────────────
 
     private void resizeAvatar(StackPane avatar, int size) {
         avatar.setPrefSize(size, size);
         avatar.setMinSize(size, size);
         avatar.setMaxSize(size, size);
-        javafx.scene.shape.Circle clip =
-                new javafx.scene.shape.Circle(size / 2.0, size / 2.0, size / 2.0);
+        Circle clip = new Circle(size / 2.0, size / 2.0, size / 2.0);
         avatar.setClip(clip);
-        // update image if present
         avatar.getChildren().forEach(n -> {
             if (n instanceof ImageView iv) {
                 iv.setFitWidth(size);
@@ -374,12 +686,13 @@ public class GameView {
         lbl.setPrefWidth(width);
         lbl.setAlignment(Pos.CENTER);
         lbl.setStyle(String.format("""
-            -fx-text-fill: #f0f0f0;
+            -fx-text-fill: #f0f0e8;
             -fx-font-size: %.0fpx;
             -fx-font-weight: 900;
             -fx-background-color: #141412;
             -fx-background-radius: 6;
             -fx-padding: 6 0;
+            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 6, 0, 0, 2);
         """, fontSize));
     }
 
@@ -399,194 +712,13 @@ public class GameView {
         """, fontSize);
     }
 
-    // ── Board rendering ───────────────────────────────────────────────
-
-    private void drawAllPieces() {
-        for (Square square : Square.values()) {
-            if (square == Square.NONE) continue;
-            int[] rc = squareToRowCol(square);
-            clearSquareUI(rc[0], rc[1]);
-            Piece piece = board.getPiece(square);
-            if (piece != Piece.NONE) placePiece(piece, rc[0], rc[1]);
-        }
-    }
-
-    private void redrawSquare(String squareName) {
-        Square sq = Square.fromValue(squareName.toUpperCase());
-        if (sq == Square.NONE) return;
-        int[] rc = squareToRowCol(sq);
-        clearSquareUI(rc[0], rc[1]);
-        Piece piece = board.getPiece(sq);
-        if (piece != Piece.NONE) placePiece(piece, rc[0], rc[1]);
-    }
-
-    private void placePiece(Piece piece, int row, int col) {
-        String imageName = piece.name();
-        // Load once at a fixed small size; ImageView scales up/down with the square.
-        final int PIECE_LOAD_SIZE = 56;
-        try {
-            Image img = new Image(
-                    Objects.requireNonNull(
-                            getClass().getResourceAsStream("/Pieces/" + imageName + ".png")),
-                    PIECE_LOAD_SIZE, PIECE_LOAD_SIZE, true, true);
-            ImageView iv = new ImageView(img);
-            iv.setPreserveRatio(true);
-            iv.setSmooth(true);
-            iv.setMouseTransparent(true);
-            // Bind display size to the square's actual size minus a small margin
-            StackPane sq = squares[row][col];
-            iv.fitWidthProperty().bind(sq.widthProperty().subtract(6));
-            iv.fitHeightProperty().bind(sq.heightProperty().subtract(6));
-            sq.getChildren().add(iv);
-        } catch (Exception e) {
-            Label fallback = new Label(piece.getFenSymbol());
-            fallback.setStyle("-fx-text-fill: white; -fx-font-size: 28px;");
-            fallback.setMouseTransparent(true);
-            squares[row][col].getChildren().add(fallback);
-        }
-    }
-
-    private void clearSquareUI(int row, int col) {
-        squares[row][col].getChildren().removeIf(
-                n -> !(n instanceof Rectangle) || ((Rectangle) n).getUserData() == null);
-        squares[row][col].getChildren().clear();
-    }
-
-    // ── Click handling ────────────────────────────────────────────────
-
-    private void handleSquareClick(int row, int col) {
-        Square clicked = rowColToSquare(row, col);
-
-        if (selectedSquare == null) {
-            Piece piece = board.getPiece(clicked);
-            if (piece == Piece.NONE) return;
-            if (!myTurn) return; // TODO: replace with real color check
-
-            selectedSquare = clicked;
-            legalTargets = board.legalMoves().stream()
-                    .filter(m -> m.getFrom() == clicked)
-                    .map(Move::getTo)
-                    .collect(Collectors.toList());
-
-            highlightSelected(row, col);
-            highlightLegalMoves();
-
-        } else {
-            if (legalTargets.contains(clicked)) {
-                commitMove(selectedSquare, clicked);
-            } else {
-                clearHighlights();
-                selectedSquare = null;
-                legalTargets.clear();
-
-                Piece piece = board.getPiece(clicked);
-                if (piece != Piece.NONE && myTurn) {
-                    handleSquareClick(row, col);
-                }
-            }
-        }
-    }
-
-    private void commitMove(Square from, Square to) {
-        Move move = new Move(from, to);
-
-        board.doMove(move);
-        String fromName = from.value().toLowerCase();
-        String toName   = to.value().toLowerCase();
-        redrawSquare(fromName);
-        redrawSquare(toName);
-
-        lastMoveFrom = fromName;
-        lastMoveTo   = toName;
-        applyLastMoveHighlight();
-
-        selectedSquare = null;
-        legalTargets.clear();
-        myTurn = false;
-
-        // TODO: send move to server
-        // websocket.sendMove(fromName, toName);
-        System.out.println("MOVE: " + fromName + " → " + toName);
-    }
-
-    // ── Highlights ────────────────────────────────────────────────────
-
-    private void highlightSelected(int row, int col) {
-        squares[row][col].setStyle("-fx-background-color: " + SELECT_COLOR + ";");
-    }
-
-    private void highlightLegalMoves() {
-        for (Square target : legalTargets) {
-            int[] rc = squareToRowCol(target);
-            Piece piece = board.getPiece(target);
-
-            if (piece != Piece.NONE) {
-                squares[rc[0]][rc[1]].setStyle("-fx-background-color: " + SELECT_COLOR + ";");
-            } else {
-                double radius = Math.max(6, squareSize * 0.12);
-                Circle dot = new Circle(radius);
-                dot.setFill(Color.web("#000000", 0.18));
-                dot.setMouseTransparent(true);
-                dot.setUserData("dot");
-                squares[rc[0]][rc[1]].getChildren().add(dot);
-            }
-        }
-    }
-
-    private void applyLastMoveHighlight() {
-        if (lastMoveFrom == null || lastMoveTo == null) return;
-        Square from = Square.fromValue(lastMoveFrom.toUpperCase());
-        Square to   = Square.fromValue(lastMoveTo.toUpperCase());
-        if (from == Square.NONE || to == Square.NONE) return;
-
-        int[] rcFrom = squareToRowCol(from);
-        int[] rcTo   = squareToRowCol(to);
-
-        squares[rcFrom[0]][rcFrom[1]].setStyle("-fx-background-color: " + HIGHLIGHT + ";");
-        squares[rcTo[0]][rcTo[1]].setStyle("-fx-background-color: " + HIGHLIGHT + ";");
-    }
-
-    private void clearHighlights() {
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
-                boolean isLight = (r + c) % 2 != 0;
-                squares[r][c].setStyle("-fx-background-color: " +
-                        (isLight ? LIGHT_SQUARE : DARK_SQUARE) + ";");
-                squares[r][c].getChildren().removeIf(n -> "dot".equals(n.getUserData()));
-            }
-        }
-        if (lastMoveFrom != null) applyLastMoveHighlight();
-    }
-
-    // ── Coordinate helpers ────────────────────────────────────────────
-
-    private int[] squareToRowCol(Square square) {
-        int file = square.getFile().ordinal();
-        int rank = square.getRank().ordinal();
-        int row  = 7 - rank;
-        int col  = file;
-        return new int[]{row, col};
-    }
-
-    private Square rowColToSquare(int row, int col) {
-        int rank = 7 - row;
-        int file = col;
-        String name = "" + (char)('a' + file) + (rank + 1);
-        return Square.fromValue(name.toUpperCase());
-    }
-
-    // ── Builder helpers ───────────────────────────────────────────────
-
     private VBox buildPlayerInfoBox(StackPane avatar, Label nameLbl, Label eloLbl) {
         HBox row = new HBox(10);
         row.setAlignment(Pos.CENTER_LEFT);
-
         VBox nameBlock = new VBox(2);
         nameBlock.setAlignment(Pos.CENTER_LEFT);
         nameBlock.getChildren().addAll(nameLbl, eloLbl);
-
         row.getChildren().addAll(avatar, nameBlock);
-
         VBox box = new VBox(0);
         box.getChildren().add(row);
         return box;
@@ -607,7 +739,6 @@ public class GameView {
             -fx-background-radius: 8;
             -fx-cursor: hand;
         """);
-
         Label lbl = new Label(symbol);
         lbl.setStyle("-fx-text-fill: " + color + "; -fx-font-size: 18px; -fx-font-weight: 700;");
         btn.getChildren().add(lbl);
@@ -633,8 +764,7 @@ public class GameView {
         avatar.setMinSize(size, size);
         avatar.setMaxSize(size, size);
 
-        javafx.scene.shape.Circle clip =
-                new javafx.scene.shape.Circle(size / 2.0, size / 2.0, size / 2.0);
+        Circle clip = new Circle(size / 2.0, size / 2.0, size / 2.0);
         avatar.setClip(clip);
 
         if (imageUrl != null && !imageUrl.isEmpty()) {

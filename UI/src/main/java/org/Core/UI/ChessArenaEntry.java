@@ -32,7 +32,7 @@ public class ChessArenaEntry extends Application {
         Scene scene = new Scene(root, 1100, 700);
         scene.setFill(Color.web("#0a0a0a"));
         stage.setScene(scene);
-        stage.setTitle("Chess Desktop");
+        stage.setTitle("Chess Arena");
         stage.show();
         DarkTitleBar.apply(stage, 0x000a0a0a);
         Injector injector=Guice.createInjector(new AppModule(root,getHostServices()));

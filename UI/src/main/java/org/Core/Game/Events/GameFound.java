@@ -1,5 +1,6 @@
 package org.Core.Game.Events;
 
+import com.github.bhlangonijr.chesslib.Side;
 import lombok.Data;
 @Data
 public class GameFound {
@@ -7,7 +8,7 @@ public class GameFound {
     private String id;
     private Opponent opponent;
     private String fen;
-    private PlayerColor playerColor;
+    private Side mySide;
     @Data
     public static class Opponent{
         private int id;
@@ -15,6 +16,4 @@ public class GameFound {
         private int elo;
         private String avatarUrl;
     }
-
-    public enum PlayerColor{WHITE,BLACK}
 }

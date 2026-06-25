@@ -3,10 +3,9 @@ package org.Core.Game.Services;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import javafx.application.Platform;
-import javafx.scene.layout.StackPane;
 import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Events.GameFound;
-import org.Core.Game.Events.GameMove;
+import org.Core.Game.Events.OpponentMove;
 import org.Core.UI.Game.GameView;
 import org.Core.UI.Shared.ViewNavigator;
 import java.io.IOException;
@@ -15,9 +14,9 @@ import java.io.IOException;
 public class GameSessionService{
 
     private GameView gameView;
-    private  StackPane gameRoot;
     private  final ViewNavigator viewNavigator;
     private final UserSessionManager userSessionManager;
+
 
     @Inject
     public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator){
@@ -31,7 +30,7 @@ public class GameSessionService{
         Platform.runLater(()-> {
             try {
                 this.gameView = new GameView(event.getFen(),
-                        userSessionManager.getUserSession(false), event.getOpponent());
+                        userSessionManager.getUserSession(false), event.getMySide(),event.getOpponent(),this);
 
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
@@ -41,9 +40,11 @@ public class GameSessionService{
     }
 
     @Subscribe
-    public void onMove(GameMove event){
-        System.out.println(event);
+    public void onOpponentMove(OpponentMove event){
+            gameView.applyOpponentMove(event);
     }
+
+
 }
 
 

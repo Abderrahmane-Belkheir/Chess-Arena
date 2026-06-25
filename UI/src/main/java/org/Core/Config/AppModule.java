@@ -40,7 +40,7 @@ public class AppModule extends AbstractModule {
         bind(UserSessionManager.class).in(Scopes.SINGLETON);
         bind(FriendShipClient.class).in(Scopes.SINGLETON);
         bind(RealtimeGateway.class).in(Scopes.SINGLETON);
-        bind(AppEvents.class).in(Scopes.SINGLETON);
+        bind(GameEventPublisher.class).in(Scopes.SINGLETON);
         bind(GameSessionService.class).in(Scopes.SINGLETON);
     }
 }
