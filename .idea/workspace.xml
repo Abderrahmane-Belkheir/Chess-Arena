@@ -5,20 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Api/Dto/OpponentMove.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Api/Dto/PlayerMove.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/PlayerMove.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Redis/RedisConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/GameAuthorizationService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/GameMatchmakingService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/GameMoveValidation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/GameSessionRegistry.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/ChessServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/ChessServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Api/Controllers/MatchmakingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Api/Controllers/MatchmakingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Api/Dto/GameFound.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Api/Dto/GameFound.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/MatchmakingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/MatchmakingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/AppEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/GameEventPublisher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/AppModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/AppModule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/GameFound.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/GameFound.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/GameMove.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/OpponentMove.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Realtime/RealtimeGateway.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Realtime/RealtimeGateway.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Move.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Move.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Models/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/MatchmakingService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/PlayerColorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Matchmaking/Services/PlayerColorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Models/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaEntry.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" afterDir="false" />
     </list>
@@ -61,7 +61,8 @@
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/Server/src/main/java/org/Core/Configurations/Websocket&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java&quot;
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -77,7 +78,7 @@
       <recent name="org.Core.UI.LobbyScreens.Lobby" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Chess-UI">
+  <component name="RunManager" selected="Application.Chess-Server">
     <configuration name="Chess-Server" type="Application" factoryName="Application">
       <option name="envFilePaths">
         <option value="$PROJECT_DIR$/Server/.env" />
@@ -137,5 +138,9 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

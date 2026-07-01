@@ -1,12 +1,9 @@
-package org.Core.Matchmaking.Api.Controllers;
+package org.Core.GameLogic.Api.Controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.Core.Matchmaking.Api.Dto.GameFound;
-import org.Core.Matchmaking.Services.MatchmakingService;
+import org.Core.GameLogic.Services.Matchmaking.GameMatchmakingService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import tools.jackson.databind.ObjectMapper;
 
 import java.security.Principal;
 
@@ -14,13 +11,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class MatchmakingController {
 
-    private final MatchmakingService matchmakingService;
-
-
-    @MessageMapping("/in.lobby")
-    public void handleInLobby(Principal principal){
-        System.out.println(principal.getName()+" IN LOBBY");
-    }
+    private final GameMatchmakingService matchmakingService;
 
     @MessageMapping("/start.search")
     public void handleGameSearchStart(Principal principal) throws InterruptedException {

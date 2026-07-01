@@ -56,6 +56,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
+import org.Core.UI.LobbyScreens.Friends.Avatar;
+
 import java.util.*;
 
 
@@ -797,11 +799,7 @@ public class GameView {
     // ── Helpers ───────────────────────────────────────────────────────
 
     private String initials(String username) {
-        if (username == null || username.isEmpty()) return "?";
-        String[] parts = username.split("_");
-        if (parts.length >= 2)
-            return (parts[0].substring(0, 1) + parts[1].substring(0, 1)).toUpperCase();
-        return username.substring(0, Math.min(2, username.length())).toUpperCase();
+        return Avatar.initials(username);
     }
 
     private String avatarColor(String username) {

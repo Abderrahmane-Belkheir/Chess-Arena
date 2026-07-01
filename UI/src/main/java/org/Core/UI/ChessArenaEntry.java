@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.Core.Auth.TokenStorage;
 import org.Core.UI.OpeningScreens.GameController;
 import org.Core.Config.AppModule;
 

@@ -1,4 +1,4 @@
-package org.Core.Matchmaking.Api.Dto;
+package org.Core.GameLogic.Api.Dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
