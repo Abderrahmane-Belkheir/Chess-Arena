@@ -32,12 +32,12 @@ public class GameMoveValidation {
             throw new IllegalMoveException("Invalid square: " + from + " or " + to);
         }
 
-        Board board=gameSessionRegistry.getBoard(request.getGameId());
-        if(board==null){
+        Board board=gameSessionRegistry.getBoard(request.getGameId()).orElseGet(()->{
             Game game=gameRepo.findById(request.getGameId()).orElseThrow();
-            board=new Board();
-            board.loadFromFen(game.getFen());
-        }
+           Board b=new Board();
+            b.loadFromFen(game.getFen());
+            return b;
+        });
 
         Move move=new Move(fromSq,toSq);
         if(!board.isMoveLegal(move,true)){

@@ -1,7 +1,7 @@
 package org.Core.GameLogic.Api.Controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.Core.GameLogic.Services.Matchmaking.GameMatchmakingService;
+import org.Core.GameLogic.Services.Matchmaking.MatchmakingEntry;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
@@ -11,7 +11,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class MatchmakingController {
 
-    private final GameMatchmakingService matchmakingService;
+    private final MatchmakingEntry matchmakingService;
 
     @MessageMapping("/start.search")
     public void handleGameSearchStart(Principal principal) throws InterruptedException {

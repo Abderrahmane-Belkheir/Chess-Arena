@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -19,8 +20,8 @@ class GameSessionRegistry {
         activeSessions.put(gameId, board);
     }
 
-    public Board getBoard(String gameId) {
-        return activeSessions.get(gameId);
+    public Optional<Board> getBoard(String gameId) {
+        return Optional.ofNullable(activeSessions.get(gameId));
     }
 
     public void removeSession(String gameId) {

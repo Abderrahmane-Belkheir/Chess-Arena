@@ -7,6 +7,7 @@ import org.Core.GameLogic.Exceptions.GameNotFoundException;
 import org.Core.GameLogic.Exceptions.WrongTurnException;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Models.Player;
+import org.Core.GameLogic.Persistence.GameMoveRepo;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +18,12 @@ public class GameAuthorizationService {
 
     private final GameMoveValidation gameMoveValidation;
     private final GameSessionStore gameSessionStore;
+    private final GameMoveRepo gameMoveRepo;
 
     public void Authorize(String userId, MoveRequest request){
-        GameSession session=gameSessionStore.find(request.getGameId()).orElse(null);
+        GameSession session=gameSessionStore.find(request.getGameId()).orElseGet(()->{
+            return null;
+        });
         if(session==null){return;}
         boolean belongsToGame = session.getWhitePlayerId().equals(userId)
                 || session.getBlackPlayerId().equals(userId);
@@ -33,6 +37,7 @@ public class GameAuthorizationService {
         // TODO here i should first look for the instance where the board is created
         //  if its the current continue if not route it to the right instance
         gameMoveValidation.validateAndPlay(request);
+
         // TODO deliver move to opponent
     }
 
