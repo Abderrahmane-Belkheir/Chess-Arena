@@ -10,9 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class GameSession {
+    private String gameId;
     private String whitePlayerId;
     private String blackPlayerId;
-    private Player.Color turn;
+    private Color turn;
     private boolean active;
-    private long    lastMoveAt;
+    private long    lastWhiteMoveAt;
+    private long lastBlackMoveAt;
 }

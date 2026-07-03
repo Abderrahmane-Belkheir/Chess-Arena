@@ -6,8 +6,12 @@ import javafx.application.Platform;
 import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Events.GameFound;
 import org.Core.Game.Events.OpponentMove;
+import org.Core.Game.Events.PlayerMove;
+import org.Core.Realtime.RealtimeGateway;
 import org.Core.UI.Game.GameView;
 import org.Core.UI.Shared.ViewNavigator;
+import tools.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 
 
@@ -16,12 +20,14 @@ public class GameSessionService{
     private GameView gameView;
     private  final ViewNavigator viewNavigator;
     private final UserSessionManager userSessionManager;
+    private final ObjectMapper mapper;
 
 
     @Inject
-    public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator){
+    public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator,ObjectMapper mapper){
         this.userSessionManager=userSessionManager;
         this.viewNavigator=viewNavigator;
+        this.mapper=mapper;
     }
 
 
@@ -29,7 +35,7 @@ public class GameSessionService{
     public void onMatchFound(GameFound event){
         Platform.runLater(()-> {
             try {
-                this.gameView = new GameView(event.getFen(),
+                this.gameView = new GameView(event.getId(),event.getFen(),
                         userSessionManager.getUserSession(false), event.getMySide(),event.getOpponent(),this);
 
             } catch (IOException | InterruptedException e) {
@@ -42,6 +48,10 @@ public class GameSessionService{
     @Subscribe
     public void onOpponentMove(OpponentMove event){
             gameView.applyOpponentMove(event);
+    }
+
+    public void sendPlayerMove(PlayerMove move){
+        RealtimeGateway.getSession().send("/app/game.move",mapper.writeValueAsString(move));
     }
 
 

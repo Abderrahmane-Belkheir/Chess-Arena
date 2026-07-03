@@ -3,7 +3,7 @@ package org.Core.GameLogic.Api.Controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
-import org.Core.GameLogic.Services.Authorazation.GameAuthorizationService;
+import org.Core.GameLogic.Services.Authorization.GameAuthorizationService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;

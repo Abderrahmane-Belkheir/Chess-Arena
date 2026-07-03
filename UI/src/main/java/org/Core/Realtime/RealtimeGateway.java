@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import lombok.Getter;
 import org.Core.Auth.TokenStorage;
 import org.Core.Game.Events.GameFound;
 import org.Core.Game.Events.OpponentMove;
-import org.Core.Game.Events.PlayerMove;
 import org.Core.Config.GameEventPublisher;
 import org.springframework.messaging.converter.StringMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -24,7 +24,8 @@ import java.util.concurrent.*;
 
 public class RealtimeGateway {
 
-    private StompSession session;
+    @Getter
+    private static StompSession session;
 
     private final GameEventPublisher appEvents;
     private final TokenStorage tokenStorage;
@@ -86,10 +87,6 @@ public class RealtimeGateway {
     session.send("/app/stop.search","");
     }
 
-//    @Subscribe
-//    public void sendMove(PlayerMove playerMove){
-//    session.send("/app/game.move","");
-//    }
 
     private void subscribe(StompSession s){
             subscribeToSingle(s, "/user/queue/matchmaking", GameFound.class);

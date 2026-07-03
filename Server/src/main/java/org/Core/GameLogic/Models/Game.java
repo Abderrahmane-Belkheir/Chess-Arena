@@ -6,19 +6,38 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Game  {
 
     @Id
-    @GeneratedValue
     private String id;
+
+    private Instant createdAt=Instant.now();
+
+    private GameStatus status;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Player> players=new ArrayList<>();
+
 
     private String fen;
 
+    public Game(String id,String fen){
+        this.id=id;
+        this.fen=fen;
+    }
 
+    public void players(Player white,Player black){
+        this.players.addAll(List.of(white,black));
+        white.setGame(this);
+        black.setGame(this);
+    }
+    public enum GameStatus{FINISHED,RUNNING}
 }

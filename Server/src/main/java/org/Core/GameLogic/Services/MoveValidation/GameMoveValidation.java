@@ -36,6 +36,7 @@ public class GameMoveValidation {
             Game game=gameRepo.findById(request.getGameId()).orElseThrow();
            Board b=new Board();
             b.loadFromFen(game.getFen());
+            gameSessionRegistry.createSession(game.getId(),game.getFen());
             return b;
         });
 

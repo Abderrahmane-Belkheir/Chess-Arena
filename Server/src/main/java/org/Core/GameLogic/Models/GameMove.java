@@ -23,7 +23,7 @@ public class GameMove {
     private Game game;
 
     @Enumerated(EnumType.STRING)
-    private Player.Color color;
+    private Color color;
 
     private Instant playedAt;
 

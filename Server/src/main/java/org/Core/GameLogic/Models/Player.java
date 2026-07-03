@@ -9,8 +9,6 @@ import org.Core.User.Models.User;
 
 @Entity
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Player {
 
@@ -28,6 +26,8 @@ public class Player {
 
     private Color playerColor;
 
-    public enum Color{WHITE,BLACK}
-
+    public Player(Color color,User user){
+        this.playerColor=color;
+        this.user=user;
+    }
 }

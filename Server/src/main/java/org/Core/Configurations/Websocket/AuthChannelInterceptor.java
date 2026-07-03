@@ -46,7 +46,6 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 Jwt jwt = jwtDecoder.decode(token);
                 String userId = jwt.getSubject();
                 accessor.setUser(() -> userId);
-
             } catch (JwtException e) {
                 log.error("JWT decode failed: {}", e.getMessage());
                 throw new MessageDeliveryException("Invalid token: " + e.getMessage());

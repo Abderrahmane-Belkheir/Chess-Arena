@@ -104,7 +104,7 @@ public class AuthService {
                 + "&redirect_uri=" + URLEncoder.encode(localUrl, StandardCharsets.UTF_8)
                 + "&code_challenge=" + getCodeChallenge()
                 + "&code_challenge_method=S256"
-                + "&prompt=consent";
+                + "&prompt=login";
     }
 
     // =========================

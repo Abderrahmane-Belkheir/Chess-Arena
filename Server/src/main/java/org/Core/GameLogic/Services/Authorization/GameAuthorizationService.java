@@ -1,14 +1,18 @@
-package org.Core.GameLogic.Services.Authorazation;
+package org.Core.GameLogic.Services.Authorization;
 
+import com.github.bhlangonijr.chesslib.move.Move;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
+import org.Core.GameLogic.Api.Dto.MoveResponse;
 import org.Core.GameLogic.Exceptions.GameNotFoundException;
 import org.Core.GameLogic.Exceptions.WrongTurnException;
+import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Models.Player;
 import org.Core.GameLogic.Persistence.GameMoveRepo;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +23,7 @@ public class GameAuthorizationService {
     private final GameMoveValidation gameMoveValidation;
     private final GameSessionStore gameSessionStore;
     private final GameMoveRepo gameMoveRepo;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void Authorize(String userId, MoveRequest request){
         GameSession session=gameSessionStore.find(request.getGameId()).orElseGet(()->{
@@ -32,13 +37,15 @@ public class GameAuthorizationService {
                     userId, request.getGameId());
             throw new GameNotFoundException("Game not found");
         }
-        Player.Color playerColor= session.getWhitePlayerId().equals(userId)? Player.Color.WHITE: Player.Color.BLACK;
+        Color playerColor= session.getWhitePlayerId().equals(userId)? Color.WHITE: Color.BLACK;
         if(playerColor!=session.getTurn()) throw new WrongTurnException("Not your turn");
         // TODO here i should first look for the instance where the board is created
         //  if its the current continue if not route it to the right instance
         gameMoveValidation.validateAndPlay(request);
+        gameSessionStore.updateTurn(request.getGameId(),session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK);
 
         // TODO deliver move to opponent
+        eventPublisher.publishEvent(new MoveResponse());
     }
 
 }

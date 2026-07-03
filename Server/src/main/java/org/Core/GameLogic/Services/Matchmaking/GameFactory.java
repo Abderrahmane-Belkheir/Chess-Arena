@@ -1,23 +1,117 @@
 package org.Core.GameLogic.Services.Matchmaking;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.Core.GameLogic.Api.Dto.GameFound;
+import org.Core.GameLogic.Fen;
+import org.Core.GameLogic.Models.Color;
+import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Models.Player;
-import org.Core.GameLogic.Services.Authorazation.GameSessionStore;
+import org.Core.GameLogic.Persistence.GameRepo;
+import org.Core.GameLogic.Services.Authorization.GameSessionStore;
+import org.Core.GameLogic.Services.Matchmaking.Events.GameCreatedEvent;
+import org.Core.GameLogic.Services.MoveValidation.GameSessionRegistry;
+import org.Core.User.Persistence.UserRepo;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Random;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class GameFactory {
 
     private final GameSessionStore gameSessionStore;
+    private final GameSessionRegistry gameSessionRegistry;
+    private final GameRepo gameRepo;
+    private final UserRepo userRepo;
     private final ApplicationEventPublisher eventPublisher;
 
-    public void createGame(){
+    @Transactional
+    public void createGame(MatchedPair matchedPair) {
+        log.info("Creating game for matched players: {} and {}",
+                matchedPair.playerA().userId(),
+                matchedPair.playerB().userId());
 
+        GamePair gamePair = assignColorToPlayers(matchedPair);
 
-        eventPublisher.publishEvent(null);
+        QueueEntry whiteQE = gamePair.whitePl();
+        QueueEntry blackQE = gamePair.blackPl();
+
+        String gameId = UUID.randomUUID().toString();
+        String fen = Fen.START_POSITION;
+
+        log.debug("Assigned colors - White: {}, Black: {}",
+                whiteQE.userId(),
+                blackQE.userId());
+
+        Game game = new Game(gameId, fen);
+
+        Player whitePl = new Player(Color.WHITE, userRepo.getReferenceById(whiteQE.userId()));
+        Player blackPl = new Player(Color.BLACK, userRepo.getReferenceById(blackQE.userId()));
+
+        game.players(whitePl, blackPl);
+
+        gameRepo.save(game);
+        log.info("Game {} persisted successfully.", gameId);
+
+        gameSessionStore.save(
+                gameId,
+                new GameSession(
+                        gameId,
+                        whiteQE.userId(),
+                        blackQE.userId(),
+                        Color.WHITE,
+                        true,
+                        System.currentTimeMillis(),
+                        0
+                )
+        );
+
+        gameSessionRegistry.createSession(gameId, fen);
+        log.debug("Created runtime session for game {}.", gameId);
+
+        eventPublisher.publishEvent(
+                new GameCreatedEvent(
+                        buildFor(blackQE, true, gameId, fen),
+                        buildFor(whiteQE, false, gameId, fen),
+                        whiteQE.userId(),
+                        whiteQE.sessionId(),
+                        blackQE.userId(),
+                        blackQE.sessionId()
+                )
+        );
+
+        log.info("Published GameCreatedEvent for game {}.", gameId);
     }
 
-}
+    private GamePair assignColorToPlayers(MatchedPair pair){
+        QueueEntry playerA=pair.playerA();
+        QueueEntry playerB=pair.playerB();
+        boolean playerAIsWhite = new Random().nextBoolean();
+        QueueEntry whiteQE=playerAIsWhite?playerA:playerB;
+        QueueEntry blackQE=playerAIsWhite?playerB:playerA;
+        return new GamePair(whiteQE,blackQE);
+    }
+
+    private GameFound buildFor(QueueEntry opponent,boolean isWhite,String gameId,String fen) {
+        return new GameFound(
+                true,
+                gameId,
+                new GameFound.Opponent(
+                        opponent.publicId(),
+                        opponent.username(),
+                        opponent.elo(),
+                        opponent.avatarUrl()
+                ),
+                fen,
+                isWhite ? Color.WHITE : Color.BLACK
+        );
+    }
+
+    }
+

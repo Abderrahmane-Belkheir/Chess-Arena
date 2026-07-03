@@ -6,6 +6,8 @@ import com.github.bhlangonijr.chesslib.Side;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.Core.GameLogic.Models.Color;
+import org.Core.GameLogic.Models.Player;
 
 
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class GameFound {
     private Opponent opponent;
     private String fen;
     @JsonProperty("mySide")
-    private Side playerSide;
+    private Color playerSide;
 
 
 @AllArgsConstructor

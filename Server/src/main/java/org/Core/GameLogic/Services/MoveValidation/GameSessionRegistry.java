@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
-class GameSessionRegistry {
+public class GameSessionRegistry {
 
     private final Map<String, Board> activeSessions=new ConcurrentHashMap<>();
 
@@ -20,15 +20,15 @@ class GameSessionRegistry {
         activeSessions.put(gameId, board);
     }
 
-    public Optional<Board> getBoard(String gameId) {
+    protected Optional<Board> getBoard(String gameId) {
         return Optional.ofNullable(activeSessions.get(gameId));
     }
 
-    public void removeSession(String gameId) {
+    protected void removeSession(String gameId) {
         activeSessions.remove(gameId);
     }
 
-    public boolean isActive(String gameId) {
+    protected boolean isActive(String gameId) {
         return activeSessions.containsKey(gameId);
     }
 }

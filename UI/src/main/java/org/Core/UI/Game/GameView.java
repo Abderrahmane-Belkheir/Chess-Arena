@@ -23,6 +23,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import org.Core.Game.Events.OpponentMove;
+import org.Core.Game.Events.PlayerMove;
 import org.Core.Game.Services.GameSessionService;
 
 import java.util.*;
@@ -79,6 +80,7 @@ public class GameView {
     private static final double MOVE_ANIM_MS = 160;
 
     // ── State ─────────────────────────────────────────────────────────
+    private String gameId;
     private final Board              board          = new Board();
     private final UserSession        session;
     private Square                   selectedSquare = null;
@@ -122,8 +124,9 @@ public class GameView {
     private final GameSessionService gameSessionService;
 
     // ── Constructor ───────────────────────────────────────────────────
-    public GameView(String fen, UserSession session, Side playerColor,
+    public GameView(String gameId,String fen, UserSession session, Side playerColor,
                     GameFound.Opponent opponent, GameSessionService gameSessionService) {
+        this.gameId=gameId;
         this.fen      = fen;
         this.session  = session;
         this.opponent = opponent;
@@ -566,10 +569,12 @@ public class GameView {
         Square clicked = rowColToSquare(row, col);
 
         if (selectedSquare == null) {
+            // first click — select piece
             Piece piece = board.getPiece(clicked);
             if (piece == Piece.NONE) return;
             if (!myTurn) return;
             if (piece.getPieceSide() != mySide) return;
+
             selectedSquare = clicked;
             legalTargets = board.legalMoves().stream()
                     .filter(m -> m.getFrom() == clicked)
@@ -578,7 +583,14 @@ public class GameView {
 
             highlightSelected(row, col);
             highlightLegalMoves();
-        }else {
+
+        } else {
+            // second click
+            if (legalTargets.contains(clicked)) {
+                // ← THIS WAS MISSING — commit the move
+                commitMove(selectedSquare, clicked);
+            } else {
+                // deselect or re-select another piece
                 clearHighlights();
                 selectedSquare = null;
                 legalTargets.clear();
@@ -589,27 +601,25 @@ public class GameView {
                 }
             }
         }
-
-
-    private void commitMove(Square from, Square to) {
+    }
+    private void commitMove(Square fromSq, Square toSq) {
         clearHighlights();
         selectedSquare = null;
         legalTargets.clear();
 
-        animateMove(from, to, () -> {
-            Move move = new Move(from, to);
+        animateMove(fromSq, toSq, () -> {
+            Move move = new Move(fromSq, toSq);
             board.doMove(move);
-            String fromName = from.value().toLowerCase();
-            String toName   = to.value().toLowerCase();
-            lastMoveFrom = fromName;
-            lastMoveTo   = toName;
-            redrawSquare(fromName);
-            redrawSquare(toName);
+            String from = fromSq.value().toLowerCase();
+            String to   = toSq.value().toLowerCase();
+            lastMoveFrom = from;
+            lastMoveTo   = to;
+            redrawSquare(from);
+            redrawSquare(to);
             myTurn = false;
-            System.out.println("MOVE: " + fromName + " → " + toName);
+            gameSessionService.sendPlayerMove(new PlayerMove(gameId,from,to));
         });
     }
-
     // ── Highlights ────────────────────────────────────────────────────
 
     private void highlightSelected(int row, int col) {
