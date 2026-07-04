@@ -5,6 +5,7 @@ import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 import lombok.RequiredArgsConstructor;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
+import org.Core.GameLogic.Api.Dto.MoveResponse;
 import org.Core.GameLogic.Exceptions.IllegalMoveException;
 import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Persistence.GameRepo;
@@ -17,7 +18,7 @@ public class GameMoveValidation {
     private final GameSessionRegistry gameSessionRegistry;
     private final GameRepo gameRepo;
 
-    public void validateAndPlay(MoveRequest request){
+    public MoveResponse validateAndPlay(MoveRequest request){
         String from=request.getFrom();
         String to=request.getTo();
 
@@ -25,8 +26,8 @@ public class GameMoveValidation {
             throw new IllegalMoveException("From and to squares are identical");
         }
 
-        Square fromSq=Square.fromValue(from);
-        Square toSq=Square.fromValue(to);
+        Square fromSq=Square.fromValue(from.toUpperCase());
+        Square toSq=Square.fromValue(to.toUpperCase());
 
         if (fromSq == Square.NONE || toSq == Square.NONE) {
             throw new IllegalMoveException("Invalid square: " + from + " or " + to);
@@ -45,6 +46,7 @@ public class GameMoveValidation {
             throw new IllegalMoveException("Illegal move: " + from + " → " + to);
         }
         board.doMove(move);
+        return new MoveResponse(from,to,board.getFen());
     }
 
 }

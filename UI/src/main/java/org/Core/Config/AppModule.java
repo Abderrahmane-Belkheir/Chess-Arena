@@ -1,6 +1,6 @@
 package org.Core.Config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import javafx.application.HostServices;
@@ -14,6 +14,7 @@ import org.Core.Realtime.RealtimeGateway;
 import org.Core.Social.FriendShipClient;
 import org.Core.UI.OpeningScreens.GameController;
 import org.Core.UI.Shared.ViewNavigator;
+import tools.jackson.databind.ObjectMapper;
 
 public class AppModule extends AbstractModule {
 

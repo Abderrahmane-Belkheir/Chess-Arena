@@ -33,10 +33,6 @@ public class GameFactory {
 
     @Transactional
     public void createGame(MatchedPair matchedPair) {
-        log.info("Creating game for matched players: {} and {}",
-                matchedPair.playerA().userId(),
-                matchedPair.playerB().userId());
-
         GamePair gamePair = assignColorToPlayers(matchedPair);
 
         QueueEntry whiteQE = gamePair.whitePl();
@@ -57,7 +53,6 @@ public class GameFactory {
         game.players(whitePl, blackPl);
 
         gameRepo.save(game);
-        log.info("Game {} persisted successfully.", gameId);
 
         gameSessionStore.save(
                 gameId,
@@ -73,7 +68,6 @@ public class GameFactory {
         );
 
         gameSessionRegistry.createSession(gameId, fen);
-        log.debug("Created runtime session for game {}.", gameId);
 
         eventPublisher.publishEvent(
                 new GameCreatedEvent(
@@ -86,7 +80,6 @@ public class GameFactory {
                 )
         );
 
-        log.info("Published GameCreatedEvent for game {}.", gameId);
     }
 
     private GamePair assignColorToPlayers(MatchedPair pair){

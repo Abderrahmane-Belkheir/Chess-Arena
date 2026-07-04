@@ -1,6 +1,6 @@
 package org.Core.GameLogic.Services.Authorization;
 
-import com.github.bhlangonijr.chesslib.move.Move;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
@@ -9,11 +9,12 @@ import org.Core.GameLogic.Exceptions.GameNotFoundException;
 import org.Core.GameLogic.Exceptions.WrongTurnException;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.GameSession;
-import org.Core.GameLogic.Models.Player;
 import org.Core.GameLogic.Persistence.GameMoveRepo;
+import org.Core.GameLogic.Services.Matchmaking.Events.MoveEvent;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class GameAuthorizationService {
     private final GameMoveRepo gameMoveRepo;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public void Authorize(String userId, MoveRequest request){
         GameSession session=gameSessionStore.find(request.getGameId()).orElseGet(()->{
             return null;
@@ -41,11 +43,12 @@ public class GameAuthorizationService {
         if(playerColor!=session.getTurn()) throw new WrongTurnException("Not your turn");
         // TODO here i should first look for the instance where the board is created
         //  if its the current continue if not route it to the right instance
-        gameMoveValidation.validateAndPlay(request);
-        gameSessionStore.updateTurn(request.getGameId(),session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK);
+        MoveResponse response=gameMoveValidation.validateAndPlay(request);
 
+        gameSessionStore.updateTurn(request.getGameId(),session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK);
+        String opponentId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
         // TODO deliver move to opponent
-        eventPublisher.publishEvent(new MoveResponse());
+        eventPublisher.publishEvent(new MoveEvent(opponentId,response));
     }
 
 }

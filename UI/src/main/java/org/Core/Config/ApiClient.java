@@ -1,10 +1,11 @@
 package org.Core.Config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.inject.Inject;
 import org.Core.Auth.AuthClient;
 import org.Core.Auth.AuthTokens;
 import org.Core.Auth.TokenStorage;
+import tools.jackson.databind.ObjectMapper;
 
 import javax.security.sasl.AuthenticationException;
 import java.io.IOException;

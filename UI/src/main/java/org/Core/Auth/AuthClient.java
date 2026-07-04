@@ -1,11 +1,11 @@
 package org.Core.Auth;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.Auth.Exceptions.TokenExpiredException;
 import org.Core.Config.AppConfig;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;

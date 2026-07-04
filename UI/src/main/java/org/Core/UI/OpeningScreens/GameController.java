@@ -130,11 +130,14 @@ public class GameController {
 
                                     Platform.runLater(() -> loading.setMessage("Almost there...", 2));
 
-                                    realtimeGateway.connect().thenAccept(u -> {
-                                        Platform.runLater(() -> viewNavigator.transitionTo(lobbyController.start(userSession,friendShipClient)));
-                                        realtimeGateway.startLobbyPING();
-                                    }  );
-
+                                    try {
+                                        realtimeGateway.connect().thenAccept(u -> {
+                                            Platform.runLater(() -> viewNavigator.transitionTo(lobbyController.start(userSession,friendShipClient)));
+                                            realtimeGateway.startLobbyPING();
+                                        }  );
+                                    }catch (Throwable e){
+                                        e.printStackTrace();
+                                    }
 
                                 } catch (Exception e) {
                                     Platform.runLater(() -> viewNavigator.transitionTo(showAuthView()));

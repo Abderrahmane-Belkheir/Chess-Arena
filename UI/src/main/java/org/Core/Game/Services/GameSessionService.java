@@ -12,6 +12,7 @@ import org.Core.UI.Game.GameView;
 import org.Core.UI.Shared.ViewNavigator;
 import tools.jackson.databind.ObjectMapper;
 
+
 import java.io.IOException;
 
 
@@ -24,7 +25,7 @@ public class GameSessionService{
 
 
     @Inject
-    public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator,ObjectMapper mapper){
+    public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator, ObjectMapper mapper){
         this.userSessionManager=userSessionManager;
         this.viewNavigator=viewNavigator;
         this.mapper=mapper;
@@ -50,8 +51,9 @@ public class GameSessionService{
             gameView.applyOpponentMove(event);
     }
 
-    public void sendPlayerMove(PlayerMove move){
-        RealtimeGateway.getSession().send("/app/game.move",mapper.writeValueAsString(move));
+    public void sendPlayerMove(PlayerMove move) {
+        System.out.println("PUBLISHING MOVE "+move);
+        RealtimeGateway.getSession().send("/app/game.move",move);
     }
 
 

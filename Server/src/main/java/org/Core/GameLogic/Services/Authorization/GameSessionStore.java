@@ -64,10 +64,10 @@ public class GameSessionStore {
                 (String) m.get("gameId"),
                 (String) m.get("whiteId"),
                 (String) m.get("blackId"),
-                (Color) m.get("turn"),
-                (Boolean) m.get("status"),
-                (long) m.get("lastColor:w"),
-                (long) m.get("lastColor:b")
+                Color.valueOf((String)(m.get("turn"))),
+                Boolean.parseBoolean(((String)m.get("status"))),
+                Long.parseLong((String)m.get("lastWhiteMoveAt")),
+                Long.parseLong((String)m.get("lastBlackMoveAt"))
         );
     }
 }

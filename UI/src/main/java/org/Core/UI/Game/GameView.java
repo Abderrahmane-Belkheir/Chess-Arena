@@ -1,5 +1,6 @@
 package org.Core.UI.Game;
 
+
 import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Piece;
 import com.github.bhlangonijr.chesslib.Side;
@@ -602,7 +603,7 @@ public class GameView {
             }
         }
     }
-    private void commitMove(Square fromSq, Square toSq) {
+    private void commitMove(Square fromSq, Square toSq){
         clearHighlights();
         selectedSquare = null;
         legalTargets.clear();
@@ -617,7 +618,9 @@ public class GameView {
             redrawSquare(from);
             redrawSquare(to);
             myTurn = false;
-            gameSessionService.sendPlayerMove(new PlayerMove(gameId,from,to));
+
+                gameSessionService.sendPlayerMove(new PlayerMove(gameId,from,to));
+
         });
     }
     // ── Highlights ────────────────────────────────────────────────────
