@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
 import org.Core.GameLogic.Api.Dto.MoveResponse;
 import org.Core.GameLogic.Exceptions.GameNotFoundException;
+import org.Core.GameLogic.Exceptions.PlayerTimeExpired;
 import org.Core.GameLogic.Exceptions.WrongTurnException;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.GameSession;
@@ -16,6 +17,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.image.AreaAveragingScaleFilter;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,6 +31,8 @@ public class GameAuthorizationService {
     private final GameSessionStore gameSessionStore;
     private final GameMoveRepo gameMoveRepo;
     private final ApplicationEventPublisher eventPublisher;
+
+    private final static long TEN_MINUTES_MS = TimeUnit.MINUTES.toMillis(10);
 
     @Transactional
     public void Authorize(String userId, MoveRequest request){
@@ -41,11 +49,15 @@ public class GameAuthorizationService {
         }
         Color playerColor= session.getWhitePlayerId().equals(userId)? Color.WHITE: Color.BLACK;
         if(playerColor!=session.getTurn()) throw new WrongTurnException("Not your turn");
+        long playedTime=playerColor==Color.WHITE?session.getWhitePlayedTime():session.getBlackPlayedTime();
+        Instant now= Instant.now();
+        long durationToPlay =Duration.between(session.getLastMoveAt(),now).toMillis();
+        playedTime+= durationToPlay;
+        if(TEN_MINUTES_MS<playedTime) throw new PlayerTimeExpired(session.getGameId(),playerColor);
         // TODO here i should first look for the instance where the board is created
         //  if its the current continue if not route it to the right instance
         MoveResponse response=gameMoveValidation.validateAndPlay(request);
-
-        gameSessionStore.updateTurn(request.getGameId(),session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK);
+        gameSessionStore.updateTurnAndPlayedTimeAndLastMoveAt(request.getGameId(),session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK,now,playedTime);
         String opponentId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
         // TODO deliver move to opponent
         eventPublisher.publishEvent(new MoveEvent(opponentId,response));

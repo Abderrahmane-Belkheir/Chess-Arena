@@ -5,12 +5,12 @@ import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.GameSession;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.ObjectMapper;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -36,8 +36,13 @@ public class GameSessionStore {
         if (entries.isEmpty()) return Optional.empty();
         return Optional.of(fromMap(entries));
     }
-    public void updateTurn(String gameId,Color color){
-        redis.opsForHash().put(PREFIX + gameId, "turn", color.name());
+    public void updateTurnAndPlayedTimeAndLastMoveAt(String gameId, Color color,Instant lastMoveAt,long playedTime){
+        String key=color==Color.WHITE?"blackPlayedTime":"whitePlayedTime";
+        redis.opsForHash().putAll(PREFIX + gameId, Map.of(
+                "turn",color.name(),
+                key,String.valueOf(playedTime)
+                ,"lastMoveAt",String.valueOf(lastMoveAt)
+        ));
     }
 
     public void updateStatus(String gameId, String status) {
@@ -54,8 +59,9 @@ public class GameSessionStore {
                 "blackId",      session.getBlackPlayerId(),
                 "turn",session.getTurn().name(),
                 "status",       String.valueOf(session.isActive()),
-                "lastWhiteMoveAt",  String.valueOf(session.getLastWhiteMoveAt()),
-                "lastBlackMoveAt",  String.valueOf(session.getLastBlackMoveAt())
+                "whitePlayedTime",  String.valueOf(session.getWhitePlayedTime()),
+                "blackPlayedTime",String.valueOf(session.getBlackPlayedTime()),
+                "lastMoveAt",  String.valueOf(session.getLastMoveAt())
         );
     }
 
@@ -66,8 +72,9 @@ public class GameSessionStore {
                 (String) m.get("blackId"),
                 Color.valueOf((String)(m.get("turn"))),
                 Boolean.parseBoolean(((String)m.get("status"))),
-                Long.parseLong((String)m.get("lastWhiteMoveAt")),
-                Long.parseLong((String)m.get("lastBlackMoveAt"))
+                Long.parseLong((String)m.get("whitePlayedTime")),
+                Long.parseLong((String)m.get("blackPlayedTime")),
+                Instant.parse((String) m.get("lastMoveAt"))
         );
     }
 }

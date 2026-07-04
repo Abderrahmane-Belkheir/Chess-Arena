@@ -62,8 +62,9 @@ public class GameFactory {
                         blackQE.userId(),
                         Color.WHITE,
                         true,
-                        System.currentTimeMillis(),
-                        0
+                        0,
+                        0,
+                        game.getCreatedAt()
                 )
         );
 

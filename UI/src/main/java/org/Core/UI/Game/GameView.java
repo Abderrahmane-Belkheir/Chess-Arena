@@ -95,6 +95,11 @@ public class GameView {
 
     private double squareSize = 96;
 
+    // ── Clocks ────────────────────────────────────────────────────────
+    private final Timeline clockTimeline = new Timeline();
+    private int myTimeSeconds  = 600; // 10:00 default, matches initial labels
+    private int oppTimeSeconds = 600;
+
     // ── UI nodes ──────────────────────────────────────────────────────
     private final StackPane      root         = new StackPane();
     private final GridPane       boardGrid    = new GridPane();
@@ -151,6 +156,7 @@ public class GameView {
         buildLayout();
         attachResizeListeners();
         renderFromFen(fen);
+        startClockTicking();
     }
 
     // ── Public API ────────────────────────────────────────────────────
@@ -183,12 +189,56 @@ public class GameView {
 
     public void updateClocks(String myTime, String oppTime) {
         Platform.runLater(() -> {
+            myTimeSeconds  = parseTime(myTime);
+            oppTimeSeconds = parseTime(oppTime);
             myClockLabel.setText(myTime);
             oppClockLabel.setText(oppTime);
         });
     }
 
+    /** Stops both clocks from ticking, e.g. on checkmate/resignation/game end. */
+    public void stopClocks() {
+        clockTimeline.stop();
+    }
+
     public StackPane getView() { return root; }
+
+    // ── Clock ticking ─────────────────────────────────────────────────
+
+    private void startClockTicking() {
+        clockTimeline.getKeyFrames().add(
+                new KeyFrame(Duration.seconds(1), e -> tickClock())
+        );
+        clockTimeline.setCycleCount(Timeline.INDEFINITE);
+        clockTimeline.play();
+    }
+
+    private void tickClock() {
+        if (myTurn) {
+            if (myTimeSeconds > 0) myTimeSeconds--;
+            myClockLabel.setText(formatTime(myTimeSeconds));
+        } else {
+            if (oppTimeSeconds > 0) oppTimeSeconds--;
+            oppClockLabel.setText(formatTime(oppTimeSeconds));
+        }
+    }
+
+    private String formatTime(int totalSeconds) {
+        int m = totalSeconds / 60;
+        int s = totalSeconds % 60;
+        return String.format("%d:%02d", m, s);
+    }
+
+    private int parseTime(String time) {
+        try {
+            String[] parts = time.split(":");
+            int m = Integer.parseInt(parts[0].trim());
+            int s = Integer.parseInt(parts[1].trim());
+            return m * 60 + s;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 
     // ── Layout ────────────────────────────────────────────────────────
 
@@ -619,7 +669,7 @@ public class GameView {
             redrawSquare(to);
             myTurn = false;
 
-                gameSessionService.sendPlayerMove(new PlayerMove(gameId,from,to));
+            gameSessionService.sendPlayerMove(new PlayerMove(gameId,from,to));
 
         });
     }

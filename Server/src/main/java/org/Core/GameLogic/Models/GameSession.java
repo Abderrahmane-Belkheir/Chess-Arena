@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
@@ -15,6 +17,7 @@ public class GameSession {
     private String blackPlayerId;
     private Color turn;
     private boolean active;
-    private long    lastWhiteMoveAt;
-    private long lastBlackMoveAt;
+    private long whitePlayedTime;
+    private long blackPlayedTime;
+    private Instant lastMoveAt;
 }
