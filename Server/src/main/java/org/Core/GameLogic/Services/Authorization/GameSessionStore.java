@@ -36,6 +36,7 @@ public class GameSessionStore {
         if (entries.isEmpty()) return Optional.empty();
         return Optional.of(fromMap(entries));
     }
+
     public void updateTurnAndPlayedTimeAndLastMoveAt(String gameId, Color color,Instant lastMoveAt,long playedTime){
         String key=color==Color.WHITE?"blackPlayedTime":"whitePlayedTime";
         redis.opsForHash().putAll(PREFIX + gameId, Map.of(

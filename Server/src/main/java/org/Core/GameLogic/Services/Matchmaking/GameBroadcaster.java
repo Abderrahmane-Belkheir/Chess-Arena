@@ -49,6 +49,9 @@ public class GameBroadcaster {
 
     private void handleMove(String userId,MoveResponse response){
        // SimpMessageHeaderAccessor accessor=setAccessor(sessionId);
+
+        if(response.isGameOver()) log.info("GAME OVER WITH MOVE "+response);
+
         messagingTemplate.convertAndSendToUser(
                 userId,
                 "/queue/game.move",

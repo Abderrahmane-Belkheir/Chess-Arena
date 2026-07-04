@@ -49,10 +49,10 @@ public class GameSessionService{
     @Subscribe
     public void onOpponentMove(OpponentMove event){
             gameView.applyOpponentMove(event);
+
     }
 
     public void sendPlayerMove(PlayerMove move) {
-        System.out.println("PUBLISHING MOVE "+move);
         RealtimeGateway.getSession().send("/app/game.move",move);
     }
 

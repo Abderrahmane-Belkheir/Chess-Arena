@@ -182,6 +182,8 @@ public class GameView {
                 lastMoveTo   = to.value().toLowerCase();
                 redrawSquare(lastMoveFrom);
                 redrawSquare(lastMoveTo);
+                if(gameMove.isGameOver());
+
                 myTurn = true;
             });
         });

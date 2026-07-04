@@ -46,7 +46,20 @@ public class GameMoveValidation {
             throw new IllegalMoveException("Illegal move: " + from + " → " + to);
         }
         board.doMove(move);
-        return new MoveResponse(from,to,board.getFen());
+        MoveResponse.MoveResponseBuilder response=MoveResponse.builder().from(from).to(to).newFen(board.getFen());
+        boolean gameOver=board.isMated()||board.isStaleMate()||board.isDraw();
+        response.gameOver(gameOver);
+        MoveResponse.GameResult result=null;
+
+        if (board.isMated()) {
+            result=MoveResponse.GameResult.CHECKMATE;
+        } else if (board.isStaleMate()) {
+           result =MoveResponse.GameResult.STALEMATE;
+        } else if (board.isDraw()) {
+           result=MoveResponse.GameResult.DRAW;
+        }
+
+        return response.result(result).build();
     }
 
 }

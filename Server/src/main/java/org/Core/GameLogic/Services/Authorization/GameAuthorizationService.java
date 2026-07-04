@@ -48,7 +48,10 @@ public class GameAuthorizationService {
             throw new GameNotFoundException("Game not found");
         }
         Color playerColor= session.getWhitePlayerId().equals(userId)? Color.WHITE: Color.BLACK;
-        if(playerColor!=session.getTurn()) throw new WrongTurnException("Not your turn");
+        if(playerColor!=session.getTurn()){
+            //TODO
+            throw new WrongTurnException("Not your turn");
+        }
         long playedTime=playerColor==Color.WHITE?session.getWhitePlayedTime():session.getBlackPlayedTime();
         Instant now= Instant.now();
         long durationToPlay =Duration.between(session.getLastMoveAt(),now).toMillis();

@@ -5,14 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Exceptions/PlayerTimeExpired.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Models/GameSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Models/GameSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/MoveResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/MoveResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Fen.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Fen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameAuthorizationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameAuthorizationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameSessionStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameSessionStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameBroadcaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameBroadcaster.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/MoveValidation/GameMoveValidation.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/MoveValidation/GameMoveValidation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/OpponentMove.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/OpponentMove.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/GameController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
