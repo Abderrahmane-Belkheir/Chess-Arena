@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import org.Core.Auth.TokenStorage;
 import org.Core.Game.Events.GameFound;
+import org.Core.Game.Events.GameOverInfo;
 import org.Core.Game.Events.OpponentMove;
 import org.Core.Config.GameEventPublisher;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
@@ -89,6 +90,7 @@ public class RealtimeGateway {
     private void subscribe(StompSession s){
         subscribeToSingle(s, "/user/queue/matchmaking", GameFound.class);
         subscribeToSingle(s, "/user/queue/game.move", OpponentMove.class);
+        subscribeToSingle(s,"/user/queue/game.over", GameOverInfo.class);
     }
 
     private  void subscribeToSingle(StompSession s,String destination,Class<?> clazz){

@@ -23,6 +23,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import org.Core.Game.Events.GameOverInfo;
 import org.Core.Game.Events.OpponentMove;
 import org.Core.Game.Events.PlayerMove;
 import org.Core.Game.Services.GameSessionService;
@@ -59,6 +60,8 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 import org.Core.UI.LobbyScreens.Friends.Avatar;
+import org.Core.UI.Shared.ViewNavigator;
+import org.springframework.web.servlet.View;
 
 import java.util.*;
 
@@ -107,6 +110,7 @@ public class GameView {
     private final StackPane      boardWrap    = new StackPane();
     private final Pane           floatPane    = new Pane();
 
+    private final  HBox centerRow=new HBox(0);
     // Sidebars
     private final VBox           leftSidebar  = new VBox(0);
     private final VBox           rightSidebar = new VBox(12);
@@ -126,11 +130,11 @@ public class GameView {
     // Action buttons
     private final StackPane      drawBtn;
     private final StackPane      resignBtn;
-
+    private final ViewNavigator viewNavigator;
     private final GameSessionService gameSessionService;
 
     // ── Constructor ───────────────────────────────────────────────────
-    public GameView(String gameId,String fen, UserSession session, Side playerColor,
+    public GameView(String gameId, String fen, UserSession session, Side playerColor,
                     GameFound.Opponent opponent, GameSessionService gameSessionService) {
         this.gameId=gameId;
         this.fen      = fen;
@@ -139,6 +143,8 @@ public class GameView {
         this.mySide   = playerColor;
         this.myTurn   = mySide == Side.WHITE;
         this.gameSessionService = gameSessionService;
+
+        this.viewNavigator=gameSessionService.getViewNavigator();
 
         oppAvatarPane = buildAvatar(opponent.getAvatarUrl(),
                 initials(opponent.getUsername()), avatarColor(opponent.getUsername()), 44);
@@ -182,10 +188,20 @@ public class GameView {
                 lastMoveTo   = to.value().toLowerCase();
                 redrawSquare(lastMoveFrom);
                 redrawSquare(lastMoveTo);
-                if(gameMove.isGameOver());
+                if(gameMove.getGameOverInfo()!=null){
+                    showGameOverCard(gameMove.getGameOverInfo(),null,null);
+                };
 
                 myTurn = true;
             });
+        });
+    }
+
+    public void showGameOverCard(GameOverInfo info, Runnable onNewGame, Runnable onReturnToLobby) {
+        Platform.runLater(() -> {
+            stopClocks();
+            session.setElo(info.getNewElo());
+            GameOverCard card = new GameOverCard(info, session, boardWrap, onNewGame, onReturnToLobby);
         });
     }
 
@@ -268,7 +284,7 @@ public class GameView {
 
         boardWrap.getChildren().addAll(boardGrid, floatPane);
         boardWrap.setStyle("-fx-background-color: transparent;");
-
+        boardWrap.setSnapToPixel(true);
         floatPane.prefWidthProperty().bind(boardWrap.widthProperty());
         floatPane.prefHeightProperty().bind(boardWrap.heightProperty());
 
@@ -302,7 +318,6 @@ public class GameView {
         rightSidebar.setStyle("-fx-background-color: #1e1c1a;");
         rightSidebar.getChildren().addAll(drawBtn, resignBtn);
 
-        HBox centerRow = new HBox(0);
         centerRow.setAlignment(Pos.CENTER);
         centerRow.setMinSize(0, 0);
         centerRow.getChildren().addAll(leftSidebar, boardWrap, rightSidebar);

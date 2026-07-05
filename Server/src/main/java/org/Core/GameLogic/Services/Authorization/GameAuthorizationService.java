@@ -3,6 +3,8 @@ package org.Core.GameLogic.Services.Authorization;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.Core.GameLogic.Api.Dto.GameOverInfo;
+import org.Core.GameLogic.Api.Dto.MoveOutCome;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
 import org.Core.GameLogic.Api.Dto.MoveResponse;
 import org.Core.GameLogic.Exceptions.GameNotFoundException;
@@ -11,13 +13,12 @@ import org.Core.GameLogic.Exceptions.WrongTurnException;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Persistence.GameMoveRepo;
+import org.Core.GameLogic.Services.Matchmaking.Events.GameOverEvent;
 import org.Core.GameLogic.Services.Matchmaking.Events.MoveEvent;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.awt.image.AreaAveragingScaleFilter;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -59,11 +60,16 @@ public class GameAuthorizationService {
         if(TEN_MINUTES_MS<playedTime) throw new PlayerTimeExpired(session.getGameId(),playerColor);
         // TODO here i should first look for the instance where the board is created
         //  if its the current continue if not route it to the right instance
-        MoveResponse response=gameMoveValidation.validateAndPlay(request);
+        MoveOutCome outCome=gameMoveValidation.processMove(request);
         gameSessionStore.updateTurnAndPlayedTimeAndLastMoveAt(request.getGameId(),session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK,now,playedTime);
         String opponentId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
-        // TODO deliver move to opponent
-        eventPublisher.publishEvent(new MoveEvent(opponentId,response));
+        if(outCome.gameOver()){
+            GameOverInfo moverGameOverInfo=outCome.moverGameOverInfo();
+            System.out.println("PUBLISHING GAME OVER TO WINNER "+moverGameOverInfo);
+            eventPublisher.publishEvent(new GameOverEvent(userId,moverGameOverInfo));
+        //TODO publish game over to the current player
+        }
+        eventPublisher.publishEvent(new MoveEvent(opponentId,outCome.opponentPayload()));
     }
 
 }

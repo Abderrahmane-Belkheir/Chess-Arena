@@ -3,8 +3,10 @@ package org.Core.GameLogic.Services.Matchmaking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameFound;
+import org.Core.GameLogic.Api.Dto.GameOverInfo;
 import org.Core.GameLogic.Api.Dto.MoveResponse;
 import org.Core.GameLogic.Services.Matchmaking.Events.GameCreatedEvent;
+import org.Core.GameLogic.Services.Matchmaking.Events.GameOverEvent;
 import org.Core.GameLogic.Services.Matchmaking.Events.MoveEvent;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -19,6 +21,11 @@ public class GameBroadcaster {
 
 
     private final SimpMessagingTemplate messagingTemplate;
+
+    @TransactionalEventListener
+    public void broadCastGameOver(GameOverEvent event){
+        handleGameOver(event.userId(),event.gameOverInfo());
+    }
 
     @TransactionalEventListener
     public void broadCastMove(MoveEvent event){
@@ -50,7 +57,6 @@ public class GameBroadcaster {
     private void handleMove(String userId,MoveResponse response){
        // SimpMessageHeaderAccessor accessor=setAccessor(sessionId);
 
-        if(response.isGameOver()) log.info("GAME OVER WITH MOVE "+response);
 
         messagingTemplate.convertAndSendToUser(
                 userId,
@@ -58,6 +64,15 @@ public class GameBroadcaster {
                 response
         );
     }
+
+    private void handleGameOver(String userId,GameOverInfo gameOverInfo){
+        messagingTemplate.convertAndSendToUser(
+              userId,
+                "/queue/game.over",
+                gameOverInfo
+        );
+    }
+
 
     private SimpMessageHeaderAccessor setAccessor(String sessionId){
         SimpMessageHeaderAccessor accessor =
@@ -68,6 +83,6 @@ public class GameBroadcaster {
         return accessor;
     }
 
+}
 
-    }
 

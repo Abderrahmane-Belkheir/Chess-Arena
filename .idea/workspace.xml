@@ -5,17 +5,91 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/GameOverInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/GameOverResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/MoveOutCome.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/Events/GameOverEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/MoveResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/MoveResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Fen.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Fen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameAuthorizationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameAuthorizationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameSessionStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Authorization/GameSessionStore.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameBroadcaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameBroadcaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/GameFactory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/MoveValidation/GameMoveValidation.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/MoveValidation/GameMoveValidation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/OpponentMove.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/OpponentMove.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/dependency-reduced-pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/AuthTokens.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/DTO/UserSession.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/Exceptions/TokenExpiredException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/TokenStorage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Auth/UserSessionManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/ApiClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/AppConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/AppModule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/DTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/GameEventPublisher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/GameFound.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/OpponentMove.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/PlayerMove.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Realtime/RealtimeGateway.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/InvitationsPage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/UserSummary.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaEntry.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Center/HeroPanel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/Avatar.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FooterViews.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendRow.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendSection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendsPanel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OfflineFriendsSection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OnlineFriendsSection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/PageResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/PlayerSearchBar.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestRow.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestsSection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SearchResultCard.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SectionState.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/Styles.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/TabBar.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Game/GameView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Game/MatchmakingView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Game/RecentGames.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyControllerStub.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/NavBar.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCard.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCardController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/AuthView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/GameController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/LoadingView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/ModeView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/SplashView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Shared/ViewNavigator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/BLACK_BISHOP.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/BLACK_KING.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/BLACK_KNIGHT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/BLACK_PAWN.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/BLACK_QUEEN.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/BLACK_ROOK.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/WHITE_BISHOP.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/WHITE_KING.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/WHITE_KNIGHT.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/WHITE_PAWN.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/WHITE_QUEEN.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/Pieces/WHITE_ROOK.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/chess-background.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/resources/login-success.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,9 +100,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="Exception" />
         <option value="Class" />
         <option value="Record" />
-        <option value="Exception" />
       </list>
     </option>
   </component>
@@ -64,6 +138,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.Core.Game.Events" />
       <recent name="org.Core.Matchmaking.Exceptions" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
@@ -71,14 +146,14 @@
       <recent name="C:\Users\HP\IdeaProjects\Chess\UI\src\main\java\org\Core\UI\LobbyScreens\Friends" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.Core.Game.Events" />
       <recent name="org.Core.GameLogic.Services.Matchmaking.Events" />
       <recent name="org.Core.Matchmaking.Services.Authorazation" />
       <recent name="org.Core.Matchmaking.Services.Matchmaking" />
       <recent name="org.Core.Matchmaking.Services.MoveValidation" />
-      <recent name="org.Core.Matchmaking.Api.Dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Chess-UI">
+  <component name="RunManager" selected="Application.Chess-Server">
     <configuration name="Chess-Server" type="Application" factoryName="Application">
       <option name="envFilePaths">
         <option value="$PROJECT_DIR$/Server/.env" />

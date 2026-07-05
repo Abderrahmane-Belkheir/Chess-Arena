@@ -4,10 +4,8 @@ import lombok.Data;
 
 @Data
 public class OpponentMove {
-    private boolean gameOver;
-    private GameResult result;
+    private GameOverInfo gameOverInfo;
     private String from;
     private String to;
     private String newFen;
-    public enum GameResult{CHECKMATE,STALEMATE,DRAW}
 }

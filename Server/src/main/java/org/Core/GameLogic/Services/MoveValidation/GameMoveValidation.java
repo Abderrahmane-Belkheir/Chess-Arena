@@ -4,8 +4,7 @@ import com.github.bhlangonijr.chesslib.Board;
 import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 import lombok.RequiredArgsConstructor;
-import org.Core.GameLogic.Api.Dto.MoveRequest;
-import org.Core.GameLogic.Api.Dto.MoveResponse;
+import org.Core.GameLogic.Api.Dto.*;
 import org.Core.GameLogic.Exceptions.IllegalMoveException;
 import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Persistence.GameRepo;
@@ -18,7 +17,7 @@ public class GameMoveValidation {
     private final GameSessionRegistry gameSessionRegistry;
     private final GameRepo gameRepo;
 
-    public MoveResponse validateAndPlay(MoveRequest request){
+    public MoveOutCome processMove(MoveRequest request){
         String from=request.getFrom();
         String to=request.getTo();
 
@@ -46,20 +45,33 @@ public class GameMoveValidation {
             throw new IllegalMoveException("Illegal move: " + from + " → " + to);
         }
         board.doMove(move);
-        MoveResponse.MoveResponseBuilder response=MoveResponse.builder().from(from).to(to).newFen(board.getFen());
-        boolean gameOver=board.isMated()||board.isStaleMate()||board.isDraw();
-        response.gameOver(gameOver);
-        MoveResponse.GameResult result=null;
+        GameOverResult result=checkGameOver(board);
+        MoveResponse opponentPayload=MoveResponse.builder().from(from).to(to).newFen(board.getFen()).gameOverInfo(result.opponentInfo()).build();
+        boolean gameOver=result.moverInfo()!=null;
+        return new MoveOutCome(gameOver,opponentPayload,result.moverInfo());
+    }
 
-        if (board.isMated()) {
-            result=MoveResponse.GameResult.CHECKMATE;
-        } else if (board.isStaleMate()) {
-           result =MoveResponse.GameResult.STALEMATE;
-        } else if (board.isDraw()) {
-           result=MoveResponse.GameResult.DRAW;
+    private GameOverResult checkGameOver(Board board){
+        boolean gameOver=board.isMated()||board.isStaleMate()||board.isDraw();
+        GameOverInfo loserInfo =null;
+        GameOverInfo winnerInfo=null;
+        if(gameOver){
+            GameOverInfo.GameResult loserResult =board.isDraw()? GameOverInfo.GameResult.DRAW:GameOverInfo.GameResult.LOSS;
+            GameOverInfo.GameResult winnerResult=board.isDraw()? GameOverInfo.GameResult.DRAW:GameOverInfo.GameResult.WIN;
+            GameOverInfo.EndReason endReason=null;
+            if (board.isMated()) {
+                endReason=GameOverInfo.EndReason.CHECKMATE;
+            } else if (board.isStaleMate()) {
+                endReason =GameOverInfo.EndReason.STALEMATE;
+            } else if (board.isDraw()) {
+                endReason=GameOverInfo.EndReason.DRAW_AGREEMENT;
+            }
+            loserInfo =new GameOverInfo(loserResult,endReason);
+            winnerInfo=new GameOverInfo(winnerResult,endReason);
         }
 
-        return response.result(result).build();
+        return new GameOverResult(winnerInfo,loserInfo);
     }
 
 }
+

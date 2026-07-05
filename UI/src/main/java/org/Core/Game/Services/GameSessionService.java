@@ -3,8 +3,10 @@ package org.Core.Game.Services;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import lombok.Getter;
 import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Events.GameFound;
+import org.Core.Game.Events.GameOverInfo;
 import org.Core.Game.Events.OpponentMove;
 import org.Core.Game.Events.PlayerMove;
 import org.Core.Realtime.RealtimeGateway;
@@ -19,6 +21,7 @@ import java.io.IOException;
 public class GameSessionService{
 
     private GameView gameView;
+    @Getter
     private  final ViewNavigator viewNavigator;
     private final UserSessionManager userSessionManager;
     private final ObjectMapper mapper;
@@ -49,11 +52,15 @@ public class GameSessionService{
     @Subscribe
     public void onOpponentMove(OpponentMove event){
             gameView.applyOpponentMove(event);
-
     }
 
     public void sendPlayerMove(PlayerMove move) {
         RealtimeGateway.getSession().send("/app/game.move",move);
+    }
+
+    @Subscribe
+    public void onGameOver(GameOverInfo gameOverInfo){
+        gameView.showGameOverCard(gameOverInfo,null,null);
     }
 
 

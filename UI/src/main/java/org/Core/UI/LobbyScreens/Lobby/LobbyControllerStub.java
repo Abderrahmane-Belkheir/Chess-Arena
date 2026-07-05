@@ -49,10 +49,6 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
         System.out.println("[Profile] Change avatar clicked");
     }
 
-
-
-
-
     @Override
     public void onPlayClicked() {
         MatchmakingView matchmaking = new MatchmakingView(() -> {
@@ -74,4 +70,5 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
     public void onGameClicked(String gameId) {
         System.out.println("[LobbyController] Game clicked: " + gameId);
     }
+
 }
