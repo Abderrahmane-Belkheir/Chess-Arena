@@ -11,32 +11,53 @@ public final class Avatar {
     private Avatar() {}
 
     public static StackPane build(String imageUrl, String initials, String bgColor) {
+        return build(imageUrl, initials, bgColor, 38);
+    }
+
+    public static StackPane build(String imageUrl, String initials, String bgColor, int size) {
         StackPane avatar = new StackPane();
-        avatar.setMinSize(38, 38);
-        avatar.setPrefSize(38, 38);
+        avatar.setMinSize(size, size);
+        avatar.setPrefSize(size, size);
+        avatar.setMaxSize(size, size);
+        avatar.setClip(new Circle(size / 2.0, size / 2.0, size / 2.0));
 
-        Circle clip = new Circle(19, 19, 19);
-        avatar.setClip(clip);
+        // Build the initials fallback first — always present underneath, so a
+        // missing/broken/unreachable image never leaves the avatar blank.
+        avatar.setStyle("-fx-background-color: " + bgColor + ";");
+        Label lbl = new Label(initials);
+        lbl.setStyle("-fx-text-fill: #ffffff; -fx-font-size: "
+                + (size / 3) + "px; -fx-font-weight: 700;");
+        avatar.getChildren().add(lbl);
 
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            Image image = new Image(imageUrl, true);
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(38);
-            imageView.setFitHeight(38);
-            imageView.setPreserveRatio(true);
-            avatar.getChildren().add(imageView);
-        } else {
-            avatar.setStyle("-fx-background-color: " + bgColor + ";");
-            Label lbl = new Label(initials);
-            lbl.setStyle("""
-                -fx-text-fill: #ffffff;
-                -fx-font-size: 13px;
-                -fx-font-weight: 700;
-            """);
-            avatar.getChildren().add(lbl);
+
+        if (imageUrl != null) {
+            try {
+                Image image = new Image(imageUrl, size, size, true, true, true);
+                ImageView imageView = new ImageView(image);
+                imageView.setFitWidth(size);
+                imageView.setFitHeight(size);
+                imageView.setPreserveRatio(true);
+
+                // Background-loaded images fail silently (no exception) — only
+                // swap in the real photo once it's confirmed loaded without error.
+                image.errorProperty().addListener((obs, wasErr, isErr) -> {
+                    if (isErr) avatar.getChildren().remove(imageView);
+                });
+                image.progressProperty().addListener((obs, oldP, newP) -> {
+                    if (newP.doubleValue() >= 1.0 && !image.isError()
+                            && !avatar.getChildren().contains(imageView)) {
+                        avatar.getChildren().add(imageView);
+                        avatar.setStyle(""); // photo now covers the whole circle
+                    }
+                });
+            } catch (Exception ignored) {
+                // stays on initials fallback — this is what was previously
+                // an uncaught exception for malformed/non-URI paths
+            }
         }
         return avatar;
     }
+
 
     public static String initials(String username) {
         if (username == null || username.isEmpty()) return "?";

@@ -35,7 +35,7 @@ public class MatchmakingEntry {
 
             QueueEntry opponent=entries.get(0);
             gameFactory.createGame(new MatchedPair(opponent,player));
-
+            entries.removeAll(List.of(player,opponent));
 
     }
 

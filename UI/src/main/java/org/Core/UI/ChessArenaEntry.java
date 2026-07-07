@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.Core.Auth.TokenStorage;
 import org.Core.UI.OpeningScreens.GameController;
+import org.Core.UI.OpeningScreens.GameControllerStub;
 import org.Core.Config.AppModule;
 
 
@@ -37,7 +38,7 @@ public class ChessArenaEntry extends Application {
         stage.show();
         DarkTitleBar.apply(stage, 0x000a0a0a);
         Injector injector=Guice.createInjector(new AppModule(root,getHostServices()));
-        injector.getInstance(TokenStorage.class).clearRefreshToken();
+     //   injector.getInstance(TokenStorage.class).clearRefreshToken();
         injector.getInstance(GameController.class).start();
     }
 

@@ -7,8 +7,16 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import org.Core.UI.LobbyScreens.Friends.Avatar;
 import org.Core.UI.LobbyScreens.Lobby.LobbyController;
 
 public class HeroPanel {
@@ -123,7 +131,7 @@ public class HeroPanel {
             ScaleTransition st = new ScaleTransition(Duration.millis(120), playBtn);
             st.setToX(1.0); st.setToY(1.0); st.play();
         });
-        playBtn.setOnAction(e -> controller.onPlayClicked()); // TODO: wire to matchmaking
+        playBtn.setOnAction(e -> controller.onPlayClicked());
 
         // ── Stats row ─────────────────────────────────────────────────
         HBox stats = new HBox(0);

@@ -21,7 +21,7 @@ public class Game  {
 
     private Instant createdAt=Instant.now();
 
-    private GameStatus status;
+    private GameStatus status=GameStatus.RUNNING;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Player> players=new ArrayList<>();

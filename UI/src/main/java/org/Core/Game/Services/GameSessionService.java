@@ -3,19 +3,24 @@ package org.Core.Game.Services;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import javafx.application.Platform;
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Events.GameFound;
 import org.Core.Game.Events.GameOverInfo;
 import org.Core.Game.Events.OpponentMove;
 import org.Core.Game.Events.PlayerMove;
-import org.Core.Realtime.RealtimeGateway;
+import org.Core.Realtime.RealtimeGatewayStub;
 import org.Core.UI.Game.GameView;
+import org.Core.UI.Game.MatchmakingHandler;
+import org.Core.UI.OpeningScreens.GameController;
+import org.Core.UI.OpeningScreens.GameControllerStub;
 import org.Core.UI.Shared.ViewNavigator;
-import tools.jackson.databind.ObjectMapper;
+
 
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 
 public class GameSessionService{
@@ -24,14 +29,15 @@ public class GameSessionService{
     @Getter
     private  final ViewNavigator viewNavigator;
     private final UserSessionManager userSessionManager;
-    private final ObjectMapper mapper;
-
+    private final MatchmakingHandler matchmakingHandler;
+    private final GameController gameController;
 
     @Inject
-    public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator, ObjectMapper mapper){
+    public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator, MatchmakingHandler matchmakingHandler, GameController gameController){
         this.userSessionManager=userSessionManager;
         this.viewNavigator=viewNavigator;
-        this.mapper=mapper;
+        this.matchmakingHandler=matchmakingHandler;
+        this.gameController=gameController;
     }
 
 
@@ -40,7 +46,8 @@ public class GameSessionService{
         Platform.runLater(()-> {
             try {
                 this.gameView = new GameView(event.getId(),event.getFen(),
-                        userSessionManager.getUserSession(false), event.getMySide(),event.getOpponent(),this);
+                        userSessionManager.getUserSession(false),
+                        event.getMySide(),event.getOpponent(),matchmakingHandler,returnToLobby(),sendPlayerMove());
 
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
@@ -49,18 +56,24 @@ public class GameSessionService{
         });
     }
 
+
+    public Runnable returnToLobby(){
+        return gameController::transitionToLobby;
+    }
+
+    public Consumer<PlayerMove> sendPlayerMove() {
+        return (move)-> RealtimeGatewayStub.getSession().send("/app/game.move",move);
+    }
+
+
     @Subscribe
     public void onOpponentMove(OpponentMove event){
             gameView.applyOpponentMove(event);
     }
 
-    public void sendPlayerMove(PlayerMove move) {
-        RealtimeGateway.getSession().send("/app/game.move",move);
-    }
-
     @Subscribe
     public void onGameOver(GameOverInfo gameOverInfo){
-        gameView.showGameOverCard(gameOverInfo,null,null);
+        gameView.gameOver(gameOverInfo);
     }
 
 

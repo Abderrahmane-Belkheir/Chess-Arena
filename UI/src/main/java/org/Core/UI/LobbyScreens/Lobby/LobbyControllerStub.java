@@ -3,9 +3,9 @@ package org.Core.UI.LobbyScreens.Lobby;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
-import org.Core.Realtime.RealtimeGateway;
 import org.Core.Social.FriendShipClient;
-import org.Core.UI.LobbyScreens.Game.MatchmakingView;
+import org.Core.UI.Game.MatchmakingHandler;
+import org.Core.UI.LobbyScreens.Friends.Avatar;
 import org.Core.UI.LobbyScreens.Profile.ProfileCard;
 import org.Core.UI.LobbyScreens.Profile.ProfileCardController;
 import org.Core.UI.Shared.ViewNavigator;
@@ -16,22 +16,25 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
     private final StackPane appRoot;
     private org.Core.UI.LobbyScreens.Lobby.LobbyView lobbyView;
     private UserSession currentSession;
-    private final RealtimeGateway websocket;
-    private  FriendShipClient friendShipClient;
     private final ViewNavigator viewNavigator;
+    private final MatchmakingHandler matchmakingHandler;
 
-    public LobbyControllerStub(StackPane appRoot, RealtimeGateway websocket,ViewNavigator viewNavigator) {
+    public LobbyControllerStub(StackPane appRoot,ViewNavigator viewNavigator,MatchmakingHandler matchmakingHandler) {
         this.appRoot = appRoot;
-        this.websocket=websocket;
         this.viewNavigator=new ViewNavigator(appRoot);
+        this.matchmakingHandler=matchmakingHandler;
     }
 
     @Override
     public StackPane start(UserSession userSession, FriendShipClient friendShipClient) {
         this.currentSession = userSession;
-        this.friendShipClient=friendShipClient;
         lobbyView = new LobbyView(this,friendShipClient);
-        lobbyView.setUser(userSession.getUsername(), userSession.getElo(), userSession.getAvatarUrl());
+        lobbyView.setUser(
+                userSession.getUsername(),
+                userSession.getElo(),
+                Avatar.initials(userSession.getUsername()),
+                userSession.getAvatarUrl()
+        );
         return lobbyView.getView();
     }
 
@@ -51,14 +54,7 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
 
     @Override
     public void onPlayClicked() {
-        MatchmakingView matchmaking = new MatchmakingView(() -> {
-            websocket.stopGameSearching();
-            viewNavigator.transitionTo(lobbyView.getView());
-        });
-
-        viewNavigator.transitionTo(matchmaking.getView());
-
-        websocket.startGameSearching();
+        matchmakingHandler.startGameSearching(lobbyView.getView());
     }
 
     @Override

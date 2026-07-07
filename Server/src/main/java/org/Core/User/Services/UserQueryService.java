@@ -36,7 +36,7 @@ public class UserQueryService {
 
     public UserSummary getMyProfile(String currentUserId){
         User user= userRepo.findById(currentUserId).orElseThrow();
-        return UserSummary.builder().id(user.getPublicId()).username(user.getUsername()).elo(user.getElo()).avatarUrl("hello").build();
+        return UserSummary.builder().id(user.getPublicId()).username(user.getUsername()).elo(user.getElo()).avatarUrl(user.getAvatarUrl()).build();
     }
 
 }

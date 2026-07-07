@@ -1,13 +1,13 @@
-package org.Core.UI.LobbyScreens.Game;
+package org.Core.UI.Game;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import org.Core.UI.LobbyScreens.Friends.Avatar;
 import org.Core.UI.LobbyScreens.Lobby.LobbyController;
 import org.Core.UI.LobbyScreens.Profile.NavBar;
-
 
 import java.util.List;
 
@@ -109,11 +109,11 @@ public class RecentGames {
         row.setPadding(new Insets(11, 16, 11, 16));
         row.setStyle("-fx-cursor: hand;");
 
-        // Avatar
-        Label initLbl = new Label(initials(g.opponentName()));
-        StackPane avatar = NavBar.buildAvatar(initLbl, g.avatarColor());
 
-        // Name + time
+        Label initLbl = new Label(initials(g.opponentName()));
+        StackPane avatar = Avatar.build(null,null,null);
+
+
         VBox info = new VBox(2);
         HBox.setHgrow(info, Priority.ALWAYS);
         Label name = new Label(g.opponentName());

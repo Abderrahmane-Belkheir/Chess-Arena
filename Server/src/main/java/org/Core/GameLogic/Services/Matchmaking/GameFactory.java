@@ -39,7 +39,7 @@ public class GameFactory {
         QueueEntry blackQE = gamePair.blackPl();
 
         String gameId = UUID.randomUUID().toString();
-        String fen = Fen.TEST_POSITION;
+        String fen = Fen.START_POSITION;
 
         log.debug("Assigned colors - White: {}, Black: {}",
                 whiteQE.userId(),

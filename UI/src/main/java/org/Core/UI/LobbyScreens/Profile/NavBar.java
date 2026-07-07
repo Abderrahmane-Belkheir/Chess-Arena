@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
+import org.Core.UI.LobbyScreens.Friends.Avatar;
 import org.Core.UI.LobbyScreens.Lobby.LobbyController;
 
 /**
@@ -24,9 +25,10 @@ public class NavBar {
     private final HBox root = new HBox();
 
     // kept as fields so LobbyView.setUser() can update them live
-    private final Label avatarLabel  = new Label("MA");
+    private StackPane avatarPane;
     private final Label usernameLabel = new Label("magnus_jr");
     private final Label eloLabel     = new Label("1420");
+    private final HBox profileChip = new HBox(12); // field so setUser can swap avatarPane in place
 
     public NavBar(LobbyController controller) {
 
@@ -60,7 +62,6 @@ public class NavBar {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         // ── Right: profile chip ───────────────────────────────────────
-        HBox profileChip = new HBox(12);
         profileChip.setAlignment(Pos.CENTER);
         profileChip.setPadding(new Insets(8, 14, 8, 10));
         profileChip.setStyle("""
@@ -72,8 +73,7 @@ public class NavBar {
             -fx-cursor: hand;
         """);
 
-        // Avatar circle with initials
-        StackPane avatar = buildAvatar(avatarLabel, "#7c5c3e");
+        avatarPane = Avatar.build(null, "MA", "#7c5c3e"); // placeholder until setUser
 
         // Username + status
         VBox userInfo = new VBox(2);
@@ -105,7 +105,7 @@ public class NavBar {
         """);
         eloBadge.getChildren().add(eloLabel);
 
-        profileChip.getChildren().addAll(avatar, userInfo, eloBadge);
+        profileChip.getChildren().addAll(avatarPane, userInfo, eloBadge);
         profileChip.setOnMouseClicked(e -> controller.onProfileClicked());
         profileChip.setOnMouseEntered(e -> profileChip.setStyle(profileChip.getStyle()
                 .replace("#1e1e1e", "#252525")));
@@ -117,33 +117,18 @@ public class NavBar {
 
     // ── public API ────────────────────────────────────────────────────
 
-    public void setUser(String username, int elo, String initials) {
+    public void setUser(String username, int elo, String initials, String avatarUrl, String bgColor) {
         usernameLabel.setText(username);
         eloLabel.setText(String.valueOf(elo));
-        avatarLabel.setText(initials.length() > 2
+
+        String shownInitials = initials.length() > 2
                 ? initials.substring(0, 2).toUpperCase()
-                : initials.toUpperCase());
+                : initials.toUpperCase();
+
+        StackPane newAvatar = Avatar.build(avatarUrl, shownInitials, bgColor);
+        profileChip.getChildren().set(0, newAvatar); // avatarPane is always index 0
+        avatarPane = newAvatar;
     }
 
     public HBox getView() { return root; }
-
-    // ── helpers ───────────────────────────────────────────────────────
-
-    public static StackPane buildAvatar(Label initials, String bgColor) {
-        StackPane pane = new StackPane();
-        pane.setPrefSize(36, 36);
-        pane.setMinSize(36, 36);
-        pane.setMaxSize(36, 36);
-        pane.setStyle(String.format("""
-            -fx-background-color: %s;
-            -fx-background-radius: 18;
-        """, bgColor));
-        initials.setStyle("""
-            -fx-text-fill: #ffffff;
-            -fx-font-size: 12px;
-            -fx-font-weight: 700;
-        """);
-        pane.getChildren().add(initials);
-        return pane;
-    }
 }

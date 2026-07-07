@@ -1,4 +1,4 @@
-package org.Core.UI.LobbyScreens.Game;
+package org.Core.UI.Game;
 
 import javafx.animation.*;
 import javafx.geometry.Insets;

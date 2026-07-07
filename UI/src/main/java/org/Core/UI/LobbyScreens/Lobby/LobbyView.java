@@ -6,9 +6,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import org.Core.Social.FriendShipClient;
+import org.Core.UI.Game.RecentGames;
 import org.Core.UI.LobbyScreens.Center.HeroPanel;
+import org.Core.UI.LobbyScreens.Friends.Avatar;
 import org.Core.UI.LobbyScreens.Friends.FriendsPanel;
-import org.Core.UI.LobbyScreens.Game.RecentGames;
 import org.Core.UI.LobbyScreens.Profile.NavBar;
 
 
@@ -49,11 +50,9 @@ public class LobbyView {
         root.getChildren().addAll(layout,overlay);
     }
 
-    public void setUser(String username, int elo, String avatarInitials) {
-        navBar.setUser(username, elo, avatarInitials);
+    public void setUser(String username, int elo, String avatarInitials, String avatarUrl) {
+        navBar.setUser(username, elo, avatarInitials, avatarUrl, Avatar.colorFromName(username));
     }
-
-
 
     public void setRecentGames(java.util.List<RecentGames.GameEntry> games) {
         recentGames.setGames(games);

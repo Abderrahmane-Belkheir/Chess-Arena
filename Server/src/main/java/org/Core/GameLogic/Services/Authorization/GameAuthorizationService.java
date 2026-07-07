@@ -6,13 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameOverInfo;
 import org.Core.GameLogic.Api.Dto.MoveOutCome;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
-import org.Core.GameLogic.Api.Dto.MoveResponse;
 import org.Core.GameLogic.Exceptions.GameNotFoundException;
-import org.Core.GameLogic.Exceptions.PlayerTimeExpired;
 import org.Core.GameLogic.Exceptions.WrongTurnException;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.GameSession;
-import org.Core.GameLogic.Persistence.GameMoveRepo;
+import org.Core.GameLogic.Persistence.GameRepo;
 import org.Core.GameLogic.Services.Matchmaking.Events.GameOverEvent;
 import org.Core.GameLogic.Services.Matchmaking.Events.MoveEvent;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
@@ -30,10 +28,11 @@ public class GameAuthorizationService {
 
     private final GameMoveValidation gameMoveValidation;
     private final GameSessionStore gameSessionStore;
-    private final GameMoveRepo gameMoveRepo;
+    private final GameRepo gameRepo;
     private final ApplicationEventPublisher eventPublisher;
 
     private final static long TEN_MINUTES_MS = TimeUnit.MINUTES.toMillis(10);
+    private final static long THEE_MINUTES_MS=TimeUnit.MINUTES.toMillis(3);
 
     @Transactional
     public void Authorize(String userId, MoveRequest request){
@@ -57,19 +56,25 @@ public class GameAuthorizationService {
         Instant now= Instant.now();
         long durationToPlay =Duration.between(session.getLastMoveAt(),now).toMillis();
         playedTime+= durationToPlay;
-        if(TEN_MINUTES_MS<playedTime) throw new PlayerTimeExpired(session.getGameId(),playerColor);
-        // TODO here i should first look for the instance where the board is created
-        //  if its the current continue if not route it to the right instance
+        String opponentId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
+        if(TEN_MINUTES_MS<playedTime){
+            handleTimeOut(userId,opponentId);
+        }
         MoveOutCome outCome=gameMoveValidation.processMove(request);
         gameSessionStore.updateTurnAndPlayedTimeAndLastMoveAt(request.getGameId(),session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK,now,playedTime);
-        String opponentId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
         if(outCome.gameOver()){
             GameOverInfo moverGameOverInfo=outCome.moverGameOverInfo();
-            System.out.println("PUBLISHING GAME OVER TO WINNER "+moverGameOverInfo);
             eventPublisher.publishEvent(new GameOverEvent(userId,moverGameOverInfo));
-        //TODO publish game over to the current player
         }
         eventPublisher.publishEvent(new MoveEvent(opponentId,outCome.opponentPayload()));
+    }
+
+    private void handleTimeOut(String userId,String opponentId){
+        GameOverInfo winner=new GameOverInfo(GameOverInfo.GameResult.WIN, GameOverInfo.EndReason.TIMEOUT);
+        GameOverInfo looser=new GameOverInfo(GameOverInfo.GameResult.LOSS, GameOverInfo.EndReason.TIMEOUT);
+
+        eventPublisher.publishEvent(new GameOverEvent(opponentId,winner));
+        eventPublisher.publishEvent(new GameOverEvent(userId,looser));
     }
 
 }
