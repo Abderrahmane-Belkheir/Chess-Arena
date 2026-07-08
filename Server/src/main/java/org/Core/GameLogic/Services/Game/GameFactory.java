@@ -1,4 +1,4 @@
-package org.Core.GameLogic.Services.Matchmaking;
+package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +9,9 @@ import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Models.Player;
 import org.Core.GameLogic.Persistence.GameRepo;
-import org.Core.GameLogic.Services.Authorization.GameSessionStore;
-import org.Core.GameLogic.Services.Matchmaking.Events.GameCreatedEvent;
+import org.Core.GameLogic.Services.Game.Events.GameCreatedEvent;
+import org.Core.GameLogic.Services.Matchmaking.MatchedPair;
+import org.Core.GameLogic.Services.Matchmaking.QueueEntry;
 import org.Core.GameLogic.Services.MoveValidation.GameSessionRegistry;
 import org.Core.User.Persistence.UserRepo;
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,7 +40,7 @@ public class GameFactory {
         QueueEntry blackQE = gamePair.blackPl();
 
         String gameId = UUID.randomUUID().toString();
-        String fen = Fen.START_POSITION;
+        String fen = Fen.TEST_POSITION;
 
         log.debug("Assigned colors - White: {}, Black: {}",
                 whiteQE.userId(),

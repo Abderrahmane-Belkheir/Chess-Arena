@@ -19,16 +19,19 @@ public class GameMove {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name = "game_id")
     private Game game;
 
     @Enumerated(EnumType.STRING)
     private Color color;
 
-    private Instant playedAt;
+    @Builder.Default
+    private Instant playedAt=Instant.now();
 
-    private String from;
-    private String to;
+    private long timeToPlay;
+
+    private String fromSquare;
+    private String toSquare;
     private String fenAfter;
 
 }

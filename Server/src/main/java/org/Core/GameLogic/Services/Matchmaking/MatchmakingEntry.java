@@ -2,15 +2,12 @@ package org.Core.GameLogic.Services.Matchmaking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.UserSession;
-import org.Core.GameLogic.Models.Color;
-import org.Core.GameLogic.Models.Player;
+
+import org.Core.GameLogic.Services.Game.GameFactory;
 import org.Core.User.Exceptions.UserNotFoundException;
 import org.Core.User.Models.User;
 import org.Core.User.Persistence.UserRepo;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.stylesheets.LinkStyle;
-
-import javax.management.Query;
 import java.util.ArrayList;
 import java.util.List;
 

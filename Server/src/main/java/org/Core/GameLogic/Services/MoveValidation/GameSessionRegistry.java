@@ -24,11 +24,12 @@ public class GameSessionRegistry {
         return Optional.ofNullable(activeSessions.get(gameId));
     }
 
-    protected void removeSession(String gameId) {
+    public void removeSession(String gameId) {
         activeSessions.remove(gameId);
     }
 
     protected boolean isActive(String gameId) {
         return activeSessions.containsKey(gameId);
     }
+
 }

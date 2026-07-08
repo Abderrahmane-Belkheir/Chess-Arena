@@ -87,7 +87,6 @@ public class RecentGames {
         root.getChildren().addAll(header, sep, scroll);
 
         // Load placeholder data — replace with controller.getRecentGames()
-        setGames(placeholderGames());
     }
 
     // ── public API ────────────────────────────────────────────────────
@@ -175,17 +174,6 @@ public class RecentGames {
 
     // ── placeholder data (replace with real match history service) ────
 
-    private List<GameEntry> placeholderGames() {
-        return List.of(
-            new GameEntry("g001", "queens_gambit",  +12, Result.WIN,  "2m ago",    "#7c3e3e"),
-            new GameEntry("g002", "rook_n_roll",     -8, Result.LOSS, "18m ago",   "#7c5c3e"),
-            new GameEntry("g003", "pawnstar",        +9, Result.WIN,  "1h ago",    "#3e5c7c"),
-            new GameEntry("g004", "endgame_emma",    +1, Result.DRAW, "3h ago",    "#3e7c7c"),
-            new GameEntry("g005", "checkmate_chad", +14, Result.WIN,  "5h ago",    "#3e7c5c"),
-            new GameEntry("g006", "bishop_bash",    -11, Result.LOSS, "Yesterday", "#7c3e5c"),
-            new GameEntry("g007", "casual_carl",     +7, Result.WIN,  "Yesterday", "#5c7c3e")
-        );
-    }
 
     private String initials(String username) {
         if (username == null || username.isEmpty()) return "?";

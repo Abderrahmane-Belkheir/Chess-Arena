@@ -38,7 +38,7 @@ public class ChessArenaEntry extends Application {
         stage.show();
         DarkTitleBar.apply(stage, 0x000a0a0a);
         Injector injector=Guice.createInjector(new AppModule(root,getHostServices()));
-     //   injector.getInstance(TokenStorage.class).clearRefreshToken();
+        injector.getInstance(TokenStorage.class).clearRefreshToken();
         injector.getInstance(GameController.class).start();
     }
 

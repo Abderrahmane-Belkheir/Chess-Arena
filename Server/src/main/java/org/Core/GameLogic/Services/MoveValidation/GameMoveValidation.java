@@ -48,7 +48,7 @@ public class GameMoveValidation {
         GameOverResult result=checkGameOver(board);
         MoveResponse opponentPayload=MoveResponse.builder().from(from).to(to).newFen(board.getFen()).gameOverInfo(result.opponentInfo()).build();
         boolean gameOver=result.moverInfo()!=null;
-        return new MoveOutCome(gameOver,opponentPayload,result.moverInfo());
+        return new MoveOutCome(gameOver,board.getFen(),opponentPayload,result.moverInfo());
     }
 
     private GameOverResult checkGameOver(Board board){
@@ -64,7 +64,7 @@ public class GameMoveValidation {
             } else if (board.isStaleMate()) {
                 endReason =GameOverInfo.EndReason.STALEMATE;
             } else if (board.isDraw()) {
-                endReason=GameOverInfo.EndReason.DRAW_AGREEMENT;
+                endReason=GameOverInfo.EndReason.DRAW;
             }
             loserInfo =new GameOverInfo(loserResult,endReason);
             winnerInfo=new GameOverInfo(winnerResult,endReason);

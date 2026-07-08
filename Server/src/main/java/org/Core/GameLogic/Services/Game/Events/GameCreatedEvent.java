@@ -1,4 +1,4 @@
-package org.Core.GameLogic.Services.Matchmaking.Events;
+package org.Core.GameLogic.Services.Game.Events;
 
 import org.Core.GameLogic.Api.Dto.GameFound;
 

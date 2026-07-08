@@ -24,7 +24,12 @@ public class Player {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    @Enumerated(EnumType.STRING)
     private Color playerColor;
+
+    private long timePlayed;
+
+    private int eloGained;
 
     public Player(Color color,User user){
         this.playerColor=color;

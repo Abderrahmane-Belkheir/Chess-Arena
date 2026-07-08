@@ -1,4 +1,4 @@
-package org.Core.GameLogic.Services.Authorization;
+package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
 import org.Core.GameLogic.Models.Color;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,6 +34,10 @@ public class GameSessionStore {
         Map<Object, Object> entries = redis.opsForHash().entries(PREFIX + gameId);
         if (entries.isEmpty()) return Optional.empty();
         return Optional.of(fromMap(entries));
+    }
+
+    public void remove(String gameId){
+        redis.delete(PREFIX+gameId);
     }
 
     public void updateTurnAndPlayedTimeAndLastMoveAt(String gameId, Color color,Instant lastMoveAt,long playedTime){

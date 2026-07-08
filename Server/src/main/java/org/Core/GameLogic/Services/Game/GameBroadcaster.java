@@ -1,13 +1,13 @@
-package org.Core.GameLogic.Services.Matchmaking;
+package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameFound;
 import org.Core.GameLogic.Api.Dto.GameOverInfo;
 import org.Core.GameLogic.Api.Dto.MoveResponse;
-import org.Core.GameLogic.Services.Matchmaking.Events.GameCreatedEvent;
-import org.Core.GameLogic.Services.Matchmaking.Events.GameOverEvent;
-import org.Core.GameLogic.Services.Matchmaking.Events.MoveEvent;
+import org.Core.GameLogic.Services.Game.Events.GameCreatedEvent;
+import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
+import org.Core.GameLogic.Services.Game.Events.MoveEvent;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

@@ -1,0 +1,55 @@
+package org.Core.GameLogic.Services.Game;
+
+import lombok.RequiredArgsConstructor;
+import org.Core.GameLogic.Api.Dto.GameOverInfo;
+import org.Core.GameLogic.Api.Dto.MoveOutCome;
+import org.Core.GameLogic.Models.Color;
+import org.Core.GameLogic.Models.Game;
+import org.Core.GameLogic.Persistence.GameRepo;
+import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
+import org.Core.GameLogic.Services.MoveValidation.GameSessionRegistry;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+
+@Service
+@RequiredArgsConstructor
+public class GameOverHandler {
+
+    private final ApplicationEventPublisher eventPublisher;
+    private final GameRepo gameRepo;
+    private final GameSessionStore gameSessionStore;
+    private final GameSessionRegistry gameSessionRegistry;
+
+
+    public void checkAndHandle(String gameId, String userId,Color playerColor, MoveOutCome outCome) {
+
+        if(outCome.gameOver()){
+            GameOverInfo.EndReason endReason=outCome.moverGameOverInfo().getEndReason();
+            boolean isDraw=endReason== GameOverInfo.EndReason.DRAW||endReason== GameOverInfo.EndReason.DRAW_AGREEMENT;
+            Game.Result result=isDraw? Game.Result.DRAW:playerColor==Color.WHITE? Game.Result.WHITE_WIN: Game.Result.BLACK_WIN;
+            endGame(new EndGame(gameId,result,endReason));
+            eventPublisher.publishEvent(new GameOverEvent(userId,outCome.moverGameOverInfo()));
+    }
+
+}
+
+    public void handleTimeOut(String gameId,String userId,String opponentId,Color opponentColor){
+        Game.Result result= opponentColor==Color.WHITE?Game.Result.WHITE_WIN:Game.Result.BLACK_WIN;
+        endGame(new EndGame(gameId,result, GameOverInfo.EndReason.TIMEOUT));
+        GameOverInfo winner=new GameOverInfo(GameOverInfo.GameResult.WIN, GameOverInfo.EndReason.TIMEOUT);
+        GameOverInfo looser=new GameOverInfo(GameOverInfo.GameResult.LOSS, GameOverInfo.EndReason.TIMEOUT);
+        eventPublisher.publishEvent(new GameOverEvent(opponentId,winner));
+        eventPublisher.publishEvent(new GameOverEvent(userId,looser));
+    }
+
+    private void endGame(EndGame endGame){
+        gameRepo.endGame(endGame.gameId, endGame.result,Game.GameStatus.ENDED,endGame.endReason, Instant.now());
+        gameSessionRegistry.removeSession(endGame.gameId);
+        gameSessionStore.remove(endGame.gameId);
+    }
+
+    record EndGame(String gameId, Game.Result result, GameOverInfo.EndReason endReason){}
+
+}
