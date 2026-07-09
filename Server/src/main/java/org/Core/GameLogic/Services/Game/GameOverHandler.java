@@ -1,6 +1,7 @@
 package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameOverInfo;
 import org.Core.GameLogic.Api.Dto.MoveOutCome;
 import org.Core.GameLogic.Models.Color;
@@ -10,9 +11,12 @@ import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
 import org.Core.GameLogic.Services.MoveValidation.GameSessionRegistry;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GameOverHandler {
@@ -23,7 +27,7 @@ public class GameOverHandler {
     private final GameSessionRegistry gameSessionRegistry;
 
 
-    public void checkAndHandle(String gameId, String userId,Color playerColor, MoveOutCome outCome) {
+    public boolean checkAndHandle(String gameId, String userId,Color playerColor, MoveOutCome outCome) {
 
         if(outCome.gameOver()){
             GameOverInfo.EndReason endReason=outCome.moverGameOverInfo().getEndReason();
@@ -31,17 +35,19 @@ public class GameOverHandler {
             Game.Result result=isDraw? Game.Result.DRAW:playerColor==Color.WHITE? Game.Result.WHITE_WIN: Game.Result.BLACK_WIN;
             endGame(new EndGame(gameId,result,endReason));
             eventPublisher.publishEvent(new GameOverEvent(userId,outCome.moverGameOverInfo()));
+            return true;
     }
-
+        return false;
 }
-
-    public void handleTimeOut(String gameId,String userId,String opponentId,Color opponentColor){
-        Game.Result result= opponentColor==Color.WHITE?Game.Result.WHITE_WIN:Game.Result.BLACK_WIN;
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void handleTimeOut(String gameId,String winnerId,String loserId,Color winnerColor){
+        log.info("HANDLING TIMEOUT WINNER:"+winnerId+" LOSER:"+loserId);
+        Game.Result result= winnerColor==Color.WHITE?Game.Result.WHITE_WIN:Game.Result.BLACK_WIN;
         endGame(new EndGame(gameId,result, GameOverInfo.EndReason.TIMEOUT));
         GameOverInfo winner=new GameOverInfo(GameOverInfo.GameResult.WIN, GameOverInfo.EndReason.TIMEOUT);
         GameOverInfo looser=new GameOverInfo(GameOverInfo.GameResult.LOSS, GameOverInfo.EndReason.TIMEOUT);
-        eventPublisher.publishEvent(new GameOverEvent(opponentId,winner));
-        eventPublisher.publishEvent(new GameOverEvent(userId,looser));
+        eventPublisher.publishEvent(new GameOverEvent(winnerId,winner));
+        eventPublisher.publishEvent(new GameOverEvent(loserId,looser));
     }
 
     private void endGame(EndGame endGame){

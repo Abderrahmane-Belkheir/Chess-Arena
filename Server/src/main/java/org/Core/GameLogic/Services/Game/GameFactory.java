@@ -3,9 +3,10 @@ package org.Core.GameLogic.Services.Game;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameFound;
-import org.Core.GameLogic.Fen;
+import org.Core.GameLogic.Utilities;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.Game;
+import org.Core.GameLogic.Utilities.*;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Models.Player;
 import org.Core.GameLogic.Persistence.GameRepo;
@@ -13,11 +14,14 @@ import org.Core.GameLogic.Services.Game.Events.GameCreatedEvent;
 import org.Core.GameLogic.Services.Matchmaking.MatchedPair;
 import org.Core.GameLogic.Services.Matchmaking.QueueEntry;
 import org.Core.GameLogic.Services.MoveValidation.GameSessionRegistry;
+import org.Core.Scheduling.TimeOutSchedulingService;
 import org.Core.User.Persistence.UserRepo;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.UUID;
 
@@ -26,27 +30,30 @@ import java.util.UUID;
 @Slf4j
 public class GameFactory {
 
+
     private final GameSessionStore gameSessionStore;
     private final GameSessionRegistry gameSessionRegistry;
+    private final GameOverHandler gameOverHandler;
+    private final TimeOutSchedulingService timeOutSchedulingService;
     private final GameRepo gameRepo;
     private final UserRepo userRepo;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public void createGame(MatchedPair matchedPair) {
+    public void createGame(MatchedPair matchedPair,Game.GameType type) {
         GamePair gamePair = assignColorToPlayers(matchedPair);
 
         QueueEntry whiteQE = gamePair.whitePl();
         QueueEntry blackQE = gamePair.blackPl();
 
         String gameId = UUID.randomUUID().toString();
-        String fen = Fen.TEST_POSITION;
+        String fen = Utilities.TEST_POSITION;
 
         log.debug("Assigned colors - White: {}, Black: {}",
                 whiteQE.userId(),
                 blackQE.userId());
 
-        Game game = new Game(gameId, fen);
+        Game game = new Game(gameId, fen,type);
 
         Player whitePl = new Player(Color.WHITE, userRepo.getReferenceById(whiteQE.userId()));
         Player blackPl = new Player(Color.BLACK, userRepo.getReferenceById(blackQE.userId()));
@@ -59,6 +66,7 @@ public class GameFactory {
                 gameId,
                 new GameSession(
                         gameId,
+                        type,
                         whiteQE.userId(),
                         blackQE.userId(),
                         Color.WHITE,
@@ -68,9 +76,9 @@ public class GameFactory {
                         game.getCreatedAt()
                 )
         );
-
         gameSessionRegistry.createSession(gameId, fen);
-
+        long gameDuration=type== Game.GameType.RAPID?Utilities.TEN_MINUTES_MS:Utilities.THREE_MINUTES_MS;
+        timeOutSchedulingService.schedule(gameId,gameDuration,()->gameOverHandler.handleTimeOut(gameId,blackQE.userId(),whiteQE.userId(),Color.BLACK));
         eventPublisher.publishEvent(
                 new GameCreatedEvent(
                         buildFor(blackQE, true, gameId, fen),

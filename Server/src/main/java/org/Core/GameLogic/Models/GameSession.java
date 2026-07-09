@@ -13,6 +13,7 @@ import java.time.Instant;
 @Data
 public class GameSession {
     private String gameId;
+    private Game.GameType type;
     private String whitePlayerId;
     private String blackPlayerId;
     private Color turn;

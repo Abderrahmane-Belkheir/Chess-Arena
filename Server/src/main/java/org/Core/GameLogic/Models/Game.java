@@ -25,6 +25,10 @@ public class Game  {
     private Instant endedAt;
 
     @Enumerated(EnumType.STRING)
+    private GameType type;
+
+
+    @Enumerated(EnumType.STRING)
     private GameStatus status=GameStatus.RUNNING;
 
     @Enumerated(EnumType.STRING)
@@ -38,9 +42,10 @@ public class Game  {
 
     private String fen;
 
-    public Game(String id,String fen){
+    public Game(String id,String fen,GameType type){
         this.id=id;
         this.fen=fen;
+        this.type=type;
     }
 
     public void players(Player white,Player black){
@@ -49,6 +54,7 @@ public class Game  {
         black.setGame(this);
     }
 
+    public enum GameType{RAPID,BLITZ}
     public enum GameStatus{ENDED,RUNNING}
     public enum Result{IN_PROGRESS,WHITE_WIN,BLACK_WIN,DRAW}
 

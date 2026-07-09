@@ -3,6 +3,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.UserSession;
 
+import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Services.Game.GameFactory;
 import org.Core.User.Exceptions.UserNotFoundException;
 import org.Core.User.Models.User;
@@ -31,7 +32,7 @@ public class MatchmakingEntry {
         }
 
             QueueEntry opponent=entries.get(0);
-            gameFactory.createGame(new MatchedPair(opponent,player));
+            gameFactory.createGame(new MatchedPair(opponent,player), Game.GameType.RAPID);
             entries.removeAll(List.of(player,opponent));
 
     }

@@ -2,6 +2,7 @@ package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
 import org.Core.GameLogic.Models.Color;
+import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Models.GameSession;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,7 @@ public class GameSessionStore {
     private Map<String, String> toMap(GameSession session) {
         return Map.of(
                 "gameId",       session.getGameId(),
+                "type",session.getType().name(),
                 "whiteId",      session.getWhitePlayerId(),
                 "blackId",      session.getBlackPlayerId(),
                 "turn",session.getTurn().name(),
@@ -72,6 +74,7 @@ public class GameSessionStore {
     private GameSession fromMap(Map<Object, Object> m) {
         return new GameSession(
                 (String) m.get("gameId"),
+                Game.GameType.valueOf((String) m.get("type")),
                 (String) m.get("whiteId"),
                 (String) m.get("blackId"),
                 Color.valueOf((String)(m.get("turn"))),
