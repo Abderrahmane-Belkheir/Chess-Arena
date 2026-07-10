@@ -1,4 +1,4 @@
 package org.Core.GameLogic.Services.Game;
 
-public class GameAuthorizationService {
+public class GameActionsService {
 }
