@@ -3,7 +3,6 @@ package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.Core.GameLogic.Api.Dto.GameOverInfo;
 import org.Core.GameLogic.Api.Dto.MoveConfirmation;
 import org.Core.GameLogic.Api.Dto.MoveOutCome;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
@@ -15,7 +14,6 @@ import org.Core.GameLogic.Models.GameMove;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Persistence.GameMoveRepo;
 import org.Core.GameLogic.Persistence.GameRepo;
-import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
 import org.Core.GameLogic.Services.Game.Events.MoveConfirmationEvent;
 import org.Core.GameLogic.Services.Game.Events.MoveEvent;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
@@ -33,7 +31,7 @@ import static org.Core.GameLogic.Utilities.THREE_MINUTES_MS;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GameAuthorizationService {
+public class GameLogicService {
 
     private final GameOverHandler gameOverHandler;
     private final GameMoveValidation gameMoveValidation;
@@ -42,20 +40,13 @@ public class GameAuthorizationService {
     private final GameMoveRepo gameMoveRepo;
     private final TimeOutSchedulingService timeOutSchedulingService;
     private final ApplicationEventPublisher eventPublisher;
+    private final GameAuthorizationService authorizationService;
 
 
     @Transactional
     public void AuthorizeAndPersist(String userId, MoveRequest request){
         String gameId=request.getGameId();
-        GameSession session=gameSessionStore.find(gameId).orElse(restoreGameSession(gameId));
-        long gameDuration=session.getType()== Game.GameType.RAPID?TEN_MINUTES_MS:THREE_MINUTES_MS;
-        boolean belongsToGame = session.getWhitePlayerId().equals(userId)
-                || session.getBlackPlayerId().equals(userId);
-        if(!belongsToGame) {
-            log.warn("Player {} attempted to move in game {} they don't belong to",
-                    userId, gameId);
-            throw new GameNotFoundException("Game not found");
-        }
+        GameSession session=authorizationService.AuthorizePlayer(userId,gameId);
         Color playerColor= session.getWhitePlayerId().equals(userId)? Color.WHITE: Color.BLACK;
         if(playerColor!=session.getTurn()){
             //TODO
@@ -67,6 +58,7 @@ public class GameAuthorizationService {
         playedTime+= durationToPlay;
         String opponentId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
         Color opponentColor=playerColor==Color.WHITE?Color.BLACK:Color.WHITE;
+        long gameDuration=session.getType()== Game.GameType.RAPID?TEN_MINUTES_MS:THREE_MINUTES_MS;
         if(gameDuration<playedTime){
             timeOutSchedulingService.cancel(gameId);
             gameOverHandler.handleTimeOut(gameId,opponentId,userId,opponentColor);
@@ -95,10 +87,6 @@ public class GameAuthorizationService {
     }
 
 
-    private GameSession restoreGameSession(String gameId){
-        Game game=gameRepo.findById(gameId).orElseThrow();
-        //TODO restoring the game session
-        return null;
-    }
+
 
 }

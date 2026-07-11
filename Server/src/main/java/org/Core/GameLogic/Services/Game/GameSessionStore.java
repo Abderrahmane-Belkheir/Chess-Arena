@@ -50,11 +50,6 @@ public class GameSessionStore {
         ));
     }
 
-    public void updateStatus(String gameId, String status) {
-        redis.opsForHash().put(PREFIX + gameId, "status", status);
-    }
-
-
     // ── Mapping ───────────────────────────────────────────────────────
 
     private Map<String, String> toMap(GameSession session) {

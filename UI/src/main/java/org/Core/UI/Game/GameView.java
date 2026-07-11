@@ -8,7 +8,7 @@ import com.github.bhlangonijr.chesslib.Square;
 import com.github.bhlangonijr.chesslib.move.Move;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -16,18 +16,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.Core.Auth.DTO.UserSession;
-import org.Core.Game.Events.GameFound;
+import org.Core.Game.Events.*;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import org.Core.Game.Events.GameOverInfo;
-import org.Core.Game.Events.OpponentMove;
-import org.Core.Game.Events.PlayerMove;
 
 
 import java.util.*;
@@ -191,7 +188,7 @@ public class GameView {
     private List<Square>             legalTargets   = new ArrayList<>();
     private String                   lastMoveFrom   = null;
     private String                   lastMoveTo     = null;
-    private boolean                  myTurn;
+    private volatile boolean                  myTurn;
     private String                   fen;
     private final GameFound.Opponent opponent;
     private final Side               mySide;
@@ -248,15 +245,18 @@ public class GameView {
     private final StackPane      drawBtn;
     private final StackPane      resignBtn;
 
+
     private double currentBtnSize = 40;
 
+    private boolean boardLocked=false;
     private final MatchmakingHandler matchmakingHandler;
     private final Runnable onReturnToLobby;
     private final Consumer<PlayerMove> onSendMove;
+    private final Consumer<String> onResign;
 
     // ── Constructor ───────────────────────────────────────────────────
     public GameView(String gameId, String fen, UserSession session, Side playerColor,
-                    GameFound.Opponent opponent,MatchmakingHandler matchmakingHandler,Runnable onReturnToLobby, Consumer<PlayerMove> onSendMove) {
+                    GameFound.Opponent opponent,MatchmakingHandler matchmakingHandler,Runnable onReturnToLobby, Consumer<PlayerMove> onSendMove,Consumer<String> onResign) {
         this.gameId=gameId;
         this.fen      = fen;
         this.session  = session;
@@ -266,6 +266,7 @@ public class GameView {
         this.matchmakingHandler=matchmakingHandler;
         this.onReturnToLobby=onReturnToLobby;
         this.onSendMove=onSendMove;
+        this.onResign=onResign;
         System.out.println("avatar "+opponent.getAvatarUrl());
 
         oppAvatarPane = Avatar.build(opponent.getAvatarUrl(),
@@ -279,7 +280,7 @@ public class GameView {
         myEloLbl   = styledLabel(session.getElo()  + " ELO", TEXT_SECONDARY, 12, 600);
 
         drawBtn   = buildActionBtn("½", DRAW_COLOR,   "Offer draw", () -> System.out.println("Draw offered"));
-        resignBtn = buildActionBtn("⚑", RESIGN_COLOR, "Resign",     () -> System.out.println("Resigned"));
+        resignBtn = buildActionBtn("⚑", RESIGN_COLOR, "Resign",    this::confirmResign);
 
         buildLayout();
         attachResizeListeners();
@@ -300,8 +301,8 @@ public class GameView {
 
     public void applyOpponentMove(OpponentMove gameMove) {
         Platform.runLater(() -> {
-            Square from = Square.fromValue(gameMove.getFrom().toUpperCase());
-            Square to   = Square.fromValue(gameMove.getTo().toUpperCase());
+            Square from = Square.fromValue(gameMove.from().toUpperCase());
+            Square to   = Square.fromValue(gameMove.to().toUpperCase());
 
             animateMove(from, to, () -> {
                 Move move = new Move(from, to);
@@ -311,33 +312,46 @@ public class GameView {
                 lastMoveTo   = to.value().toLowerCase();
                 redrawSquare(lastMoveFrom);
                 redrawSquare(lastMoveTo);
-                if(gameMove.getGameOverInfo()!=null){
-                    showGameOverCard(gameMove.getGameOverInfo());
-                };
-
-                myTurn = true;
+                this.fen = board.getFen();
                 refreshTurnIndicators();
+                myTurn = true;
+                if(gameMove.gameOverInfo()!=null){
+                    showGameOverCard(gameMove.gameOverInfo());
+                }
             });
         });
+    }
+    public void applyMoveConfirmation(MoveConfirmation confirmation) {
+        Platform.runLater(() -> {
+            syncClocks(confirmation.myRemainingMs(), confirmation.oppRemainingMs());
+
+            if (confirmation.fen() != null && !confirmation.fen().equals(fen)) {
+                renderFromFen(confirmation.fen());
+            }
+
+            if (confirmation.gameOverInfo() != null) {
+                showGameOverCard(confirmation.gameOverInfo());
+            }
+        });
+    }
+
+    private void syncClocks(long myRemainingMs, long oppRemainingMs) {
+        myTimeSeconds  = (int) (myRemainingMs / 1000);
+        oppTimeSeconds = (int) (oppRemainingMs / 1000);
+        myClockLabel.setText(formatTime(myTimeSeconds));
+        oppClockLabel.setText(formatTime(oppTimeSeconds));
     }
 
     public void gameOver(GameOverInfo gameOverInfo){
         showGameOverCard(gameOverInfo);
     }
+
     private void showGameOverCard(GameOverInfo info) {
         Platform.runLater(() -> {
+            disableButtons();
             stopClocks();
             session.setElo(info.getNewElo());
             GameOverCard card = new GameOverCard(info, session, boardWrap,()->matchmakingHandler.startGameSearching(root), onReturnToLobby);
-        });
-    }
-
-    public void updateClocks(String myTime, String oppTime) {
-        Platform.runLater(() -> {
-            myTimeSeconds  = parseTime(myTime);
-            oppTimeSeconds = parseTime(oppTime);
-            myClockLabel.setText(myTime);
-            oppClockLabel.setText(oppTime);
         });
     }
 
@@ -376,16 +390,8 @@ public class GameView {
         return s < 10 ? (m + ":0" + s) : (m + ":" + s);
     }
 
-    private int parseTime(String time) {
-        try {
-            String[] parts = time.split(":");
-            int m = Integer.parseInt(parts[0].trim());
-            int s = Integer.parseInt(parts[1].trim());
-            return m * 60 + s;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
+
+
 
     // ── Turn indicators (new) ──────────────────────────────────────────
 
@@ -771,13 +777,6 @@ public class GameView {
             iv.setPreserveRatio(true);
             iv.setSmooth(true);
             iv.setMouseTransparent(true);
-
-//            DropShadow shadow = new DropShadow();
-//            shadow.setColor(Color.color(0, 0, 0, 0.45));
-//            shadow.setRadius(6);
-//            shadow.setOffsetY(2);
-//            iv.setEffect(shadow);
-
             StackPane sq = squares[row][col];
             iv.fitWidthProperty().bind(sq.widthProperty().subtract(8));
             iv.fitHeightProperty().bind(sq.heightProperty().subtract(8));
@@ -916,6 +915,7 @@ public class GameView {
     // ── Click & move logic ────────────────────────────────────────────
 
     private void handleSquareClick(int row, int col) {
+        if(boardLocked) return;
         Square clicked = rowColToSquare(row, col);
 
         if (selectedSquare == null) {
@@ -966,6 +966,7 @@ public class GameView {
             lastMoveTo   = to;
             redrawSquare(from);
             redrawSquare(to);
+            this.fen=board.getFen();
             refreshTurnIndicators();
             onSendMove.accept(new PlayerMove(gameId,from,to));
         });
@@ -1116,6 +1117,21 @@ public class GameView {
         clockLabel.setAlignment(Pos.CENTER);
         box.getChildren().add(clockLabel);
         return box;
+    }
+
+    private void disableButtons(){
+        drawBtn.setVisible(false);   drawBtn.setManaged(false);
+        resignBtn.setVisible(false); resignBtn.setManaged(false);
+    }
+    private void confirmResign() {
+        new ResignConfirmCard(root, () -> {
+            stopClocks();
+            onResign.accept(gameId);
+            boardLocked = true;
+           disableButtons();
+        },()->{
+            if(myTurn&&boardLocked) boardLocked=false;
+        });
     }
 
     private StackPane buildActionBtn(String symbol, String color, String tooltip, Runnable action) {

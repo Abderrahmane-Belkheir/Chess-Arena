@@ -1,11 +1,8 @@
 package org.Core.Game.Events;
 
-import lombok.Data;
 
-@Data
-public class OpponentMove {
-    private GameOverInfo gameOverInfo;
-    private String from;
-    private String to;
-    private String newFen;
-}
+public record OpponentMove (
+     String from,
+     String to,
+     String newFen,
+     GameOverInfo gameOverInfo){}

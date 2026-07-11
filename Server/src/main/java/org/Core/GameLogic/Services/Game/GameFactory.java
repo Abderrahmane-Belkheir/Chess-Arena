@@ -20,8 +20,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.UUID;
 
@@ -47,7 +45,7 @@ public class GameFactory {
         QueueEntry blackQE = gamePair.blackPl();
 
         String gameId = UUID.randomUUID().toString();
-        String fen = Utilities.TEST_POSITION;
+        String fen = Utilities.START_POSITION;
 
         log.debug("Assigned colors - White: {}, Black: {}",
                 whiteQE.userId(),

@@ -3,7 +3,6 @@ package org.Core.GameLogic.Services.Game;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameOverInfo;
-import org.Core.GameLogic.Api.Dto.MoveOutCome;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Persistence.GameRepo;
@@ -27,27 +26,21 @@ public class GameOverHandler {
     private final GameSessionRegistry gameSessionRegistry;
 
 
-    public boolean checkAndHandle(String gameId, String userId,Color playerColor, MoveOutCome outCome) {
+    public void handle(String gameId, Color winnerColor, GameOverInfo.EndReason endReason) {
 
-        if(outCome.gameOver()){
-            GameOverInfo.EndReason endReason=outCome.moverGameOverInfo().getEndReason();
             boolean isDraw=endReason== GameOverInfo.EndReason.DRAW||endReason== GameOverInfo.EndReason.DRAW_AGREEMENT;
-            Game.Result result=isDraw? Game.Result.DRAW:playerColor==Color.WHITE? Game.Result.WHITE_WIN: Game.Result.BLACK_WIN;
+            Game.Result result=isDraw? Game.Result.DRAW: winnerColor ==Color.WHITE? Game.Result.WHITE_WIN: Game.Result.BLACK_WIN;
             endGame(new EndGame(gameId,result,endReason));
-            eventPublisher.publishEvent(new GameOverEvent(userId,outCome.moverGameOverInfo()));
-            return true;
-    }
-        return false;
 }
+
     @Transactional(propagation = Propagation.REQUIRED)
     public void handleTimeOut(String gameId,String winnerId,String loserId,Color winnerColor){
         log.info("HANDLING TIMEOUT WINNER:"+winnerId+" LOSER:"+loserId);
         Game.Result result= winnerColor==Color.WHITE?Game.Result.WHITE_WIN:Game.Result.BLACK_WIN;
         endGame(new EndGame(gameId,result, GameOverInfo.EndReason.TIMEOUT));
-        GameOverInfo winner=new GameOverInfo(GameOverInfo.GameResult.WIN, GameOverInfo.EndReason.TIMEOUT);
-        GameOverInfo looser=new GameOverInfo(GameOverInfo.GameResult.LOSS, GameOverInfo.EndReason.TIMEOUT);
-        eventPublisher.publishEvent(new GameOverEvent(winnerId,winner));
-        eventPublisher.publishEvent(new GameOverEvent(loserId,looser));
+        GameOverInfo winner=new GameOverInfo(winnerId,GameOverInfo.GameResult.WIN, GameOverInfo.EndReason.TIMEOUT);
+        GameOverInfo looser=new GameOverInfo(loserId,GameOverInfo.GameResult.LOSS, GameOverInfo.EndReason.TIMEOUT);
+        eventPublisher.publishEvent(new GameOverEvent(looser,winner));
     }
 
     private void endGame(EndGame endGame){

@@ -8,6 +8,8 @@ import org.Core.GameLogic.Api.Dto.*;
 import org.Core.GameLogic.Exceptions.IllegalMoveException;
 import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Persistence.GameRepo;
+import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
+import org.Core.GameLogic.Services.Game.GameOverHandler;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,13 +47,20 @@ public class GameMoveValidation {
             throw new IllegalMoveException("Illegal move: " + from + " → " + to);
         }
         board.doMove(move);
-        GameOverResult result=checkGameOver(board);
-        MoveResponse opponentPayload=MoveResponse.builder().from(from).to(to).newFen(board.getFen()).gameOverInfo(result.opponentInfo()).build();
-        boolean gameOver=result.moverInfo()!=null;
-        return new MoveOutCome(gameOver,board.getFen(),opponentPayload,result.moverInfo());
+        GameOverEvent result=checkGameOver(board);
+        boolean gameOver=result.playerA()!=null;
+        GameOverInfo playerGameOverInfo=null;
+        GameOverInfo opponentGameOverInfo=null;
+        if(gameOver){
+            opponentGameOverInfo=result.playerA().getResult()== GameOverInfo.GameResult.LOSS?result.playerA():result.playerB();
+            playerGameOverInfo=result.playerA().getResult()== GameOverInfo.GameResult.WIN?result.playerA():result.playerB();
+        }
+        MoveResponse opponentPayload=new MoveResponse(from,to,board.getFen(),opponentGameOverInfo);
+
+        return new MoveOutCome(gameOver,board.getFen(),opponentPayload,playerGameOverInfo);
     }
 
-    private GameOverResult checkGameOver(Board board){
+    private GameOverEvent checkGameOver(Board board){
         boolean gameOver=board.isMated()||board.isStaleMate()||board.isDraw();
         GameOverInfo loserInfo =null;
         GameOverInfo winnerInfo=null;
@@ -70,7 +79,7 @@ public class GameMoveValidation {
             winnerInfo=new GameOverInfo(winnerResult,endReason);
         }
 
-        return new GameOverResult(winnerInfo,loserInfo);
+        return new GameOverEvent(winnerInfo,loserInfo);
     }
 
 }

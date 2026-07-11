@@ -1,4 +1,7 @@
 package org.Core.GameLogic.Services.Game.Events;
 
-public record MoveConfirmationEvent() {
+import org.Core.GameLogic.Api.Dto.GameOverInfo;
+import org.Core.GameLogic.Api.Dto.MoveConfirmation;
+
+public record MoveConfirmationEvent(String userId, MoveConfirmation confirmation) {
 }
