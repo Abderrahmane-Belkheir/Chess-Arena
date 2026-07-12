@@ -19,7 +19,6 @@ import org.Core.Auth.DTO.UserSession;
 import org.Core.Game.Events.*;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javafx.application.Platform;
@@ -57,6 +56,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
+import org.Core.Game.Services.GameActions;
+import org.Core.Game.Services.GameSessionService;
 import org.Core.UI.LobbyScreens.Friends.Avatar;
 
 
@@ -248,15 +249,14 @@ public class GameView {
 
     private double currentBtnSize = 40;
 
+    private boolean drawCooldownActive;
     private boolean boardLocked=false;
     private final MatchmakingHandler matchmakingHandler;
     private final Runnable onReturnToLobby;
-    private final Consumer<PlayerMove> onSendMove;
-    private final Consumer<String> onResign;
 
     // ── Constructor ───────────────────────────────────────────────────
     public GameView(String gameId, String fen, UserSession session, Side playerColor,
-                    GameFound.Opponent opponent,MatchmakingHandler matchmakingHandler,Runnable onReturnToLobby, Consumer<PlayerMove> onSendMove,Consumer<String> onResign) {
+                    GameFound.Opponent opponent,MatchmakingHandler matchmakingHandler,Runnable onReturnToLobby) {
         this.gameId=gameId;
         this.fen      = fen;
         this.session  = session;
@@ -265,8 +265,6 @@ public class GameView {
         this.myTurn   = mySide == Side.WHITE;
         this.matchmakingHandler=matchmakingHandler;
         this.onReturnToLobby=onReturnToLobby;
-        this.onSendMove=onSendMove;
-        this.onResign=onResign;
         System.out.println("avatar "+opponent.getAvatarUrl());
 
         oppAvatarPane = Avatar.build(opponent.getAvatarUrl(),
@@ -279,9 +277,11 @@ public class GameView {
         oppEloLbl  = styledLabel(opponent.getElo() + " ELO", TEXT_SECONDARY, 12, 600);
         myEloLbl   = styledLabel(session.getElo()  + " ELO", TEXT_SECONDARY, 12, 600);
 
-        drawBtn   = buildActionBtn("½", DRAW_COLOR,   "Offer draw", () -> System.out.println("Draw offered"));
+        drawBtn   = buildActionBtn("½", DRAW_COLOR,   "Offer draw", this::offerDraw);
         resignBtn = buildActionBtn("⚑", RESIGN_COLOR, "Resign",    this::confirmResign);
-
+        if(mySide==Side.WHITE){
+            drawBtn.setDisable(true);
+        }
         buildLayout();
         attachResizeListeners();
         renderFromFen(fen);
@@ -315,6 +315,8 @@ public class GameView {
                 this.fen = board.getFen();
                 refreshTurnIndicators();
                 myTurn = true;
+                drawBtn.setDisable(true);
+                drawBtn.setOpacity(0.4);
                 if(gameMove.gameOverInfo()!=null){
                     showGameOverCard(gameMove.gameOverInfo());
                 }
@@ -323,8 +325,9 @@ public class GameView {
     }
     public void applyMoveConfirmation(MoveConfirmation confirmation) {
         Platform.runLater(() -> {
+            drawBtn.setDisable(false);
+            drawBtn.setOpacity(1.0);
             syncClocks(confirmation.myRemainingMs(), confirmation.oppRemainingMs());
-
             if (confirmation.fen() != null && !confirmation.fen().equals(fen)) {
                 renderFromFen(confirmation.fen());
             }
@@ -340,6 +343,14 @@ public class GameView {
         oppTimeSeconds = (int) (oppRemainingMs / 1000);
         myClockLabel.setText(formatTime(myTimeSeconds));
         oppClockLabel.setText(formatTime(oppTimeSeconds));
+    }
+
+    public void showDrawOffered(){
+        Platform.runLater(() ->new DrawOfferReceivedCard(
+                root, () ->{
+         GameActions.onAcceptDraw.accept(gameId);
+         disableButtons();
+    },null));
     }
 
     public void gameOver(GameOverInfo gameOverInfo){
@@ -408,6 +419,7 @@ public class GameView {
         }
         styleAvatarRing(myAvatarPane,  myTurn);
         styleAvatarRing(oppAvatarPane, !myTurn);
+        updateDrawButtonState();
     }
 
     private double currentClockFont() {
@@ -968,7 +980,7 @@ public class GameView {
             redrawSquare(to);
             this.fen=board.getFen();
             refreshTurnIndicators();
-            onSendMove.accept(new PlayerMove(gameId,from,to));
+            GameActions.onMove.accept(new PlayerMove(gameId,from,to));
         });
     }
     // ── Highlights ────────────────────────────────────────────────────
@@ -1120,15 +1132,41 @@ public class GameView {
     }
 
     private void disableButtons(){
-        drawBtn.setVisible(false);   drawBtn.setManaged(false);
-        resignBtn.setVisible(false); resignBtn.setManaged(false);
+        drawBtn.setDisable(true);
+        resignBtn.setDisable(true);
+        drawBtn.setOpacity(0.4);
+        drawBtn.setOpacity(0.4);
     }
+    private void updateDrawButtonState() {
+        boolean disabled = myTurn || drawCooldownActive;
+        drawBtn.setDisable(disabled);
+        drawBtn.setOpacity(disabled ? 0.4 : 1.0);
+    }
+
+    private void startDrawCooldown() {
+        drawCooldownActive = true;
+        updateDrawButtonState();
+        PauseTransition cooldown = new PauseTransition(Duration.seconds(60));
+        cooldown.setOnFinished(e -> {
+            drawCooldownActive = false;
+            updateDrawButtonState();
+        });
+        cooldown.play();
+    }
+
+    private void offerDraw(){
+        new DrawOfferConfirmCard(root, ()->{
+            GameActions.onOfferDraw.accept(gameId);
+            startDrawCooldown();
+        });
+    }
+
     private void confirmResign() {
         new ResignConfirmCard(root, () -> {
             stopClocks();
-            onResign.accept(gameId);
+            GameActions.onResign.accept(gameId);
             boardLocked = true;
-           disableButtons();
+            disableButtons();
         },()->{
             if(myTurn&&boardLocked) boardLocked=false;
         });
@@ -1143,6 +1181,7 @@ public class GameView {
         Tooltip.install(btn, new Tooltip(tooltip));
 
         btn.setOnMouseEntered(e -> {
+            if (btn.isDisabled()) return;
             btn.setStyle(actionBtnStyle(true));
             ScaleTransition st = new ScaleTransition(Duration.millis(120), btn);
             st.setToX(1.08);

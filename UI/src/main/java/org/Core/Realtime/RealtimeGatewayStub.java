@@ -4,10 +4,7 @@ package org.Core.Realtime;
 import com.google.inject.Inject;
 import lombok.Getter;
 import org.Core.Auth.TokenStorage;
-import org.Core.Game.Events.GameFound;
-import org.Core.Game.Events.GameOverInfo;
-import org.Core.Game.Events.MoveConfirmation;
-import org.Core.Game.Events.OpponentMove;
+import org.Core.Game.Events.*;
 import org.Core.Config.GameEventPublisher;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -99,6 +96,7 @@ public class RealtimeGatewayStub implements RealtimeGateway {
         subscribeToSingle(s, "/user/queue/game.move", OpponentMove.class);
         subscribeToSingle(s,"/user/queue/game.over", GameOverInfo.class);
         subscribeToSingle(s,"/user/queue/game.move.confirm", MoveConfirmation.class);
+        subscribeToSingle(s,"/user/queue/game.draw.offered", DrawOfferReceived.class);
     }
 
     private  void subscribeToSingle(StompSession s,String destination,Class<?> clazz){

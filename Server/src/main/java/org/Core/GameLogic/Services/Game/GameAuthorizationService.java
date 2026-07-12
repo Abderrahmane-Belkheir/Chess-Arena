@@ -23,7 +23,6 @@ public class GameAuthorizationService {
 
     public GameSession AuthorizePlayer(String userId,String gameId){
     GameSession session=gameSessionStore.find(gameId).orElse(restoreGameSession(gameId));
-    long gameDuration=session.getType()== Game.GameType.RAPID?TEN_MINUTES_MS:THREE_MINUTES_MS;
     boolean belongsToGame = session.getWhitePlayerId().equals(userId)
             || session.getBlackPlayerId().equals(userId);
         if(!belongsToGame) {

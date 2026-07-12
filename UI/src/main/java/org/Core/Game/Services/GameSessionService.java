@@ -3,21 +3,16 @@ package org.Core.Game.Services;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import javafx.application.Platform;
-import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Events.*;
-import org.Core.Realtime.RealtimeGatewayStub;
 import org.Core.UI.Game.GameView;
 import org.Core.UI.Game.MatchmakingHandler;
 import org.Core.UI.OpeningScreens.GameController;
-import org.Core.UI.OpeningScreens.GameControllerStub;
 import org.Core.UI.Shared.ViewNavigator;
-import org.springframework.messaging.simp.stomp.StompSession;
 
 
 import java.io.IOException;
-import java.util.function.Consumer;
 
 
 public class GameSessionService{
@@ -28,7 +23,6 @@ public class GameSessionService{
     private final UserSessionManager userSessionManager;
     private final MatchmakingHandler matchmakingHandler;
     private final GameController gameController;
-    private final StompSession stompSession=RealtimeGatewayStub.getSession();
 
     @Inject
     public GameSessionService(UserSessionManager userSessionManager, ViewNavigator viewNavigator, MatchmakingHandler matchmakingHandler, GameController gameController){
@@ -45,7 +39,7 @@ public class GameSessionService{
             try {
                 this.gameView = new GameView(event.getId(),event.getFen(),
                         userSessionManager.getUserSession(false),
-                        event.getMySide(),event.getOpponent(),matchmakingHandler,returnToLobby(),sendPlayerMove(),sendResign());
+                        event.getMySide(),event.getOpponent(),matchmakingHandler,returnToLobby());
 
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
@@ -59,17 +53,9 @@ public class GameSessionService{
         return gameController::transitionToLobby;
     }
 
-    public Consumer<PlayerMove> sendPlayerMove() {
-        return (move)-> RealtimeGatewayStub.getSession().send("/app/game.move",move);
-    }
-
-    public Consumer<String> sendResign(){
-        return (gameId)->RealtimeGatewayStub.getSession().send("/app/game.resign",new ResignRequest(gameId));
-    }
-
     @Subscribe
-    public void onOpponentMove(OpponentMove event){
-            gameView.applyOpponentMove(event);
+    public void onOpponentMove(OpponentMove move){
+            gameView.applyOpponentMove(move);
     }
 
     @Subscribe
@@ -81,6 +67,14 @@ public class GameSessionService{
     public void onConfirmMove(MoveConfirmation moveConfirmation){
         gameView.applyMoveConfirmation(moveConfirmation);
     }
+
+    @Subscribe
+    public void onDrawOffered(DrawOfferReceived drawOfferReceived){
+        gameView.showDrawOffered();
+    }
+
+
+
 }
 
 

@@ -1,5 +1,6 @@
 package org.Core.GameLogic.Services.Game;
 
+import io.lettuce.core.dynamic.annotation.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameOverInfo;
@@ -26,7 +27,7 @@ public class GameOverHandler {
     private final GameSessionRegistry gameSessionRegistry;
 
 
-    public void handle(String gameId, Color winnerColor, GameOverInfo.EndReason endReason) {
+    public void handle(String gameId,  Color winnerColor, GameOverInfo.EndReason endReason) {
 
             boolean isDraw=endReason== GameOverInfo.EndReason.DRAW||endReason== GameOverInfo.EndReason.DRAW_AGREEMENT;
             Game.Result result=isDraw? Game.Result.DRAW: winnerColor ==Color.WHITE? Game.Result.WHITE_WIN: Game.Result.BLACK_WIN;

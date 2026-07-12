@@ -3,6 +3,6 @@ package org.Core.GameLogic.Api.Dto;
 import lombok.Data;
 
 @Data
-public class ResignRequest {
+public class GameActionRequest {
     private String gameId;
 }

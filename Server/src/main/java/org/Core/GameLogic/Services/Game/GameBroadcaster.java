@@ -6,10 +6,7 @@ import org.Core.GameLogic.Api.Dto.GameFound;
 import org.Core.GameLogic.Api.Dto.GameOverInfo;
 import org.Core.GameLogic.Api.Dto.MoveConfirmation;
 import org.Core.GameLogic.Api.Dto.MoveResponse;
-import org.Core.GameLogic.Services.Game.Events.GameCreatedEvent;
-import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
-import org.Core.GameLogic.Services.Game.Events.MoveConfirmationEvent;
-import org.Core.GameLogic.Services.Game.Events.MoveEvent;
+import org.Core.GameLogic.Services.Game.Events.*;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -44,6 +41,11 @@ public class GameBroadcaster {
     public void broadCastGameFound(GameCreatedEvent event){
         handleGameFound(event.whiteId(),event.whiteSession(),event.forWhite());
         handleGameFound(event.blackId(),event.blackSession(),event.forBlack());
+    }
+
+    @TransactionalEventListener
+    public void broadCastDrawOffered(DrawOfferEvent event){
+        handleDrawOffered(event.getUserId(),event);
     }
 
     @TransactionalEventListener
@@ -88,6 +90,13 @@ public class GameBroadcaster {
         );
     }
 
+    private void handleDrawOffered(String userId,DrawOfferEvent event){
+        messagingTemplate.convertAndSendToUser(
+                userId,
+                "/queue/game.draw.offered",
+                event
+        );
+    }
 
     private SimpMessageHeaderAccessor setAccessor(String sessionId){
         SimpMessageHeaderAccessor accessor =

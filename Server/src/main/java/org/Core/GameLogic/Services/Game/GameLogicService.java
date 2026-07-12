@@ -41,6 +41,7 @@ public class GameLogicService {
     private final TimeOutSchedulingService timeOutSchedulingService;
     private final ApplicationEventPublisher eventPublisher;
     private final GameAuthorizationService authorizationService;
+    private final DrawOfferStore drawOfferStore;
 
 
     @Transactional
@@ -83,7 +84,7 @@ public class GameLogicService {
         eventPublisher.publishEvent(new MoveEvent(opponentId,outCome.opponentPayload()));
         eventPublisher.publishEvent(new MoveConfirmationEvent(userId,
                 new MoveConfirmation(newFen, gameDuration-playedTime, gameDuration-opponentPlayedTime,outCome.moverGameOverEvent())));
-
+        drawOfferStore.clear(gameId);
     }
 
 

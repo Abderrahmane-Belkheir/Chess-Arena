@@ -56,7 +56,6 @@ public class GameMoveValidation {
             playerGameOverInfo=result.playerA().getResult()== GameOverInfo.GameResult.WIN?result.playerA():result.playerB();
         }
         MoveResponse opponentPayload=new MoveResponse(from,to,board.getFen(),opponentGameOverInfo);
-
         return new MoveOutCome(gameOver,board.getFen(),opponentPayload,playerGameOverInfo);
     }
 
