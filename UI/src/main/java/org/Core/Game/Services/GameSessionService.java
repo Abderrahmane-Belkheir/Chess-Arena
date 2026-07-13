@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import lombok.Getter;
 import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Events.*;
+import org.Core.Realtime.RealtimeGatewayStub;
 import org.Core.UI.Game.GameView;
 import org.Core.UI.Game.MatchmakingHandler;
 import org.Core.UI.OpeningScreens.GameController;
@@ -37,7 +38,7 @@ public class GameSessionService{
     public void onMatchFound(GameFound event){
         Platform.runLater(()-> {
             try {
-                this.gameView = new GameView(event.getId(),event.getFen(),
+                this.gameView = new GameView(false,event.getId(),event.getFen(),
                         userSessionManager.getUserSession(false),
                         event.getMySide(),event.getOpponent(),matchmakingHandler,returnToLobby());
 

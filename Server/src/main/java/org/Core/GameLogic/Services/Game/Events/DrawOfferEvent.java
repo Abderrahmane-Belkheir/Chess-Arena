@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DrawOfferEvent {
+public final class DrawOfferEvent extends GameEvent {
     private String userId;
 }

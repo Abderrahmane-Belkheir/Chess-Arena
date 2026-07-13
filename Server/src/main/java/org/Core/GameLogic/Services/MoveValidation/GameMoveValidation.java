@@ -9,8 +9,12 @@ import org.Core.GameLogic.Exceptions.IllegalMoveException;
 import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Persistence.GameRepo;
 import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
-import org.Core.GameLogic.Services.Game.GameOverHandler;
+import org.Core.GameLogic.Services.Game.Events.GameOverInfo;
+import org.Core.GameLogic.Services.Game.Events.MoveResponse;
 import org.springframework.stereotype.Service;
+
+
+
 
 @Service
 @RequiredArgsConstructor

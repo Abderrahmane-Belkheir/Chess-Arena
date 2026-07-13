@@ -4,8 +4,10 @@ package org.Core.Realtime;
 import com.google.inject.Inject;
 import lombok.Getter;
 import org.Core.Auth.TokenStorage;
+import org.Core.Config.AppConfig;
 import org.Core.Game.Events.*;
 import org.Core.Config.GameEventPublisher;
+import org.Core.UI.Game.GameView;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -17,6 +19,7 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class RealtimeGatewayStub implements RealtimeGateway {
@@ -26,15 +29,19 @@ public class RealtimeGatewayStub implements RealtimeGateway {
 
     private final GameEventPublisher appEvents;
     private final TokenStorage tokenStorage;
+    private final AppConfig appConfig;
 
     private final ScheduledExecutorService executorService= Executors.newScheduledThreadPool(1);
     private  ScheduledFuture<?> lobbyPinging;
 
+    private StompSession.Subscription matchmakingSubscription;
+    private StompSession.Subscription gameEventsSubscription;
 
     @Inject
-    public RealtimeGatewayStub(TokenStorage tokenStorage, GameEventPublisher appEvents){
+    public RealtimeGatewayStub(TokenStorage tokenStorage, GameEventPublisher appEvents,AppConfig appConfig){
         this.tokenStorage=tokenStorage;
         this.appEvents=appEvents;
+        this.appConfig=appConfig;
     }
 
     @Override
@@ -62,7 +69,6 @@ public class RealtimeGatewayStub implements RealtimeGateway {
                 .orTimeout(10, TimeUnit.SECONDS)
                 .thenAccept(s -> {
                     this.session = s;
-                    subscribe(s);
                 })
                 .exceptionally(ex -> {
                     System.err.println(">>> Connection failed: " + ex.getMessage());
@@ -82,44 +88,59 @@ public class RealtimeGatewayStub implements RealtimeGateway {
     @Override
     public void startGameSearching(){
         session.send("/app/start.search","");
+        subscribe(session, "/user/queue/matchmaking", GameFound.class);
     }
 
 
     @Override
     public void stopGameSearching(){
         session.send("/app/stop.search","");
+        if (matchmakingSubscription != null) {
+            matchmakingSubscription.unsubscribe();
+            matchmakingSubscription = null;
+        }
     }
 
+    private void subscribe(StompSession session, String destination, Class<?> payloadType) {
 
-    private void subscribe(StompSession s){
-        subscribeToSingle(s, "/user/queue/matchmaking", GameFound.class);
-        subscribeToSingle(s, "/user/queue/game.move", OpponentMove.class);
-        subscribeToSingle(s,"/user/queue/game.over", GameOverInfo.class);
-        subscribeToSingle(s,"/user/queue/game.move.confirm", MoveConfirmation.class);
-        subscribeToSingle(s,"/user/queue/game.draw.offered", DrawOfferReceived.class);
-    }
-
-    private  void subscribeToSingle(StompSession s,String destination,Class<?> clazz){
-        s.subscribe(
+        StompSession.Subscription subscription = session.subscribe(
                 destination,
                 new StompFrameHandler() {
 
                     @Override
                     public Type getPayloadType(StompHeaders headers) {
-                        return clazz;
+                        return payloadType;
                     }
 
                     @Override
-                    public void handleFrame(
-                            StompHeaders headers,
-                            Object payload) {
-                        if (!(payload.getClass()==clazz)) {
+                    public void handleFrame(StompHeaders headers, Object payload) {
+
+                        if (!payloadType.isInstance(payload)) {
                             System.err.println("Unexpected payload type: " + payload.getClass());
                             return;
                         }
+
+                        if (payload instanceof GameFound) {
+
+                            // Subscribe to game events
+                            subscribe(session, "/user/queue/game.events", GameEvent.class);
+
+                            // Stop listening for matchmaking
+                            if (matchmakingSubscription != null) {
+                                matchmakingSubscription.unsubscribe();
+                                matchmakingSubscription = null;
+                            }
+                        }
+
                         appEvents.post(payload);
                     }
                 });
+
+        if (payloadType == GameFound.class) {
+            matchmakingSubscription = subscription;
+        } else if (payloadType == GameEvent.class) {
+            gameEventsSubscription = subscription;
+        }
     }
 
 }

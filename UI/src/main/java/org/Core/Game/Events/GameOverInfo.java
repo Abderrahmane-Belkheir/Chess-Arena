@@ -7,10 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class GameOverInfo {
+public final class GameOverInfo extends GameEvent {
     private GameResult result;
     private EndReason endReason;
     private int newElo;

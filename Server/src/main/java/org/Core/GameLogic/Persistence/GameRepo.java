@@ -1,6 +1,6 @@
 package org.Core.GameLogic.Persistence;
 
-import org.Core.GameLogic.Api.Dto.GameOverInfo;
+import org.Core.GameLogic.Services.Game.Events.GameOverInfo;
 import org.Core.GameLogic.Models.Game;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -254,9 +254,12 @@ public class GameView {
     private final MatchmakingHandler matchmakingHandler;
     private final Runnable onReturnToLobby;
 
+    private boolean specatorMode;
+
     // ── Constructor ───────────────────────────────────────────────────
-    public GameView(String gameId, String fen, UserSession session, Side playerColor,
+    public GameView(boolean spectatorMode,String gameId, String fen, UserSession session, Side playerColor,
                     GameFound.Opponent opponent,MatchmakingHandler matchmakingHandler,Runnable onReturnToLobby) {
+        this.specatorMode=spectatorMode;
         this.gameId=gameId;
         this.fen      = fen;
         this.session  = session;
@@ -301,8 +304,8 @@ public class GameView {
 
     public void applyOpponentMove(OpponentMove gameMove) {
         Platform.runLater(() -> {
-            Square from = Square.fromValue(gameMove.from().toUpperCase());
-            Square to   = Square.fromValue(gameMove.to().toUpperCase());
+            Square from = Square.fromValue(gameMove.getFrom().toUpperCase());
+            Square to   = Square.fromValue(gameMove.getTo().toUpperCase());
 
             animateMove(from, to, () -> {
                 Move move = new Move(from, to);
@@ -317,8 +320,8 @@ public class GameView {
                 myTurn = true;
                 drawBtn.setDisable(true);
                 drawBtn.setOpacity(0.4);
-                if(gameMove.gameOverInfo()!=null){
-                    showGameOverCard(gameMove.gameOverInfo());
+                if(gameMove.getGameOverInfo()!=null){
+                    showGameOverCard(gameMove.getGameOverInfo());
                 }
             });
         });
@@ -327,13 +330,13 @@ public class GameView {
         Platform.runLater(() -> {
             drawBtn.setDisable(false);
             drawBtn.setOpacity(1.0);
-            syncClocks(confirmation.myRemainingMs(), confirmation.oppRemainingMs());
-            if (confirmation.fen() != null && !confirmation.fen().equals(fen)) {
-                renderFromFen(confirmation.fen());
+            syncClocks(confirmation.getMyRemainingMs(), confirmation.getOppRemainingMs());
+            if (confirmation.getFen() != null && !confirmation.getFen().equals(fen)) {
+                renderFromFen(confirmation.getFen());
             }
 
-            if (confirmation.gameOverInfo() != null) {
-                showGameOverCard(confirmation.gameOverInfo());
+            if (confirmation.getGameOverInfo() != null) {
+                showGameOverCard(confirmation.getGameOverInfo());
             }
         });
     }
@@ -349,6 +352,7 @@ public class GameView {
         Platform.runLater(() ->new DrawOfferReceivedCard(
                 root, () ->{
          GameActions.onAcceptDraw.accept(gameId);
+            boardLocked = true;
          disableButtons();
     },null));
     }
@@ -927,6 +931,7 @@ public class GameView {
     // ── Click & move logic ────────────────────────────────────────────
 
     private void handleSquareClick(int row, int col) {
+        if(specatorMode) return;
         if(boardLocked) return;
         Square clicked = rowColToSquare(row, col);
 

@@ -3,7 +3,6 @@ package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.Core.GameLogic.Api.Dto.MoveConfirmation;
 import org.Core.GameLogic.Api.Dto.MoveOutCome;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
 import org.Core.GameLogic.Exceptions.GameNotFoundException;
@@ -14,6 +13,7 @@ import org.Core.GameLogic.Models.GameMove;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Persistence.GameMoveRepo;
 import org.Core.GameLogic.Persistence.GameRepo;
+import org.Core.GameLogic.Services.Game.Events.MoveConfirmation;
 import org.Core.GameLogic.Services.Game.Events.MoveConfirmationEvent;
 import org.Core.GameLogic.Services.Game.Events.MoveEvent;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
@@ -67,8 +67,8 @@ public class GameLogicService {
         }
         MoveOutCome outCome=gameMoveValidation.processMove(request);
         gameSessionStore.updateTurnAndPlayedTimeAndLastMoveAt(gameId,session.getTurn()==Color.BLACK?Color.WHITE:Color.BLACK,now,playedTime);
-        String from=outCome.opponentPayload().from();
-        String to=outCome.opponentPayload().to();
+        String from=outCome.opponentPayload().getFrom();
+        String to=outCome.opponentPayload().getTo();
         String newFen=outCome.newFen();
         gameMoveRepo.save(GameMove.builder()
                 .game(gameRepo.getReferenceById(gameId)).fromSquare(from).toSquare(to).color(playerColor).fenAfter(newFen).timeToPlay(durationToPlay).

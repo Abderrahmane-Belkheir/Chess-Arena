@@ -3,9 +3,8 @@ package org.Core.GameLogic.Services.Game;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameFound;
-import org.Core.GameLogic.Api.Dto.GameOverInfo;
-import org.Core.GameLogic.Api.Dto.MoveConfirmation;
-import org.Core.GameLogic.Api.Dto.MoveResponse;
+import org.Core.GameLogic.Services.Game.Events.GameOverInfo;
+
 import org.Core.GameLogic.Services.Game.Events.*;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -22,36 +21,34 @@ public class GameBroadcaster {
     private final SimpMessagingTemplate messagingTemplate;
 
     @TransactionalEventListener
-    public void broadCastGameOver(GameOverEvent event){
-        handleGameOver(event.playerA().getUserId(),event.playerA());
-        handleGameOver(event.playerB().getUserId(),event.playerB());
-    }
-
-    @TransactionalEventListener
-    public void broadCastMove(MoveEvent event){
-        handleMove(event.userId(),event.response());
-    }
-
-    @TransactionalEventListener
-    public void broadCastMoveConfirmation(MoveConfirmationEvent event){
-        handleConfirmMove(event.userId(),event.confirmation());
-    }
-
-    @TransactionalEventListener
     public void broadCastGameFound(GameCreatedEvent event){
         handleGameFound(event.whiteId(),event.whiteSession(),event.forWhite());
         handleGameFound(event.blackId(),event.blackSession(),event.forBlack());
     }
 
     @TransactionalEventListener
-    public void broadCastDrawOffered(DrawOfferEvent event){
-        handleDrawOffered(event.getUserId(),event);
+    public void broadCastGameOver(GameOverEvent event){
+        handleGameEvent(event.playerA().getUserId(),event.playerA());
+        handleGameEvent(event.playerB().getUserId(),event.playerB());
     }
 
     @TransactionalEventListener
-    public void broadCastGameNotFound(MoveConfirmationEvent event){
-
+    public void broadCastMove(MoveEvent event){
+        handleGameEvent(event.userId(),event.response());
     }
+
+    @TransactionalEventListener
+    public void broadCastMoveConfirmation(MoveConfirmationEvent event){
+        handleGameEvent(event.userId(),event.confirmation());
+    }
+
+
+
+    @TransactionalEventListener
+    public void broadCastDrawOffered(DrawOfferEvent event){
+        handleGameEvent(event.getUserId(),event);
+    }
+
 
     private void handleGameFound(String userId,String sessionId, GameFound gameFound){
         SimpMessageHeaderAccessor accessor =setAccessor(sessionId);
@@ -64,39 +61,14 @@ public class GameBroadcaster {
         );
     }
 
-    private void handleMove(String userId, MoveResponse response){
-       // SimpMessageHeaderAccessor accessor=setAccessor(sessionId);
-
+    private void handleGameEvent(String userId,GameEvent event){
         messagingTemplate.convertAndSendToUser(
                 userId,
-                "/queue/game.move",
-                response
-        );
-    }
-
-    private void handleConfirmMove(String userId,MoveConfirmation confirmation){
-        messagingTemplate.convertAndSendToUser(
-                userId,
-                "/queue/game.move.confirm",
-                confirmation
-        );
-    }
-
-    private void handleGameOver(String userId,GameOverInfo gameOverInfo){
-        messagingTemplate.convertAndSendToUser(
-              userId,
-                "/queue/game.over",
-                gameOverInfo
-        );
-    }
-
-    private void handleDrawOffered(String userId,DrawOfferEvent event){
-        messagingTemplate.convertAndSendToUser(
-                userId,
-                "/queue/game.draw.offered",
+                "/queue/game.events",
                 event
         );
     }
+
 
     private SimpMessageHeaderAccessor setAccessor(String sessionId){
         SimpMessageHeaderAccessor accessor =

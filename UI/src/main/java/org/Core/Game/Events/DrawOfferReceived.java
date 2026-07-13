@@ -1,4 +1,8 @@
 package org.Core.Game.Events;
 
-public record DrawOfferReceived(String userId) {
+import lombok.Data;
+
+@Data
+public final  class DrawOfferReceived extends GameEvent{
+    private String userId;
 }

@@ -15,6 +15,7 @@ import org.Core.GameLogic.Services.Matchmaking.MatchedPair;
 import org.Core.GameLogic.Services.Matchmaking.QueueEntry;
 import org.Core.GameLogic.Services.MoveValidation.GameSessionRegistry;
 import org.Core.Scheduling.TimeOutSchedulingService;
+import org.Core.Social.Game.SpectatorApprovalRegistry;
 import org.Core.User.Persistence.UserRepo;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public class GameFactory {
 
 
+    private final SpectatorApprovalRegistry spectatorApprovalRegistry;
     private final GameSessionStore gameSessionStore;
     private final GameSessionRegistry gameSessionRegistry;
     private final GameOverHandler gameOverHandler;
@@ -77,6 +79,7 @@ public class GameFactory {
         gameSessionRegistry.createSession(gameId, fen);
         long gameDuration=type== Game.GameType.RAPID?Utilities.TEN_MINUTES_MS:Utilities.THREE_MINUTES_MS;
         timeOutSchedulingService.schedule(gameId,gameDuration,()->gameOverHandler.handleTimeOut(gameId,blackQE.userId(),whiteQE.userId(),Color.BLACK));
+        spectatorApprovalRegistry.init(whiteQE.userId(),blackQE.userId());
         eventPublisher.publishEvent(
                 new GameCreatedEvent(
                         buildFor(blackQE, true, gameId, fen),

@@ -1,9 +1,8 @@
 package org.Core.GameLogic.Services.Game;
 
-import io.lettuce.core.dynamic.annotation.Param;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.Core.GameLogic.Api.Dto.GameOverInfo;
+import org.Core.GameLogic.Services.Game.Events.GameOverInfo;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.Game;
 import org.Core.GameLogic.Persistence.GameRepo;

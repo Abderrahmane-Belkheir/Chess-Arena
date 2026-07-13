@@ -1,11 +1,9 @@
 package org.Core.GameLogic.Models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.Core.GameLogic.Api.Dto.GameOverInfo;
+import org.Core.GameLogic.Services.Game.Events.GameOverInfo;
 
 import java.time.Instant;
 import java.util.ArrayList;

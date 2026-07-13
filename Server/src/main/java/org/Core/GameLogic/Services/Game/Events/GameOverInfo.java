@@ -1,4 +1,4 @@
-package org.Core.GameLogic.Api.Dto;
+package org.Core.GameLogic.Services.Game.Events;
 
 
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameOverInfo {
+public final class GameOverInfo extends GameEvent {
     String userId;
     private GameResult result;
     private EndReason endReason;
