@@ -5,7 +5,6 @@ package org.Core.Configurations.Websocket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.Social.Game.GameSpectator;
-import org.Core.Social.Game.SpectatorApprovalRegistry;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
@@ -27,6 +26,8 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 
     private final JwtDecoder jwtDecoder;
 
+
+
     private final GameSpectator spectator;
     private static final String SPECTATE_PREFIX = "/topic/spectate/";
 
@@ -37,7 +38,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
         if (accessor == null || accessor.getCommand() == null) {
             return message;
         }
-        String userId=null;
+
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String header = accessor.getFirstNativeHeader("Authorization");
 
@@ -49,34 +50,30 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
             try {
                 String token = header.substring(7);
                 Jwt jwt = jwtDecoder.decode(token);
-                 userId = jwt.getSubject();
+                 String userId = jwt.getSubject();
                 accessor.setUser(jwt::getSubject);
                 return message;
             } catch (JwtException e) {
                 log.error("JWT decode failed: {}", e.getMessage());
                 throw new MessageDeliveryException("Invalid token: " + e.getMessage());
             }
-        }
-        String destination = accessor.getDestination();
-        if (accessor.getCommand() == StompCommand.SUBSCRIBE) {
-            log.info("USER {} SUBSCRIBING TO {}", userId, destination);
+        }else if (accessor.getCommand() == StompCommand.SUBSCRIBE) {
+            String destination = accessor.getDestination();
+
             if (destination == null || !destination.startsWith(SPECTATE_PREFIX)) {
                 return message;
             }
 
             String targetUserId = destination.substring(SPECTATE_PREFIX.length());
 
-            if (!spectator.isApproved(targetUserId,userId)) {
-                return null; // subscription never reaches the broker — client stays unsubscribed
+            if (!spectator.isApproved(targetUserId,accessor.getUser().getName())) {
+                return null;
             }
 
         }
 
-        if(accessor.getCommand()==StompCommand.UNSUBSCRIBE){
-            log.info("USER {} UNSUBSCRIBING TO {}", userId, destination);
-        }
-
         return message;
     }
+
 
 }

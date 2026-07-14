@@ -9,8 +9,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = MoveResponse.class,    name = "MOVE"),
         @JsonSubTypes.Type(value = GameOverInfo.class,        name = "GAME_OVER"),
         @JsonSubTypes.Type(value = MoveConfirmation.class,     name = "MOVE_CONFIRM"),
-        @JsonSubTypes.Type(value = DrawOfferEvent.class,     name = "DRAW_OFFERED")
+        @JsonSubTypes.Type(value = DrawOfferEvent.class,     name = "DRAW_OFFERED"),
+        @JsonSubTypes.Type(value = SpectateRequest.class,name = "SPECTATE_REQUEST" )
 })
 public sealed abstract class GameEvent
-        permits MoveResponse, DrawOfferEvent, GameOverInfo, MoveConfirmation {
+        permits DrawOfferEvent, GameOverInfo, MoveConfirmation, MoveResponse, SpectateRequest {
 }

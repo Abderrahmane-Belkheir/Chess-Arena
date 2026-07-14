@@ -2,6 +2,10 @@ package org.Core.Social;
 
 import com.google.inject.Inject;
 import org.Core.Config.ApiClient;
+import org.Core.Game.Events.Spectate;
+import org.Core.Game.Events.SpectatorResponse;
+import org.Core.Realtime.RealtimeGateway;
+import org.Core.Realtime.GameRealtimeGatewayStub;
 import org.Core.Social.DTO.FriendsPage;
 import org.Core.Social.DTO.InvitationsPage;
 import org.Core.Social.DTO.UserSummary;
@@ -15,10 +19,18 @@ public class FriendShipClient {
 
     private final ApiClient apiClient;
     private final String baseUrl="/api/v1/users";
+    private final RealtimeGateway realtimeGateway;
+
 
     @Inject
-    public FriendShipClient(ApiClient apiClient){
+    public FriendShipClient(ApiClient apiClient,RealtimeGateway realtimeGateway){
         this.apiClient=apiClient;
+        this.realtimeGateway=realtimeGateway;
+    }
+
+    public void spectate(int userId){
+        GameRealtimeGatewayStub.getSession().send("/app/spectate",new Spectate(userId));
+        realtimeGateway.subscribe("/user/queue/spectate.responses", SpectatorResponse.class);
     }
 
     public UserSummary search(int userId) throws IOException, InterruptedException {

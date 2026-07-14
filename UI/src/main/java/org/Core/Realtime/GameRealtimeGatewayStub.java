@@ -7,7 +7,8 @@ import org.Core.Auth.TokenStorage;
 import org.Core.Config.AppConfig;
 import org.Core.Game.Events.*;
 import org.Core.Config.GameEventPublisher;
-import org.Core.UI.Game.GameView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.converter.JacksonJsonMessageConverter;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -19,11 +20,12 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 
 import java.lang.reflect.Type;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 
-public class RealtimeGatewayStub implements RealtimeGateway {
 
+public class GameRealtimeGatewayStub implements RealtimeGateway {
+
+    private static final Logger log = LoggerFactory.getLogger(GameRealtimeGatewayStub.class);
     @Getter
     private static StompSession session;
 
@@ -38,7 +40,7 @@ public class RealtimeGatewayStub implements RealtimeGateway {
     private StompSession.Subscription gameEventsSubscription;
 
     @Inject
-    public RealtimeGatewayStub(TokenStorage tokenStorage, GameEventPublisher appEvents,AppConfig appConfig){
+    public GameRealtimeGatewayStub(TokenStorage tokenStorage, GameEventPublisher appEvents, AppConfig appConfig){
         this.tokenStorage=tokenStorage;
         this.appEvents=appEvents;
         this.appConfig=appConfig;
@@ -67,9 +69,7 @@ public class RealtimeGatewayStub implements RealtimeGateway {
                             }
                         })
                 .orTimeout(10, TimeUnit.SECONDS)
-                .thenAccept(s -> {
-                    this.session = s;
-                })
+                .thenAccept(s -> session = s)
                 .exceptionally(ex -> {
                     System.err.println(">>> Connection failed: " + ex.getMessage());
                     return null;
@@ -88,7 +88,7 @@ public class RealtimeGatewayStub implements RealtimeGateway {
     @Override
     public void startGameSearching(){
         session.send("/app/start.search","");
-        subscribe(session, "/user/queue/matchmaking", GameFound.class);
+        subscribe( "/user/queue/matchmaking", GameFound.class);
     }
 
 
@@ -101,7 +101,8 @@ public class RealtimeGatewayStub implements RealtimeGateway {
         }
     }
 
-    private void subscribe(StompSession session, String destination, Class<?> payloadType) {
+    @Override
+    public void subscribe( String destination, Class<?> payloadType) {
 
         StompSession.Subscription subscription = session.subscribe(
                 destination,
@@ -121,17 +122,14 @@ public class RealtimeGatewayStub implements RealtimeGateway {
                         }
 
                         if (payload instanceof GameFound) {
-
-                            // Subscribe to game events
-                            subscribe(session, "/user/queue/game.events", GameEvent.class);
-
-                            // Stop listening for matchmaking
-                            if (matchmakingSubscription != null) {
-                                matchmakingSubscription.unsubscribe();
-                                matchmakingSubscription = null;
-                            }
+                            subscribe( "/user/queue/game.events", GameEvent.class);
+                            subscribe("/user/queue/spectate.requests",SpectatedResponse.class);
+                            unSubscribe(matchmakingSubscription);
+                        } else if (payload instanceof GameOverInfo) {
+                            unSubscribe(gameEventsSubscription);
+                        }else if(payload instanceof SpectatorResponse response){
+                            subscribe("/topic/spectate/"+response.getSpectatedId(),null);
                         }
-
                         appEvents.post(payload);
                     }
                 });
@@ -141,6 +139,12 @@ public class RealtimeGatewayStub implements RealtimeGateway {
         } else if (payloadType == GameEvent.class) {
             gameEventsSubscription = subscription;
         }
-    }
 
+    }
+    private void unSubscribe(StompSession.Subscription subscription){
+        if (subscription != null) {
+           subscription.unsubscribe();
+           subscription= null;
+        }
+    }
 }

@@ -11,7 +11,7 @@ import org.Core.Auth.TokenStorage;
 import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Services.GameSessionService;
 import org.Core.Realtime.RealtimeGateway;
-import org.Core.Realtime.RealtimeGatewayStub;
+import org.Core.Realtime.GameRealtimeGatewayStub;
 import org.Core.Social.FriendShipClient;
 import org.Core.UI.Game.MatchmakingHandler;
 import org.Core.UI.OpeningScreens.GameController;
@@ -43,7 +43,7 @@ public class AppModule extends AbstractModule {
         bind(ApiClient.class).in(Scopes.SINGLETON);
         bind(UserSessionManager.class).in(Scopes.SINGLETON);
         bind(FriendShipClient.class).in(Scopes.SINGLETON);
-        bind(RealtimeGateway.class).to(RealtimeGatewayStub.class);
+        bind(RealtimeGateway.class).to(GameRealtimeGatewayStub.class);
         bind(GameEventPublisher.class).in(Scopes.SINGLETON);
         bind(MatchmakingHandler.class).in(Scopes.SINGLETON);
         bind(GameSessionService.class).in(Scopes.SINGLETON);

@@ -6,6 +6,7 @@ import org.Core.GameLogic.Api.Dto.GameFound;
 import org.Core.GameLogic.Services.Game.Events.GameOverInfo;
 
 import org.Core.GameLogic.Services.Game.Events.*;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -49,7 +50,10 @@ public class GameBroadcaster {
         handleGameEvent(event.getUserId(),event);
     }
 
-
+    @EventListener
+    public void broadCastSpectateRequested(SpectateRequestEvent event){
+        handleGameEvent(event.userId(),event.request());
+    }
     private void handleGameFound(String userId,String sessionId, GameFound gameFound){
         SimpMessageHeaderAccessor accessor =setAccessor(sessionId);
 

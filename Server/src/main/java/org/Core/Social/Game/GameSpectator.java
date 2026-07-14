@@ -1,6 +1,8 @@
 package org.Core.Social.Game;
 
 import lombok.RequiredArgsConstructor;
+import org.Core.GameLogic.Services.Game.Events.SpectateRequest;
+import org.Core.GameLogic.Services.Game.Events.SpectateRequestEvent;
 import org.Core.Social.Persistence.FriendShipRepo;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class GameSpectator {
     public void requestSpectate(String targetId,String spectatorId){
         if(approvalRegistry.isApproved(targetId,spectatorId)) return;
         if(spectateRequestStore.create(spectatorId,targetId)) return;
-        eventPublisher.publishEvent(null);
+        eventPublisher.publishEvent(new SpectateRequestEvent(targetId,new SpectateRequest(0,null,null)));
     }
 
     public void acceptSpectate(String userId,String spectatorId){
