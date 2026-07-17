@@ -15,7 +15,9 @@ public class GameSession {
     private String gameId;
     private Game.GameType type;
     private String whitePlayerId;
+    private int whitePlayerPublicId;
     private String blackPlayerId;
+    private int blackPlayerPublicId;
     private Color turn;
     private boolean active;
     private long whitePlayedTime;

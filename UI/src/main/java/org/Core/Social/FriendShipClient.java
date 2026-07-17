@@ -29,7 +29,7 @@ public class FriendShipClient {
     }
 
     public void spectate(int userId){
-        GameRealtimeGatewayStub.getSession().send("/app/spectate",new Spectate(userId));
+        GameRealtimeGatewayStub.getSession().send("/app/spectate.request",new Spectate(userId));
         realtimeGateway.subscribe("/user/queue/spectate.responses", SpectatorResponse.class);
     }
 

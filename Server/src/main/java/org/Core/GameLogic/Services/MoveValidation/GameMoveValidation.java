@@ -51,38 +51,41 @@ public class GameMoveValidation {
             throw new IllegalMoveException("Illegal move: " + from + " → " + to);
         }
         board.doMove(move);
-        GameOverEvent result=checkGameOver(board);
-        boolean gameOver=result.playerA()!=null;
+        GameOverResult result=checkGameOver(board);
         GameOverInfo playerGameOverInfo=null;
         GameOverInfo opponentGameOverInfo=null;
-        if(gameOver){
-            opponentGameOverInfo=result.playerA().getResult()== GameOverInfo.GameResult.LOSS?result.playerA():result.playerB();
-            playerGameOverInfo=result.playerA().getResult()== GameOverInfo.GameResult.WIN?result.playerA():result.playerB();
+        if(result.gameOver()){
+            if(result.result()== GameOverInfo.GameResult.DRAW){
+                playerGameOverInfo=new GameOverInfo(GameOverInfo.GameResult.DRAW);
+                opponentGameOverInfo=new GameOverInfo(GameOverInfo.GameResult.DRAW);
+            }else {
+                playerGameOverInfo=new GameOverInfo(GameOverInfo.GameResult.WIN);
+                opponentGameOverInfo=new GameOverInfo(GameOverInfo.GameResult.LOSS);
+            }
+            playerGameOverInfo.setEndReason(result.endReason());
+            opponentGameOverInfo.setEndReason(result.endReason());
         }
         MoveResponse opponentPayload=new MoveResponse(from,to,board.getFen(),opponentGameOverInfo);
-        return new MoveOutCome(gameOver,board.getFen(),opponentPayload,playerGameOverInfo);
+        return new MoveOutCome(result.gameOver(),board.getFen(),opponentPayload,playerGameOverInfo);
     }
 
-    private GameOverEvent checkGameOver(Board board){
+    private GameOverResult checkGameOver(Board board){
         boolean gameOver=board.isMated()||board.isStaleMate()||board.isDraw();
-        GameOverInfo loserInfo =null;
-        GameOverInfo winnerInfo=null;
+        GameOverInfo.EndReason endReason=null;
+        GameOverInfo.GameResult result=null;
         if(gameOver){
-            GameOverInfo.GameResult loserResult =board.isDraw()? GameOverInfo.GameResult.DRAW:GameOverInfo.GameResult.LOSS;
-            GameOverInfo.GameResult winnerResult=board.isDraw()? GameOverInfo.GameResult.DRAW:GameOverInfo.GameResult.WIN;
-            GameOverInfo.EndReason endReason=null;
             if (board.isMated()) {
+                result= GameOverInfo.GameResult.WIN;
                 endReason=GameOverInfo.EndReason.CHECKMATE;
             } else if (board.isStaleMate()) {
+                result= GameOverInfo.GameResult.DRAW;
                 endReason =GameOverInfo.EndReason.STALEMATE;
             } else if (board.isDraw()) {
+                result= GameOverInfo.GameResult.DRAW;
                 endReason=GameOverInfo.EndReason.DRAW;
             }
-            loserInfo =new GameOverInfo(loserResult,endReason);
-            winnerInfo=new GameOverInfo(winnerResult,endReason);
         }
-
-        return new GameOverEvent(winnerInfo,loserInfo);
+        return new GameOverResult(gameOver,result,endReason);
     }
 
 }

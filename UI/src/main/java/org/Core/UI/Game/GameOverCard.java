@@ -17,6 +17,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.Core.Auth.DTO.UserSession;
+import org.Core.Game.Events.GameFound;
 import org.Core.Game.Events.GameOverInfo;
 import org.Core.UI.LobbyScreens.Friends.Avatar;
 public class GameOverCard {
@@ -251,7 +252,7 @@ public class GameOverCard {
 
     // ── Player row (avatar, name, elo before → after) ──────────────────
 
-    private HBox buildPlayerRow(GameOverInfo info, UserSession session) {
+    private HBox buildPlayerRow(GameOverInfo info,UserSession session) {
         HBox row = new HBox(12);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(10, 14, 10, 14));

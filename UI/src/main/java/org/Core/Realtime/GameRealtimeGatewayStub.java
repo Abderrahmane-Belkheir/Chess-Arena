@@ -128,7 +128,8 @@ public class GameRealtimeGatewayStub implements RealtimeGateway {
                         } else if (payload instanceof GameOverInfo) {
                             unSubscribe(gameEventsSubscription);
                         }else if(payload instanceof SpectatorResponse response){
-                            subscribe("/topic/spectate/"+response.getSpectatedId(),null);
+                            System.out.println("SUBSCRIBING TO TOPIC/SPECTATE FOR USER "+response.getSpectatedPlayer().getId());
+                            subscribe("/topic/spectate/"+response.getSpectatedPlayer().getId(),GameEvent.class);
                         }
                         appEvents.post(payload);
                     }

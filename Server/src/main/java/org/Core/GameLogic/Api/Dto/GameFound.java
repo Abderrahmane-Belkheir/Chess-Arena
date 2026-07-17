@@ -16,7 +16,7 @@ import org.Core.GameLogic.Models.Player;
 public class GameFound {
     private boolean found;
     private String id;
-    private Opponent opponent;
+    private Player opponent;
     private String fen;
     @JsonProperty("mySide")
     private Color playerSide;
@@ -25,13 +25,12 @@ public class GameFound {
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public static class Opponent{
+public static class Player{
             private int id;
             private String username;
             private int elo;
             private String avatarUrl;
         }
-    public enum PlayerColor{WHITE,BLACK}
     }
 
 

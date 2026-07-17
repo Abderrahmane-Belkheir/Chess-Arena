@@ -36,14 +36,15 @@ public class GameSessionService{
     @Subscribe
     public void onMatchFound(GameFound event){
         Platform.runLater(()-> {
+
             try {
-                this.gameView = new GameView(false,event.getId(),event.getFen(),
+                this.gameView = new GameView(event.getId(),event.getFen(),
                         userSessionManager.getUserSession(false),
                         event.getMySide(),event.getOpponent(),matchmakingHandler,returnToLobby());
-
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
             viewNavigator.transitionTo(gameView.getView());
         });
     }
@@ -55,7 +56,7 @@ public class GameSessionService{
 
     @Subscribe
     public void onOpponentMove(OpponentMove move){
-            gameView.applyOpponentMove(move);
+        gameView.applyOpponentMove(move);
     }
 
     @Subscribe
@@ -76,13 +77,22 @@ public class GameSessionService{
 
     @Subscribe
     public void onSpectateRequested(SpectatedResponse response){
-        //gameView
+        System.out.println(response);
+        gameView.showSpectateRequest(response);
     }
 
     @Subscribe
     public void onSpectateAccepted(SpectatorResponse response){
-
+        System.out.println(response);
+        Platform.runLater(()-> {
+                this.gameView = new GameView(response.getFen(),response.getSpectatedSide(),
+                        response.getSpectatedPlayer(),response.getOpponent(),response.getSpectatedTimeMs(),
+                        response.getOtherTimeMs(),response.getTurn(),returnToLobby());
+            viewNavigator.transitionTo(gameView.getView());
+        });
     }
+
+
 
 }
 

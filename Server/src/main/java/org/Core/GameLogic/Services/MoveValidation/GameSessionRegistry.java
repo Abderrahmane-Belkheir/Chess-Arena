@@ -24,6 +24,10 @@ public class GameSessionRegistry {
         return Optional.ofNullable(activeSessions.get(gameId));
     }
 
+    public Optional<String> getFen(String gameId){
+        Optional<Board> board=getBoard(gameId);
+        return board.map(Board::getFen);
+    }
     public void removeSession(String gameId) {
         activeSessions.remove(gameId);
     }

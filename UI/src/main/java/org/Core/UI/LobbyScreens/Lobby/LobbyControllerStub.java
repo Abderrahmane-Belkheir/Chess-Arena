@@ -3,6 +3,7 @@ package org.Core.UI.LobbyScreens.Lobby;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
+import org.Core.Game.Services.GameActions;
 import org.Core.Social.FriendShipClient;
 import org.Core.UI.Game.MatchmakingHandler;
 import org.Core.UI.LobbyScreens.Friends.Avatar;
@@ -35,12 +36,13 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
                 Avatar.initials(userSession.getUsername()),
                 userSession.getAvatarUrl()
         );
+        friendShipClient.spectate(677387);
         return lobbyView.getView();
     }
 
     @Override
     public void onProfileClicked() {
-        StackPane overlay = lobbyView.getOverlay(); // we'll add this method below
+        StackPane overlay = lobbyView.getOverlay();
         ProfileCard card = new ProfileCard(currentSession, this, overlay);
         card.show();
     }

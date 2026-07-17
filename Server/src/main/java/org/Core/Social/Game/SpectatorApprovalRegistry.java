@@ -12,20 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class SpectatorApprovalRegistry {
 
-    private final Map<String, Set<String>> approvals = new ConcurrentHashMap<>();
+    private final Map<Integer, Set<String>> approvals = new ConcurrentHashMap<>();
 
-
-    public void init(String playerA,String playerB){
+    public void init(int playerA,int playerB){
         approvals.put(playerA,new HashSet<>());
         approvals.put(playerB,new HashSet<>());
     }
 
-    public void approve(String targetUserId, String spectatorUserId) {
-        approvals.get(targetUserId)
-                 .add(spectatorUserId);
+    public boolean approve(int targetUserId, String spectatorUserId) {
+        Set<String> approved=approvals.get(targetUserId);
+        return approved != null && approved.add(spectatorUserId);
     }
 
-    public boolean isApproved(String targetUserId, String spectatorUserId) {
+    public boolean isApproved(int targetUserId, String spectatorUserId) {
         Set<String> approved = approvals.get(targetUserId);
         return approved != null && approved.contains(spectatorUserId);
     }

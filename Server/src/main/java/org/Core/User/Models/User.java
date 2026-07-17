@@ -32,11 +32,16 @@ public class User {
     private String email;
 
     private String avatarUrl;
+
     @Builder.Default
     private int elo=1200;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     public User(String id) {
         this.id=id;
     }
 
+    public enum Status{IN_LOBBY,IN_GAME,OFFLINE}
 }

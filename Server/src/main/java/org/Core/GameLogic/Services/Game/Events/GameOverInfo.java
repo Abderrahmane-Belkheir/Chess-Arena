@@ -7,16 +7,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public final class GameOverInfo extends GameEvent {
-    String userId;
     private GameResult result;
     private EndReason endReason;
 
-    public GameOverInfo(GameResult result,EndReason endReason) {
-        this.endReason = endReason;
+    public GameOverInfo(GameResult result) {
         this.result=result;
+    }
+    public GameOverInfo(GameResult result,EndReason endReason){
+        this(result);
+        this.endReason=endReason;
     }
 
     public enum GameResult{WIN,LOSS,DRAW}

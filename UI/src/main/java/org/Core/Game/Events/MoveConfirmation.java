@@ -4,8 +4,10 @@ import lombok.Data;
 
 @Data
 public final class MoveConfirmation extends GameEvent{
-        String fen;
-        long myRemainingMs;
-        long oppRemainingMs;
-        GameOverInfo gameOverInfo;
+    private String from;
+    private String to;
+    private String fen;
+    private long myRemainingMs;
+    private long oppRemainingMs;
+    private GameOverInfo gameOverInfo;
 }

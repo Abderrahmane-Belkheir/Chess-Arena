@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.MoveOutCome;
 import org.Core.GameLogic.Api.Dto.MoveRequest;
-import org.Core.GameLogic.Exceptions.GameNotFoundException;
 import org.Core.GameLogic.Exceptions.WrongTurnException;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.Game;
@@ -13,9 +12,9 @@ import org.Core.GameLogic.Models.GameMove;
 import org.Core.GameLogic.Models.GameSession;
 import org.Core.GameLogic.Persistence.GameMoveRepo;
 import org.Core.GameLogic.Persistence.GameRepo;
+import org.Core.GameLogic.Services.Game.Events.Event;
+import org.Core.GameLogic.Services.Game.Events.Id;
 import org.Core.GameLogic.Services.Game.Events.MoveConfirmation;
-import org.Core.GameLogic.Services.Game.Events.MoveConfirmationEvent;
-import org.Core.GameLogic.Services.Game.Events.MoveEvent;
 import org.Core.GameLogic.Services.MoveValidation.GameMoveValidation;
 import org.Core.Scheduling.TimeOutSchedulingService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -45,10 +44,10 @@ public class GameLogicService {
 
 
     @Transactional
-    public void AuthorizeAndPersist(String userId, MoveRequest request){
+    public void AuthorizeAndPersist(String playerInternalId, MoveRequest request){
         String gameId=request.getGameId();
-        GameSession session=authorizationService.AuthorizePlayer(userId,gameId);
-        Color playerColor= session.getWhitePlayerId().equals(userId)? Color.WHITE: Color.BLACK;
+        GameSession session=authorizationService.AuthorizePlayer(playerInternalId,gameId);
+        Color playerColor= session.getWhitePlayerId().equals(playerInternalId)? Color.WHITE: Color.BLACK;
         if(playerColor!=session.getTurn()){
             //TODO
             throw new WrongTurnException("Not your turn");
@@ -57,12 +56,16 @@ public class GameLogicService {
         Instant now= Instant.now();
         long durationToPlay =Duration.between(session.getLastMoveAt(),now).toMillis();
         playedTime+= durationToPlay;
-        String opponentId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
+        String opponentInternalId=playerColor==Color.WHITE?session.getBlackPlayerId():session.getWhitePlayerId();
         Color opponentColor=playerColor==Color.WHITE?Color.BLACK:Color.WHITE;
         long gameDuration=session.getType()== Game.GameType.RAPID?TEN_MINUTES_MS:THREE_MINUTES_MS;
+        int playerPublicId =playerColor==Color.WHITE?session.getWhitePlayerPublicId():session.getBlackPlayerPublicId();
+        int OpponentPublicId=opponentColor==Color.WHITE?session.getWhitePlayerPublicId():session.getBlackPlayerPublicId();
+        Id opponentId=new Id(opponentInternalId,OpponentPublicId);
+        Id playerId=new Id(playerInternalId,playerPublicId);
         if(gameDuration<playedTime){
             timeOutSchedulingService.cancel(gameId);
-            gameOverHandler.handleTimeOut(gameId,opponentId,userId,opponentColor);
+            gameOverHandler.handleTimeOut(gameId,opponentId,playerId,opponentColor);
             return;
         }
         MoveOutCome outCome=gameMoveValidation.processMove(request);
@@ -77,13 +80,13 @@ public class GameLogicService {
         long opponentPlayedTime=playerColor==Color.WHITE?session.getBlackPlayedTime(): session.getWhitePlayedTime();
        if(outCome.gameOver()){
            timeOutSchedulingService.cancel(gameId);
-           gameOverHandler.handle(gameId,playerColor,outCome.moverGameOverEvent().getEndReason());
+           gameOverHandler.handle(gameId,playerInternalId,opponentInternalId,playerColor,outCome.moverGameOverEvent().getEndReason());
        }else {
-           timeOutSchedulingService.schedule(gameId,gameDuration-opponentPlayedTime,()->gameOverHandler.handleTimeOut(gameId,userId,opponentId,playerColor));
+           timeOutSchedulingService.schedule(gameId,gameDuration-opponentPlayedTime,()->gameOverHandler.handleTimeOut(gameId,playerId,opponentId,playerColor));
        }
-        eventPublisher.publishEvent(new MoveEvent(opponentId,outCome.opponentPayload()));
-        eventPublisher.publishEvent(new MoveConfirmationEvent(userId,
-                new MoveConfirmation(newFen, gameDuration-playedTime, gameDuration-opponentPlayedTime,outCome.moverGameOverEvent())));
+        eventPublisher.publishEvent(new Event(opponentId,outCome.opponentPayload()));
+        eventPublisher.publishEvent(new Event(playerId,
+                new MoveConfirmation(from,to,newFen, gameDuration-playedTime, gameDuration-opponentPlayedTime,outCome.moverGameOverEvent())));
         drawOfferStore.clear(gameId);
     }
 

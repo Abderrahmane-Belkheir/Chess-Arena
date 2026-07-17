@@ -22,9 +22,10 @@ public class MatchmakingEntry {
     private final GameFactory gameFactory;
     private final UserRepo userRepo;
     private final List<QueueEntry> entries=new ArrayList<>();
-    // THIS IS A DEMO TEST
+
     public void searchGame(UserSession session) {
-        User user=userRepo.findById(session.userId()).orElseThrow(()->new UserNotFoundException("User not found"));
+        User user=userRepo.findById(session.userId()).orElseThrow(()->new UserNotFoundException("User not found"));//
+        if(user.getStatus()== User.Status.IN_GAME) throw new RuntimeException();
         QueueEntry player=new QueueEntry(session.userId(),user.getPublicId(), user.getUsername(),user.getElo(),user.getAvatarUrl(),System.currentTimeMillis(), session.sessionId());
         if(entries.isEmpty()) {
             entries.add(player);

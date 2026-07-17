@@ -2,11 +2,9 @@ package org.Core.GameLogic.Services.Game;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.Core.GameLogic.Services.Game.Events.GameOverInfo;
+import org.Core.GameLogic.Services.Game.Events.*;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.GameSession;
-import org.Core.GameLogic.Services.Game.Events.DrawOfferEvent;
-import org.Core.GameLogic.Services.Game.Events.GameOverEvent;
 import org.Core.Scheduling.TimeOutSchedulingService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -26,16 +24,20 @@ public class GameActionsService {
     private final ApplicationEventPublisher eventPublisher;
     private final TimeOutSchedulingService timeOutSchedulingService;
 
-    public void resign(String userId,String gameId){
-        GameSession session=authorizationService.AuthorizePlayer(userId,gameId);
+    public void resign(String playerInternalId,String gameId){
+        GameSession session=authorizationService.AuthorizePlayer(playerInternalId,gameId);
         // here its clear that the opponent is the winner so we pass in the handle method which is expecting the winner
-        String opponentId= Objects.equals(session.getWhitePlayerId(), userId) ?session.getBlackPlayerId():session.getWhitePlayerId();
-        Color opponentColor=Objects.equals(session.getWhitePlayerId(),opponentId) ?Color.WHITE:Color.BLACK;
-       gameOverHandler.handle(gameId,opponentColor, GameOverInfo.EndReason.RESIGNATION);
-        GameOverInfo winner=new GameOverInfo(opponentId,GameOverInfo.GameResult.WIN, GameOverInfo.EndReason.RESIGNATION);
-        GameOverInfo loser =new GameOverInfo(userId,GameOverInfo.GameResult.LOSS, GameOverInfo.EndReason.RESIGNATION);
+        String opponentInternalId = Objects.equals(session.getWhitePlayerId(), playerInternalId) ?session.getBlackPlayerId():session.getWhitePlayerId();
+        Color opponentColor=Objects.equals(session.getWhitePlayerId(), opponentInternalId) ?Color.WHITE:Color.BLACK;
+       gameOverHandler.handle(gameId,playerInternalId, opponentInternalId,opponentColor, GameOverInfo.EndReason.RESIGNATION);
+        GameOverInfo winner=new GameOverInfo(GameOverInfo.GameResult.WIN, GameOverInfo.EndReason.RESIGNATION);
+        GameOverInfo loser =new GameOverInfo(GameOverInfo.GameResult.LOSS, GameOverInfo.EndReason.RESIGNATION);
         timeOutSchedulingService.cancel(gameId);
-        eventPublisher.publishEvent(new GameOverEvent(loser,winner));
+        int playerPublicId =opponentColor==Color.WHITE?session.getBlackPlayerPublicId():session.getWhitePlayerPublicId();
+        int OpponentPublicId=opponentColor==Color.WHITE?session.getWhitePlayerPublicId():session.getBlackPlayerPublicId();
+        Id opponentId=new Id(opponentInternalId,OpponentPublicId);
+        Id playerId=new Id(playerInternalId,playerPublicId);
+        eventPublisher.publishEvent(new GameOverEvent(new Event(playerId,loser),new Event(opponentId,winner)));
     }
 
 
@@ -44,23 +46,27 @@ public class GameActionsService {
         Color playerColor=Objects.equals(session.getWhitePlayerId(),userId)?Color.WHITE:Color.BLACK;
         if(session.getTurn()==playerColor) return;
         if(!drawOfferStore.offerDraw(gameId,playerColor)) return;
-
-        eventPublisher.publishEvent(new DrawOfferEvent(
-                Objects.equals(session.getWhitePlayerId(),userId)?session.getBlackPlayerId():session.getWhitePlayerId()
-        ));
+        String opponentInternalId=Objects.equals(session.getWhitePlayerId(),userId)?session.getBlackPlayerId():session.getWhitePlayerId();
+        eventPublisher.publishEvent(new  Event(new Id(opponentInternalId,0),new DrawOfferEvent(
+                opponentInternalId
+        )));
     }
 
 
-    public void acceptDraw(String userId,String gameId){
-       GameSession session=authorizationService.AuthorizePlayer(userId,gameId);
+    public void acceptDraw(String playerInternalId, String gameId){
+       GameSession session=authorizationService.AuthorizePlayer(playerInternalId,gameId);
         DrawOffer offer=drawOfferStore.get(gameId).orElseThrow();
+        String opponentInternalId =Objects.equals(session.getWhitePlayerId(), playerInternalId)?session.getBlackPlayerId():session.getWhitePlayerId();
         drawOfferStore.clear(gameId);
-        gameOverHandler.handle(gameId,Color.NONE, GameOverInfo.EndReason.DRAW_AGREEMENT);
+        gameOverHandler.handle(gameId, playerInternalId, opponentInternalId,Color.NONE, GameOverInfo.EndReason.DRAW_AGREEMENT);
         timeOutSchedulingService.cancel(gameId);
-        String opponentId =Objects.equals(session.getWhitePlayerId(),userId)?session.getBlackPlayerId():session.getWhitePlayerId();
-        GameOverInfo player=new GameOverInfo(userId,GameOverInfo.GameResult.DRAW, GameOverInfo.EndReason.DRAW_AGREEMENT);
-        GameOverInfo opponent=new GameOverInfo(opponentId,GameOverInfo.GameResult.DRAW, GameOverInfo.EndReason.DRAW_AGREEMENT);
-        eventPublisher.publishEvent(new GameOverEvent(player,opponent));
+        GameOverInfo player=new GameOverInfo(GameOverInfo.GameResult.DRAW, GameOverInfo.EndReason.DRAW_AGREEMENT);
+        GameOverInfo opponent=new GameOverInfo(GameOverInfo.GameResult.DRAW, GameOverInfo.EndReason.DRAW_AGREEMENT);
+        int playerPublicId =playerInternalId.equals(session.getWhitePlayerId())?session.getWhitePlayerPublicId():session.getBlackPlayerPublicId();
+        int OpponentPublicId= playerInternalId.equals(session.getWhitePlayerId())?session.getBlackPlayerPublicId():session.getWhitePlayerPublicId();
+        Id opponentId=new Id(opponentInternalId,OpponentPublicId);
+        Id playerId=new Id(playerInternalId,playerPublicId);
+        eventPublisher.publishEvent(new GameOverEvent(new Event(playerId,player),new Event(opponentId,opponent)));
     }
 
 }

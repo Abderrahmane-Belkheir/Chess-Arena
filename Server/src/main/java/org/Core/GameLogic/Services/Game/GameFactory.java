@@ -3,6 +3,7 @@ package org.Core.GameLogic.Services.Game;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.Core.GameLogic.Api.Dto.GameFound;
+import org.Core.GameLogic.Services.Game.Events.Id;
 import org.Core.GameLogic.Utilities;
 import org.Core.GameLogic.Models.Color;
 import org.Core.GameLogic.Models.Game;
@@ -15,7 +16,9 @@ import org.Core.GameLogic.Services.Matchmaking.MatchedPair;
 import org.Core.GameLogic.Services.Matchmaking.QueueEntry;
 import org.Core.GameLogic.Services.MoveValidation.GameSessionRegistry;
 import org.Core.Scheduling.TimeOutSchedulingService;
+import org.Core.Social.Game.PendingSpectateRequestStore;
 import org.Core.Social.Game.SpectatorApprovalRegistry;
+import org.Core.User.Models.User;
 import org.Core.User.Persistence.UserRepo;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -30,6 +33,7 @@ import java.util.UUID;
 public class GameFactory {
 
 
+    private final PendingSpectateRequestStore pendingSpectateRequestStore;
     private final SpectatorApprovalRegistry spectatorApprovalRegistry;
     private final GameSessionStore gameSessionStore;
     private final GameSessionRegistry gameSessionRegistry;
@@ -68,7 +72,9 @@ public class GameFactory {
                         gameId,
                         type,
                         whiteQE.userId(),
+                        whiteQE.publicId(),
                         blackQE.userId(),
+                        blackQE.publicId(),
                         Color.WHITE,
                         true,
                         0,
@@ -76,10 +82,11 @@ public class GameFactory {
                         game.getCreatedAt()
                 )
         );
+        userRepo.updateUsersStatus(User.Status.IN_GAME,whiteQE.userId(),blackQE.userId());
         gameSessionRegistry.createSession(gameId, fen);
         long gameDuration=type== Game.GameType.RAPID?Utilities.TEN_MINUTES_MS:Utilities.THREE_MINUTES_MS;
-        timeOutSchedulingService.schedule(gameId,gameDuration,()->gameOverHandler.handleTimeOut(gameId,blackQE.userId(),whiteQE.userId(),Color.BLACK));
-        spectatorApprovalRegistry.init(whiteQE.userId(),blackQE.userId());
+        timeOutSchedulingService.schedule(gameId,gameDuration,()->gameOverHandler.handleTimeOut(gameId,new Id(blackQE.userId(),blackQE.publicId()),new Id(whiteQE.userId(),whiteQE.publicId()),Color.BLACK));
+        pendingSpectateRequestStore.init(whiteQE.userId(),blackQE.userId());
         eventPublisher.publishEvent(
                 new GameCreatedEvent(
                         buildFor(blackQE, true, gameId, fen),
@@ -106,7 +113,7 @@ public class GameFactory {
         return new GameFound(
                 true,
                 gameId,
-                new GameFound.Opponent(
+                new GameFound.Player(
                         opponent.publicId(),
                         opponent.username(),
                         opponent.elo(),

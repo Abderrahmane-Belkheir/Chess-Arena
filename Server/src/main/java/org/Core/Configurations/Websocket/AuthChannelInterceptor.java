@@ -66,10 +66,9 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 
             String targetUserId = destination.substring(SPECTATE_PREFIX.length());
 
-            if (!spectator.isApproved(targetUserId,accessor.getUser().getName())) {
-                return null;
-            }
-
+//            if (!spectator.isApproved(Integer.parseInt(targetUserId),accessor.getUser().getName())) {
+//                return null;
+//            }
         }
 
         return message;

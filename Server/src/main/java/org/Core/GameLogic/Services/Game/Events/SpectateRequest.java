@@ -1,13 +1,8 @@
 package org.Core.GameLogic.Services.Game.Events;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-
-@Getter
-@AllArgsConstructor
-public final  class SpectateRequest extends GameEvent {
+@Data
+public class SpectateRequest {
     private int userId;
-    private String username;
-    private String avatarUrl;
 }

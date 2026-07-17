@@ -17,36 +17,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import org.Core.Auth.DTO.UserSession;
 import org.Core.Game.Events.*;
-
-import java.util.List;
 import java.util.stream.Collectors;
-
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
-
-
-import java.util.*;
-/**
- * GameView — full game screen.
- *
- * Layout (matches screenshot):
- * ┌──────────┬──────────────────────────────┬──────────┐
- * │ Left     │        Chess Board           │ Right    │
- * │ sidebar  │  8x8 squares + pieces        │ actions  │
- * │ opponent │                              │ ½ resign │
- * │ captured │                              │          │
- * │ clock    │                              │          │
- * │ my info  │                              │          │
- * └──────────┴──────────────────────────────┴──────────┘
- *
- * Usage:
- *   GameView view = new GameView(root, gameFound, currentSession, navigator);
- *   // move received from server:
- *   view.applyServerMove("e2", "e4", newFen);
- *   // reconnect:
- *   view.renderFromFen(currentFen);
- */
 import com.github.bhlangonijr.chesslib.*;
 import javafx.animation.*;
 import javafx.geometry.*;
@@ -57,14 +31,34 @@ import javafx.scene.paint.*;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 import org.Core.Game.Services.GameActions;
-import org.Core.Game.Services.GameSessionService;
 import org.Core.UI.LobbyScreens.Friends.Avatar;
-
-
+import static org.Core.UI.LobbyScreens.Friends.Avatar.initials;
+import javafx.scene.control.*;
+import org.Core.Game.Events.*;
+import javafx.scene.layout.*;
+import java.util.*;
+import com.github.bhlangonijr.chesslib.*;
+import javafx.animation.*;
+import javafx.geometry.*;
+import javafx.scene.effect.*;
+import javafx.scene.image.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
 import java.util.*;
 
-import static org.Core.UI.LobbyScreens.Friends.Avatar.initials;
-
+/**
+ * GameView — full game screen.
+ *
+ * Two ways to construct it:
+ *   - Player mode:     GameView(gameId, fen, session, playerColor, opponent, matchmakingHandler, onReturnToLobby)
+ *                       Draw/Resign buttons present, board is interactive on your turn.
+ *   - Spectator mode:   GameView(gameId, fen, spectatedPlayerSide, spectatedPlayer, otherPlayer,
+ *                                 spectatedTimeMs, otherTimeMs, onReturnToLobby)
+ *                       No Draw/Resign buttons at all (not just hidden — never built), board is
+ *                       never interactive, moves arrive via applyMoveConfirmation()'s from/to.
+ *                       Board orientation follows the spectated player's side.
+ */
 public class GameView {
 
     private static final EnumMap<Piece, Image> PIECE_IMAGES = new EnumMap<>(Piece.class);
@@ -80,7 +74,6 @@ public class GameView {
 
     }
 
-    // ── Board palette (warm wood-matched) ──────────────────────────────
     private static final String LIGHT_SQUARE      = "#f2e3c8";
     private static final String DARK_SQUARE       = "#8b5e34";
     private static final String SELECT_COLOR      = "#f0d878";
@@ -88,9 +81,7 @@ public class GameView {
     private static final String LAST_MOVE_LIGHT   = "#e8cf9a";
     private static final String LAST_MOVE_DARK    = "#b9873f";
 
-    // ── UI palette (warm wood-matched) ─────────────────────────────────
-    private static final String BG_TOP            = "#2b2420";
-    private static final String BG_BOTTOM         = "#181310";
+
     private static final String PANEL_TOP         = "#2a2018";
     private static final String PANEL_BOTTOM      = "#180f0a";
     private static final String CARD_BG           = "rgba(232,207,138,0.035)";
@@ -107,19 +98,18 @@ public class GameView {
     private static final String BTN_BG_HOVER      = "#443528";
     private static final String RESIGN_COLOR      = "#e0645a";
     private static final String DRAW_COLOR        = "#d8c8a8";
-
-    private static final String WOOD_LIGHT        = "#9c6b3f";
     private static final String WOOD_MID          = "#7a4d29";
     private static final String WOOD_DARK         = "#3e2415";
     private static final String WOOD_HIGHLIGHT    = "#b98550";
     private static final String BRASS_LIGHT       = "#e8cf8a";
     private static final String BRASS_DARK        = "#8a6a30";
 
-    // ── Precomputed style strings ──────────────────────────────────────
-    // These used to be rebuilt via string concatenation on every square
-    // repaint (i.e. on every click and every move). Since the underlying
-    // colors never change at runtime, we build them once at class-load
-    // time and just pick between the two cached instances afterward.
+    // Spectate badge colors — muted, distinct from the LIVE accent gold so the
+    // top-bar reads at a glance as "watching" rather than "playing".
+    private static final String SPECTATE_COLOR       = TEXT_SECONDARY;
+    private static final String SPECTATE_GLOW        = "rgba(160,142,120,0.45)";
+    private static final String SPECTATE_DIVIDER_FROM = "rgba(160,142,120,0.30)";
+
     private static final String SQ_STYLE_LIGHT       = "-fx-background-color: " + LIGHT_SQUARE + ";";
     private static final String SQ_STYLE_DARK        = "-fx-background-color: " + DARK_SQUARE + ";";
     private static final String SELECT_STYLE_LIGHT   = "-fx-background-color: " + SELECT_COLOR + ";";
@@ -154,15 +144,6 @@ public class GameView {
     private static final String CLOCK_GLOW_IDLE =
             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 6, 0, 0, 2);";
 
-    // ── Root wallpaper (wood-grain, fills the whole screen) ─────────────
-    // Built from the exact same wood palette as boardFrame (WOOD_HIGHLIGHT →
-    // WOOD_MID → WOOD_DARK) so the wallpaper reads as the same wood, just
-    // darker/duller so the board still pops as the focal point. Layers: base
-    // diagonal wood gradient, a dark overlay to recede it, fine grain streaks,
-    // broader grain bands, a soft amber glow, and a warm vignette at the edges.
-    // NOTE: uses JavaFX's own linear-gradient/radial-gradient syntax (point-based
-    // direction, "repeat" cycle keyword) rather than CSS3 "Ndeg"/"repeating-linear-gradient"
-    // syntax, which JavaFX's CSS parser does not support.
     private static final String WALLPAPER_STYLE =
             "-fx-background-color: " +
                     "linear-gradient(from 0% 0% to 100% 100%, " + WOOD_HIGHLIGHT + " 0%, " + WOOD_MID + " 45%, " + WOOD_DARK + " 100%)," +
@@ -176,36 +157,42 @@ public class GameView {
     private static final double RIGHT_RATIO  = 0.09;
     private static final int    MIN_SQUARE   = 48;
     private static final int    MAX_SQUARE   = 120;
-    private static final double BOARD_SCALE  = 0.86; // shrinks board + pieces together
+    private static final double BOARD_SCALE  = 0.86;
 
     private static final double MOVE_ANIM_MS = 160;
-    private static final double MAX_CLOCK_GAP = 240; // cap so the gap between clocks doesn't blow up on big boards
+    private static final double MAX_CLOCK_GAP = 240;
 
-    // ── State ─────────────────────────────────────────────────────────
-    private String gameId;
+    private static final int DEFAULT_TIME_SECONDS = 600;
+
+    private record PlayerInfo(String username, int elo, String avatarUrl) {
+        static PlayerInfo from(UserSession session) {
+            return new PlayerInfo(session.getUsername(), session.getElo(), session.getAvatarUrl());
+        }
+        static PlayerInfo from(GameFound.Player opponent) {
+            return new PlayerInfo(opponent.getUsername(), opponent.getElo(), opponent.getAvatarUrl());
+        }
+    }
+
+    private final String             gameId;
     private final Board              board          = new Board();
     private final UserSession        session;
     private Square                   selectedSquare = null;
     private List<Square>             legalTargets   = new ArrayList<>();
     private String                   lastMoveFrom   = null;
     private String                   lastMoveTo     = null;
-    private volatile boolean                  myTurn;
+    private volatile boolean         myTurn;
     private String                   fen;
-    private final GameFound.Opponent opponent;
     private final Side               mySide;
 
     private double squareSize = 96;
 
-    // ── Clocks ────────────────────────────────────────────────────────
     private final Timeline clockTimeline = new Timeline();
-    private int myTimeSeconds  = 600; // 10:00 default, matches initial labels
-    private int oppTimeSeconds = 600;
+    private int myTimeSeconds;
+    private int oppTimeSeconds;
 
-    // Cached clock CSS — rebuilt only when size changes (applySize), not on every move.
     private String clockStyleActive;
     private String clockStyleIdle;
 
-    // ── UI nodes ──────────────────────────────────────────────────────
     private final StackPane      root         = new StackPane();
     private final GridPane       boardGrid    = new GridPane();
     private final StackPane[][]  squares      = new StackPane[8][8];
@@ -223,6 +210,7 @@ public class GameView {
     private final Region         ambientGlow  = new Region();
     private final HBox           topBar       = new HBox(8);
     private final Circle         liveDot      = new Circle(4);
+    private final Label          liveLbl      = new Label();
     // Sidebars
     private final VBox           leftSidebar  = new VBox(0);
     private final VBox           rightSidebar = new VBox(14);
@@ -235,56 +223,102 @@ public class GameView {
     private final Label          myNameLbl;
     private final Label          oppEloLbl;
     private final Label          myEloLbl;
-    private final Label          myClockLabel  = new Label("10:00");
-    private final Label          oppClockLabel = new Label("10:00");
+    private final Label          myClockLabel  = new Label();
+    private final Label          oppClockLabel = new Label();
     private final HBox           oppCaptured   = new HBox(2);
     private final HBox           myCaptured    = new HBox(2);
     private VBox                 oppInfoCard;
     private VBox                 myInfoCard;
 
-    // Action buttons
-    private final StackPane      drawBtn;
-    private final StackPane      resignBtn;
-
+    private StackPane      drawBtn;
+    private StackPane      resignBtn;
 
     private double currentBtnSize = 40;
 
     private boolean drawCooldownActive;
-    private boolean boardLocked=false;
-    private final MatchmakingHandler matchmakingHandler;
+    private boolean boardLocked = false;
+    private final MatchmakingHandler matchmakingHandler; // null in spectator mode
     private final Runnable onReturnToLobby;
 
-    private boolean specatorMode;
+    private final boolean spectatorMode;
+    private GameFound.Player spectatedPlayer;
+    /** Player mode — full interactive game with Draw/Resign. */
+    public GameView(String gameId, String fen, UserSession session, Side playerColor,
+                    GameFound.Player opponent, MatchmakingHandler matchmakingHandler, Runnable onReturnToLobby) {
+        this(gameId, fen, false, playerColor,
+                PlayerInfo.from(session), PlayerInfo.from(opponent),
+                DEFAULT_TIME_SECONDS, DEFAULT_TIME_SECONDS,
+                session, matchmakingHandler, onReturnToLobby, null);
+    }
 
-    // ── Constructor ───────────────────────────────────────────────────
-    public GameView(boolean spectatorMode,String gameId, String fen, UserSession session, Side playerColor,
-                    GameFound.Opponent opponent,MatchmakingHandler matchmakingHandler,Runnable onReturnToLobby) {
-        this.specatorMode=spectatorMode;
-        this.gameId=gameId;
-        this.fen      = fen;
-        this.session  = session;
-        this.opponent = opponent;
-        this.mySide   = playerColor;
-        this.myTurn   = mySide == Side.WHITE;
-        this.matchmakingHandler=matchmakingHandler;
-        this.onReturnToLobby=onReturnToLobby;
-        System.out.println("avatar "+opponent.getAvatarUrl());
+    /**
+     * Spectator mode — read-only. No Draw/Resign buttons are ever built. Board
+     * orientation follows spectatedPlayerSide, so you see the board the way
+     * that player sees it. Clock values are supplied directly since there's
+     * no local play driving them until moves start arriving.
+     *
+     * @param currentTurn whose turn it actually is right now in the live game.
+     *                    Unlike player mode — where a brand-new game always
+     *                    opens on White, so "is it my turn" can be inferred
+     *                    from playerColor == WHITE — a spectator can join a
+     *                    game already in progress, so the real side-to-move
+     *                    must be passed in explicitly and compared against
+     *                    spectatedPlayerSide to decide which clock/avatar
+     *                    renders as active.
+     */
+    public GameView(String fen, Side spectatedPlayerSide,
+                    GameFound.Player spectatedPlayer, GameFound.Player otherPlayer,
+                    long spectatedTimeMs, long otherTimeMs, Side currentTurn, Runnable onReturnToLobby) {
+        this(null, fen, true, spectatedPlayerSide,
+                PlayerInfo.from(spectatedPlayer), PlayerInfo.from(otherPlayer),
+                (int) (spectatedTimeMs / 1000), (int) (otherTimeMs / 1000),
+                null, null, onReturnToLobby, currentTurn);
+        this.spectatedPlayer=spectatedPlayer;
+    }
 
-        oppAvatarPane = Avatar.build(opponent.getAvatarUrl(),
-                initials(opponent.getUsername()), Avatar.colorFromName(opponent.getUsername()), 44);
-        myAvatarPane  = Avatar.build(session.getAvatarUrl(),
-                initials(session.getUsername()),  Avatar.colorFromName(session.getUsername()),  44);
+    /** Shared setup for both modes. bottomPlayer = "my" row, topPlayer = "opponent" row. */
+    private GameView(String gameId, String fen, boolean spectatorMode, Side mySide,
+                     PlayerInfo bottomPlayer, PlayerInfo topPlayer,
+                     int myTimeSeconds, int oppTimeSeconds,
+                     UserSession session, MatchmakingHandler matchmakingHandler, Runnable onReturnToLobby,
+                     Side sideToMove) {
+        this.gameId = gameId;
+        this.fen = fen;
+        this.spectatorMode = spectatorMode;
+        this.mySide = mySide;
+        this.session = session;
+        this.matchmakingHandler = matchmakingHandler;
+        this.onReturnToLobby = onReturnToLobby;
+        this.myTimeSeconds = myTimeSeconds;
+        this.oppTimeSeconds = oppTimeSeconds;
+        // Player mode (sideToMove == null): a fresh game always starts on White's
+        // turn, so mySide == WHITE tells us whether it's "my" turn — unchanged
+        // from before. Spectator mode: the game may already be in progress, so
+        // we compare the actual side-to-move (sideToMove) against the side we're
+        // spectating (mySide, i.e. spectatedPlayerSide) instead of assuming White opens.
+        this.myTurn = (sideToMove != null) ? (sideToMove == mySide) : (mySide == Side.WHITE);
 
-        oppNameLbl = styledLabel(opponent.getUsername(), TEXT_PRIMARY, 14, 700);
-        myNameLbl  = styledLabel(session.getUsername(),  TEXT_PRIMARY, 14, 700);
-        oppEloLbl  = styledLabel(opponent.getElo() + " ELO", TEXT_SECONDARY, 12, 600);
-        myEloLbl   = styledLabel(session.getElo()  + " ELO", TEXT_SECONDARY, 12, 600);
+        myAvatarPane  = Avatar.build(bottomPlayer.avatarUrl(), initials(bottomPlayer.username()),
+                Avatar.colorFromName(bottomPlayer.username()), 44);
+        oppAvatarPane = Avatar.build(topPlayer.avatarUrl(), initials(topPlayer.username()),
+                Avatar.colorFromName(topPlayer.username()), 44);
 
-        drawBtn   = buildActionBtn("½", DRAW_COLOR,   "Offer draw", this::offerDraw);
-        resignBtn = buildActionBtn("⚑", RESIGN_COLOR, "Resign",    this::confirmResign);
-        if(mySide==Side.WHITE){
-            drawBtn.setDisable(true);
+        myNameLbl  = styledLabel(bottomPlayer.username(), TEXT_PRIMARY, 14, 700);
+        oppNameLbl = styledLabel(topPlayer.username(), TEXT_PRIMARY, 14, 700);
+        myEloLbl   = styledLabel(bottomPlayer.elo() + " ELO", TEXT_SECONDARY, 12, 600);
+        oppEloLbl  = styledLabel(topPlayer.elo() + " ELO", TEXT_SECONDARY, 12, 600);
+
+        myClockLabel.setText(formatTime(myTimeSeconds));
+        oppClockLabel.setText(formatTime(oppTimeSeconds));
+
+        if (!spectatorMode) {
+            drawBtn   = buildActionBtn("½", DRAW_COLOR,   "Offer draw", this::offerDraw);
+            resignBtn = buildActionBtn("⚑", RESIGN_COLOR, "Resign",     this::confirmResign);
+            if (mySide == Side.WHITE) {
+                drawBtn.setDisable(true);
+            }
         }
+
         buildLayout();
         attachResizeListeners();
         renderFromFen(fen);
@@ -292,7 +326,6 @@ public class GameView {
         startClockTicking();
     }
 
-    // ── Public API ────────────────────────────────────────────────────
 
     public void renderFromFen(String fen) {
         board.loadFromFen(fen);
@@ -318,23 +351,53 @@ public class GameView {
                 this.fen = board.getFen();
                 refreshTurnIndicators();
                 myTurn = true;
-                drawBtn.setDisable(true);
-                drawBtn.setOpacity(0.4);
-                if(gameMove.getGameOverInfo()!=null){
+                if (!spectatorMode) {
+                    drawBtn.setDisable(true);
+                    drawBtn.setOpacity(0.4);
+                }
+                if (gameMove.getGameOverInfo() != null) {
                     showGameOverCard(gameMove.getGameOverInfo());
                 }
             });
         });
     }
+
+    /**
+     * Player mode: applies clock sync / fen reconciliation / game-over after
+     * the server confirms a move you already animated locally in commitMove().
+     *
+     * Spectator mode: nothing was animated locally, so this is what actually
+     * moves the piece — uses confirmation.getFrom()/getTo() to animate + apply
+     * the move, then updates both clocks the same way. Requires MoveConfirmation
+     * to expose from/to (add them server-side if it doesn't yet).
+     */
     public void applyMoveConfirmation(MoveConfirmation confirmation) {
         Platform.runLater(() -> {
-            drawBtn.setDisable(false);
-            drawBtn.setOpacity(1.0);
-            syncClocks(confirmation.getMyRemainingMs(), confirmation.getOppRemainingMs());
-            if (confirmation.getFen() != null && !confirmation.getFen().equals(fen)) {
-                renderFromFen(confirmation.getFen());
-            }
+            if (spectatorMode) {
+                Square from = Square.fromValue(confirmation.getFrom().toUpperCase());
+                Square to   = Square.fromValue(confirmation.getTo().toUpperCase());
 
+                animateMove(from, to, () -> {
+                    Move move = new Move(from, to);
+                    board.doMove(move);
+
+                    lastMoveFrom = from.value().toLowerCase();
+                    lastMoveTo   = to.value().toLowerCase();
+                    redrawSquare(lastMoveFrom);
+                    redrawSquare(lastMoveTo);
+                    this.fen = board.getFen();
+
+                    myTurn = board.getSideToMove() == mySide;
+                    refreshTurnIndicators();
+                });
+            } else {
+                drawBtn.setDisable(false);
+                drawBtn.setOpacity(1.0);
+                if (confirmation.getFen() != null && !confirmation.getFen().equals(fen)) {
+                    renderFromFen(confirmation.getFen());
+                }
+            }
+            syncClocks(confirmation.getMyRemainingMs(), confirmation.getOppRemainingMs());
             if (confirmation.getGameOverInfo() != null) {
                 showGameOverCard(confirmation.getGameOverInfo());
             }
@@ -348,25 +411,35 @@ public class GameView {
         oppClockLabel.setText(formatTime(oppTimeSeconds));
     }
 
-    public void showDrawOffered(){
-        Platform.runLater(() ->new DrawOfferReceivedCard(
-                root, () ->{
-         GameActions.onAcceptDraw.accept(gameId);
-            boardLocked = true;
-         disableButtons();
-    },null));
+    public void showSpectateRequest(SpectatedResponse response){
+        if(spectatorMode) return;
+        Platform.runLater(() ->
+                new SpectateRequestCard(root,response,GameActions.onAcceptSpectate, null));
     }
 
-    public void gameOver(GameOverInfo gameOverInfo){
+    public void showDrawOffered() {
+        if (spectatorMode) return;
+        Platform.runLater(() -> new DrawOfferReceivedCard(
+                root, () -> {
+            GameActions.onAcceptDraw.accept(gameId);
+            boardLocked = true;
+            disableButtons();
+        }, null));
+    }
+
+    public void gameOver(GameOverInfo gameOverInfo) {
         showGameOverCard(gameOverInfo);
     }
 
     private void showGameOverCard(GameOverInfo info) {
         Platform.runLater(() -> {
-            disableButtons();
+            if (!spectatorMode) disableButtons();
             stopClocks();
-            session.setElo(info.getNewElo());
-            GameOverCard card = new GameOverCard(info, session, boardWrap,()->matchmakingHandler.startGameSearching(root), onReturnToLobby);
+            if (session != null) session.setElo(info.getNewElo());
+            Runnable onRematch = spectatorMode
+                    ? onReturnToLobby
+                    : () -> matchmakingHandler.startGameSearching(root);
+            GameOverCard card = new GameOverCard(info, session, boardWrap, onRematch, onReturnToLobby);
         });
     }
 
@@ -405,16 +478,10 @@ public class GameView {
         return s < 10 ? (m + ":0" + s) : (m + ":" + s);
     }
 
-
-
-
-    // ── Turn indicators (new) ──────────────────────────────────────────
+    // ── Turn indicators ──────────────────────────────────────────────
 
     /** Updates clock + avatar styling to reflect whose turn it is. Call whenever myTurn changes. */
     private void refreshTurnIndicators() {
-        // Clock CSS only depends on size (font/width), which is cached and rebuilt
-        // solely by applySize(). Here we just swap between the two cached strings
-        // instead of recomputing/formatting them on every move.
         if (clockStyleActive == null) {
             recomputeClockStyles(currentClockFont(), currentClockWidth());
         } else {
@@ -423,7 +490,7 @@ public class GameView {
         }
         styleAvatarRing(myAvatarPane,  myTurn);
         styleAvatarRing(oppAvatarPane, !myTurn);
-        updateDrawButtonState();
+        if (!spectatorMode) updateDrawButtonState(); // no draw button exists in spectator mode
     }
 
     private double currentClockFont() {
@@ -448,7 +515,6 @@ public class GameView {
         root.setStyle(WALLPAPER_STYLE);
         root.setMinSize(0, 0);
 
-        // Ambient glow sitting behind everything, centered on the board area
         ambientGlow.setMouseTransparent(true);
         ambientGlow.setStyle(
                 "-fx-background-color: radial-gradient(center 50% 46%, radius 55%, " +
@@ -481,10 +547,6 @@ public class GameView {
         floatPane.prefWidthProperty().bind(boardWrap.widthProperty());
         floatPane.prefHeightProperty().bind(boardWrap.heightProperty());
 
-        // Beveled wooden frame wrapping the board:
-        // boardFrame  = outer wood molding (thick, warm gradient + faux grain streaks)
-        // boardGroove = a darker recessed "channel" so the board looks set INTO the wood
-        // boardWrap   = the actual chess board, sitting inside the groove
         boardGroove.getChildren().add(boardWrap);
         boardGroove.setStyle(
                 "-fx-background-color: " + WOOD_DARK + ";" +
@@ -504,7 +566,6 @@ public class GameView {
         );
         boardFrame.setEffect(new DropShadow(34, Color.color(0, 0, 0, 0.65)));
 
-        // Brass corner pins — small decorative touch, sit on top of the wood molding
         for (Circle pin : new Circle[]{pinTL, pinTR, pinBL, pinBR}) {
             pin.setFill(new RadialGradient(0, 0, 0.35, 0.3, 0.7, true, CycleMethod.NO_CYCLE,
                     new Stop(0, Color.web(BRASS_LIGHT)), new Stop(1, Color.web(BRASS_DARK))));
@@ -557,7 +618,8 @@ public class GameView {
 
         leftSidebar.getChildren().addAll(topGroup, clockSpacer, bottomGroup);
 
-        // Right sidebar
+        // Right sidebar — width reserved for symmetry either way; buttons only
+        // exist (and only get added) in player mode.
         rightSidebar.setAlignment(Pos.CENTER);
         rightSidebar.setStyle(
                 "-fx-background-color: linear-gradient(to bottom, " + PANEL_TOP + ", " + PANEL_BOTTOM + ")," +
@@ -567,9 +629,10 @@ public class GameView {
                         "-fx-border-width: 0 0 0 2;" +
                         "-fx-border-radius: 14 0 0 14;"
         );
-        rightSidebar.getChildren().addAll(drawBtn, resignBtn);
+        if (!spectatorMode) {
+            rightSidebar.getChildren().addAll(drawBtn, resignBtn);
+        }
 
-        // Accent divider strips along the top edge of each sidebar panel
         Region leftAccent = accentStrip("0 8 0 0");
         StackPane leftPanelWrap = new StackPane(leftSidebar, leftAccent);
         StackPane.setAlignment(leftAccent, Pos.TOP_CENTER);
@@ -583,10 +646,11 @@ public class GameView {
         centerRow.setSpacing(0);
         centerRow.getChildren().addAll(leftPanelWrap, boardOuter, rightPanelWrap);
 
-        // Top status bar — pulsing "LIVE" indicator + fading accent divider,
-        // width-matched to the board+sidebars row beneath it.
-        liveDot.setFill(Color.web(ACCENT));
-        liveDot.setEffect(new DropShadow(8, Color.web(ACCENT_GLOW)));
+        // Top-bar status dot + label: gold "LIVE" pulse in player mode,
+        // muted "SPECTATING" badge in spectator mode — same widgets, styled
+        // per mode so the two views are visually distinguishable at a glance.
+        liveDot.setFill(Color.web(spectatorMode ? SPECTATE_COLOR : ACCENT));
+        liveDot.setEffect(new DropShadow(8, Color.web(spectatorMode ? SPECTATE_GLOW : ACCENT_GLOW)));
         FadeTransition pulse = new FadeTransition(Duration.millis(900), liveDot);
         pulse.setFromValue(1.0);
         pulse.setToValue(0.35);
@@ -594,11 +658,16 @@ public class GameView {
         pulse.setAutoReverse(true);
         pulse.play();
 
-        Label liveLbl = styledLabel("LIVE", ACCENT, 11, 800);
+        liveLbl.setText(spectatorMode ? "SPECTATING" : "LIVE");
+        liveLbl.setStyle(String.format(
+                "-fx-text-fill: %s; -fx-font-size: %.0fpx; -fx-font-weight: %d;",
+                spectatorMode ? SPECTATE_COLOR : ACCENT, 11.0, 800));
+
         Region topDivider = new Region();
         topDivider.setPrefHeight(1);
         topDivider.setMaxHeight(1);
-        topDivider.setStyle("-fx-background-color: linear-gradient(to right, rgba(129,182,76,0.35), rgba(129,182,76,0));");
+        topDivider.setStyle("-fx-background-color: linear-gradient(to right, "
+                + (spectatorMode ? SPECTATE_DIVIDER_FROM : "rgba(129,182,76,0.35)") + ", rgba(129,182,76,0));");
         HBox.setHgrow(topDivider, Priority.ALWAYS);
 
         topBar.setAlignment(Pos.CENTER_LEFT);
@@ -750,8 +819,10 @@ public class GameView {
         rightSidebar.setMaxSize(rightWidth, boardPx);
 
         currentBtnSize = btnSize;
-        resizeActionBtn(drawBtn,   btnSize);
-        resizeActionBtn(resignBtn, btnSize);
+        if (!spectatorMode) {
+            resizeActionBtn(drawBtn,   btnSize);
+            resizeActionBtn(resignBtn, btnSize);
+        }
 
         clearHighlights();
     }
@@ -768,16 +839,11 @@ public class GameView {
         }
     }
 
-    /**
-     * Redraws a single square: resets its background color then redraws piece.
-     * Resetting color here is the key fix — clearSquareUI only removes children,
-     * it never touches the -fx-background-color style.
-     */
     private void redrawSquare(String squareName) {
         Square sq = Square.fromValue(squareName.toUpperCase());
         if (sq == Square.NONE) return;
         int[] rc = squareToRowCol(sq);
-        resetSquareColor(rc[0], rc[1]);   // ← fix: reset color before redrawing
+        resetSquareColor(rc[0], rc[1]);
         clearSquareUI(rc[0], rc[1]);
         Piece piece = board.getPiece(sq);
         if (piece != Piece.NONE) placePiece(piece, rc[0], rc[1]);
@@ -809,9 +875,8 @@ public class GameView {
         squares[row][col].getChildren().removeIf(n -> !"coord".equals(n.getUserData()));
     }
 
-    // ── Color helpers (targeted — never loop all 64) ──────────────────
+    // ── Color helpers ───────────────────────────────────────────────
 
-    /** Resets a single square to its natural light/dark board color. */
     private void resetSquareColor(int row, int col) {
         boolean isLight = (row + col) % 2 != 0;
         squares[row][col].setStyle(isLight ? SQ_STYLE_LIGHT : SQ_STYLE_DARK);
@@ -825,36 +890,20 @@ public class GameView {
         resetSquareColor(rc[0], rc[1]);
     }
 
-    /**
-     * Clears only the squares that were actually highlighted:
-     * the selected square, legal-move dots, and the previous last-move tint.
-     * Never loops all 64.
-     */
     private void clearHighlights() {
-        // 1. Reset selected square
         if (selectedSquare != null) {
             int[] rc = squareToRowCol(selectedSquare);
             resetSquareColor(rc[0], rc[1]);
         }
 
-        // 2. Reset legal-move target squares and remove dots/rings
         for (Square target : legalTargets) {
             int[] rc = squareToRowCol(target);
             resetSquareColor(rc[0], rc[1]);
             squares[rc[0]][rc[1]].getChildren().removeIf(n -> "dot".equals(n.getUserData()));
         }
 
-        // 3. Reset previous last-move tint
         resetSquareColorByName(lastMoveFrom);
         resetSquareColorByName(lastMoveTo);
-
-//        // 4. Re-apply last-move gold tint (keeps it visible after selection clears)
-//        refreshLastMoveHighlight();
-    }
-
-    private void refreshLastMoveHighlight() {
-        if (lastMoveFrom != null) tintLastMove(lastMoveFrom);
-        if (lastMoveTo   != null) tintLastMove(lastMoveTo);
     }
 
     private void tintLastMove(String squareName) {
@@ -897,7 +946,7 @@ public class GameView {
         floatPane.getChildren().add(iv);
 
         clearSquareUI(fromRC[0], fromRC[1]);
-        resetSquareColor(fromRC[0], fromRC[1]);  // ← add this line
+        resetSquareColor(fromRC[0], fromRC[1]);
 
         TranslateTransition tt = new TranslateTransition(Duration.millis(MOVE_ANIM_MS), iv);
         tt.setFromX(0);
@@ -931,12 +980,11 @@ public class GameView {
     // ── Click & move logic ────────────────────────────────────────────
 
     private void handleSquareClick(int row, int col) {
-        if(specatorMode) return;
-        if(boardLocked) return;
+        if (spectatorMode) return; // fixed typo (was "specatorMode") — spectators can never move pieces
+        if (boardLocked) return;
         Square clicked = rowColToSquare(row, col);
 
         if (selectedSquare == null) {
-            // first click — select piece
             Piece piece = board.getPiece(clicked);
             if (piece == Piece.NONE) return;
             if (!myTurn) return;
@@ -952,12 +1000,9 @@ public class GameView {
             highlightLegalMoves();
 
         } else {
-            // second click
             if (legalTargets.contains(clicked)) {
-                // ← THIS WAS MISSING — commit the move
                 commitMove(selectedSquare, clicked);
             } else {
-                // deselect or re-select another piece
                 clearHighlights();
                 selectedSquare = null;
                 legalTargets.clear();
@@ -969,11 +1014,12 @@ public class GameView {
             }
         }
     }
-    private void commitMove(Square fromSq, Square toSq){
+
+    private void commitMove(Square fromSq, Square toSq) {
         clearHighlights();
         selectedSquare = null;
         legalTargets.clear();
-        myTurn=false;
+        myTurn = false;
         animateMove(fromSq, toSq, () -> {
             Move move = new Move(fromSq, toSq);
             board.doMove(move);
@@ -983,11 +1029,12 @@ public class GameView {
             lastMoveTo   = to;
             redrawSquare(from);
             redrawSquare(to);
-            this.fen=board.getFen();
+            this.fen = board.getFen();
             refreshTurnIndicators();
-            GameActions.onMove.accept(new PlayerMove(gameId,from,to));
+            GameActions.onMove.accept(new PlayerMove(gameId, from, to));
         });
     }
+
     // ── Highlights ────────────────────────────────────────────────────
 
     private void highlightSelected(int row, int col) {
@@ -1061,12 +1108,6 @@ public class GameView {
         btn.setMaxSize(size, size);
     }
 
-    /**
-     * Rebuilds the two clock CSS variants (active/idle) for the current size,
-     * caches them, sets the fixed layout properties once, and applies the
-     * correct variant to each label immediately. Called only from applySize()
-     * (on resize) and lazily on first use — never per move.
-     */
     private void recomputeClockStyles(double fontSize, double width) {
         myClockLabel.setPrefWidth(width);
         oppClockLabel.setPrefWidth(width);
@@ -1136,12 +1177,14 @@ public class GameView {
         return box;
     }
 
-    private void disableButtons(){
+    private void disableButtons() {
+        if (spectatorMode) return; // buttons don't exist
         drawBtn.setDisable(true);
         resignBtn.setDisable(true);
         drawBtn.setOpacity(0.4);
-        drawBtn.setOpacity(0.4);
+        resignBtn.setOpacity(0.4); // fixed: was setting drawBtn's opacity twice, resignBtn never dimmed
     }
+
     private void updateDrawButtonState() {
         boolean disabled = myTurn || drawCooldownActive;
         drawBtn.setDisable(disabled);
@@ -1159,8 +1202,8 @@ public class GameView {
         cooldown.play();
     }
 
-    private void offerDraw(){
-        new DrawOfferConfirmCard(root, ()->{
+    private void offerDraw() {
+        new DrawOfferConfirmCard(root, () -> {
             GameActions.onOfferDraw.accept(gameId);
             startDrawCooldown();
         });
@@ -1172,8 +1215,8 @@ public class GameView {
             GameActions.onResign.accept(gameId);
             boardLocked = true;
             disableButtons();
-        },()->{
-            if(myTurn&&boardLocked) boardLocked=false;
+        }, () -> {
+            if (myTurn && boardLocked) boardLocked = false;
         });
     }
 
@@ -1194,13 +1237,17 @@ public class GameView {
             st.play();
         });
         btn.setOnMouseExited(e -> {
+            if (btn.isDisabled()) return; // fixed: previously always restyled, ignoring disabled state
             btn.setStyle(actionBtnStyle(false));
             ScaleTransition st = new ScaleTransition(Duration.millis(120), btn);
             st.setToX(1.0);
             st.setToY(1.0);
             st.play();
         });
-        btn.setOnMouseClicked(e -> action.run());
+        btn.setOnMouseClicked(e -> {
+            if (btn.isDisabled()) return; // fixed: previously always ran, disabled or not
+            action.run();
+        });
         return btn;
     }
 
@@ -1208,14 +1255,11 @@ public class GameView {
         return hover ? BTN_STYLE_HOVER : BTN_STYLE_IDLE;
     }
 
-
     private Label styledLabel(String text, String color, double fontSize, int weight) {
         Label lbl = new Label(text);
         lbl.setStyle(String.format(
                 "-fx-text-fill: %s; -fx-font-size: %.0fpx; -fx-font-weight: %d;",
                 color, fontSize, weight));
         return lbl;
-
     }
-
 }

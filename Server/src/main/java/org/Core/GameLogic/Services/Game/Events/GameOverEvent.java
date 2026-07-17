@@ -1,4 +1,4 @@
 package org.Core.GameLogic.Services.Game.Events;
 
-public record GameOverEvent(GameOverInfo playerA, GameOverInfo playerB) {
+public record GameOverEvent(Event playerA, Event playerB) {
 }
