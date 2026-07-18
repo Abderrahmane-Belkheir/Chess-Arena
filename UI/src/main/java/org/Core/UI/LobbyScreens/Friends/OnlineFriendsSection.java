@@ -29,7 +29,7 @@ public class OnlineFriendsSection extends FriendSection<FriendsPage.FriendEntry>
 
     @Override
     protected Node buildRow(FriendsPage.FriendEntry f) {
-        return FriendRow.build(f, controller);
+        return FriendRow.build(f, client,controller);
     }
 
     @Override

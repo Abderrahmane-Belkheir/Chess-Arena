@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+
+import java.util.List;
 
 
 @RestController
@@ -18,10 +19,10 @@ import java.util.ArrayList;
 public class FriendShipQueryController {
 
     private final FriendShipQuery friendShipQuery;
+
     @GetMapping("/friends")
     public ResponseEntity<FriendsPage> get(@RequestParam(required = false) String cursor) {
-
-        return ResponseEntity.ok(new FriendsPage(new ArrayList<>(), "page2", true));
+        return ResponseEntity.ok(new FriendsPage(List.of(new FriendsPage.FriendEntry(677387,"ilham",1200, FriendsPage.Status.InGame,"","")), "", false));
     }
 
 }

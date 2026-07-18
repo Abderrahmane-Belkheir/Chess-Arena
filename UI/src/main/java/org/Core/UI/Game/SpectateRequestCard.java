@@ -20,30 +20,12 @@ import java.util.function.Consumer;
 
 import static org.Core.UI.LobbyScreens.Friends.Avatar.initials;
 
-/**
- * Small toast shown when someone requests to spectate you — pinned to the
- * top-right of the given parent StackPane, auto-dismisses after 10 seconds
- * if ignored. Same shape/style as DrawOfferReceivedCard, but shows the
- * requester's actual avatar + username (from the SpectatedResponse payload)
- * instead of a generic icon, since "who's asking" is the whole point here.
- *
- * Usage (wherever the client receives a SpectatedResponse spectate-request event):
- *
- *   Platform.runLater(() ->
- *       new SpectateRequestCard(root, request,
- *           req -> stompSession.send("/app/spectate/respond",
- *                   new SpectateRespondMessage(req.getUserId(), true)),   // accept
- *           req -> stompSession.send("/app/spectate/respond",
- *                   new SpectateRespondMessage(req.getUserId(), false))   // decline
- *       )
- *   );
- */
 public class SpectateRequestCard {
 
     private static final Duration VISIBLE_DURATION = Duration.seconds(10);
     private static final Duration FADE_DURATION     = Duration.millis(200);
 
-    // ── Palette (matches GameView's wood/gold theme) ───────────────────
+
     private static final String WOOD_HIGHLIGHT = "#b98550";
     private static final String WOOD_MID       = "#7a4d29";
     private static final String WOOD_DARK      = "#3e2415";
@@ -52,24 +34,11 @@ public class SpectateRequestCard {
     private final VBox card;
     private boolean responded = false;
 
-    /**
-     * @param parent    the StackPane to pin this toast onto (top-right corner)
-     * @param request   who's asking — carries userId/username/avatarUrl
-     * @param onAccept  runs with the request if accepted within the 10s window
-     * @param onDecline runs with the request if explicitly declined within the 10s window
-     *                  (NOT called on silent timeout — see the onTimeout overload for that)
-     */
     public SpectateRequestCard(StackPane parent, SpectatedResponse request,
                                Consumer<Integer>  onAccept, Consumer<Integer> onDecline) {
         this(parent, request, onAccept, onDecline, null);
     }
 
-    /**
-     * @param onTimeout optional, runs with the request only if the 10s window elapses
-     *                  with no response. The server-side pending-request TTL is the
-     *                  authoritative lapse — this is only here if you want the UI to
-     *                  reflect it too (e.g. logging, or letting the requester know).
-     */
     public SpectateRequestCard(StackPane parent, SpectatedResponse request,
                                 Consumer<Integer> onAccept, Consumer<Integer> onDecline,
                                 Consumer<SpectatedResponse> onTimeout) {

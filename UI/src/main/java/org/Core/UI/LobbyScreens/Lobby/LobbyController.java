@@ -16,23 +16,13 @@ import org.Core.Social.FriendShipClient;
 public interface LobbyController {
 
     StackPane start(UserSession userSession, FriendShipClient friendShipClient);
-    // ── Hero ──────────────────────────────────────────────────────────
 
-    /** User clicked the big green "Play" button. */
     void onPlayClicked();
 
-    // ── Nav ───────────────────────────────────────────────────────────
 
-    /** User clicked their own profile chip in the top-right. */
     void onProfileClicked();
 
-    // ── Friends ───────────────────────────────────────────────────────
 
-    /** User clicked a friend row — open challenge / chat dialog. */
-    void onFriendClicked(String username);
-
-    // ── Recent games ─────────────────────────────────────────────────
-
-    /** User clicked a past game row — open board replay. */
+    StackPane getOverlay();
     void onGameClicked(String gameId);
 }

@@ -46,10 +46,10 @@ public class FriendsPanel {
 
         tabBar = new TabBar(this::switchTab);
 
-        online   = new OnlineFriendsSection(friendShipClient, controller,
-                count -> tabBar.setOnlineCount(count));
-        offline  = new OfflineFriendsSection(friendShipClient, controller,
-                (count, hasMore) -> tabBar.setOfflineCount(count, hasMore));
+        online   = new OnlineFriendsSection(friendShipClient,  controller,
+                tabBar::setOnlineCount);
+        offline  = new OfflineFriendsSection(friendShipClient,  controller,
+                tabBar::setOfflineCount);
         requests = new RequestsSection(friendShipClient,
                 this::adjustPendingCount,
                 this::showGlobalError);

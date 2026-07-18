@@ -28,6 +28,10 @@ public class FriendShipClient {
         this.realtimeGateway=realtimeGateway;
     }
 
+    public void challenge(int userId){
+
+    }
+
     public void spectate(int userId){
         GameRealtimeGatewayStub.getSession().send("/app/spectate.request",new Spectate(userId));
         realtimeGateway.subscribe("/user/queue/spectate.responses", SpectatorResponse.class);
@@ -49,7 +53,7 @@ public class FriendShipClient {
         apiClient.PUT(null,baseUrl+"/social/reject?publicId="+userId,null);
     }
 
-    public void deleteFriend(String userId){
+    public void deleteFriend(int userId){
         System.out.println("DELETING FRIEND "+userId);
     }
 

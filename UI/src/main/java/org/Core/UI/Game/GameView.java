@@ -15,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import lombok.Getter;
 import org.Core.Auth.DTO.UserSession;
 import org.Core.Game.Events.*;
 import java.util.stream.Collectors;
@@ -240,6 +241,7 @@ public class GameView {
     private final MatchmakingHandler matchmakingHandler; // null in spectator mode
     private final Runnable onReturnToLobby;
 
+    @Getter
     private final boolean spectatorMode;
     private GameFound.Player spectatedPlayer;
     /** Player mode — full interactive game with Draw/Resign. */
@@ -433,13 +435,17 @@ public class GameView {
 
     private void showGameOverCard(GameOverInfo info) {
         Platform.runLater(() -> {
-            if (!spectatorMode) disableButtons();
             stopClocks();
-            if (session != null) session.setElo(info.getNewElo());
-            Runnable onRematch = spectatorMode
-                    ? onReturnToLobby
-                    : () -> matchmakingHandler.startGameSearching(root);
-            GameOverCard card = new GameOverCard(info, session, boardWrap, onRematch, onReturnToLobby);
+            GameOverCard card;
+            if (!spectatorMode){
+                disableButtons();
+                if (session != null){
+                    session.setElo(info.getNewElo());
+                }
+                 card = new GameOverCard(info, session, boardWrap, () -> matchmakingHandler.startGameSearching(root), onReturnToLobby);
+            }else {
+                card=new GameOverCard(info,spectatedPlayer,boardWrap,onReturnToLobby);
+            }
         });
     }
 

@@ -29,7 +29,7 @@ public class LobbyView {
         layout.setStyle("-fx-background-color: #0a0a0a;");
 
         navBar       = new NavBar(controller);
-        friendsPanel = new FriendsPanel(friendShipClient,controller);
+        friendsPanel = new FriendsPanel(friendShipClient, controller);
         heroPanel    = new HeroPanel(controller);
         recentGames  = new RecentGames(controller);
 

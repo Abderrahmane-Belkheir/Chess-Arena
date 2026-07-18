@@ -13,6 +13,7 @@ import javafx.util.Duration;
 import org.Core.Auth.DTO.UserSession;
 
 
+
 public class ProfileCard {
 
     private final StackPane overlay;

@@ -37,6 +37,7 @@ public class GameOverCard {
     private static final double BLUR_RADIUS = 10;
     private static final double BLUR_OVERSCAN = BLUR_RADIUS * 2;
     private static final double CARD_SIZE = 300;
+    private static final double SPECTATOR_AUTO_RETURN_SECONDS = 4;
 
     private final StackPane boardWrap;
     private final StackPane overlay = new StackPane();
@@ -70,6 +71,46 @@ public class GameOverCard {
         boardWrap.getChildren().add(overlay);
 
         playEntranceAnimation(card);
+    }
+
+    /**
+     * Spectator variant — no session, no rematch action. Shows the spectated
+     * player's identity plus their elo before→after (same diff styling as the
+     * 2-player card), and drops the action-button row entirely. There's no
+     * button and no click-to-dismiss — the card fades out and invokes
+     * {@code onReturnToLobby} automatically after
+     * {@link #SPECTATOR_AUTO_RETURN_SECONDS} seconds.
+     */
+    public GameOverCard(GameOverInfo info, GameFound.Player spectatedPlayer, StackPane boardWrap, Runnable onReturnToLobby) {
+        this.boardWrap = boardWrap;
+
+        overlay.setStyle("-fx-background-color: " + BG_OVERLAY + ";");
+        overlay.setOpacity(0);
+        overlay.setPickOnBounds(true);
+
+        VBox card = buildSpectatorCard(info, spectatedPlayer);
+        card.setCache(true);
+        card.setCacheHint(CacheHint.SPEED);
+
+        applyGlow(card, resultGlowColor(info.getResult()));
+
+        card.setScaleX(0.9);
+        card.setScaleY(0.9);
+        card.setOpacity(0);
+
+        overlay.getChildren().add(card);
+        StackPane.setAlignment(card, Pos.CENTER);
+
+        addBlurSnapshot();
+        boardWrap.getChildren().add(overlay);
+
+        playEntranceAnimation(card);
+
+        // No button and no click-to-dismiss in spectator mode — just auto-return
+        // after giving the viewer a moment to read the result.
+        PauseTransition autoReturn = new PauseTransition(Duration.seconds(SPECTATOR_AUTO_RETURN_SECONDS));
+        autoReturn.setOnFinished(e -> dispose(onReturnToLobby));
+        autoReturn.play();
     }
 
     public StackPane getView() { return overlay; }
@@ -175,6 +216,40 @@ public class GameOverCard {
         return card;
     }
 
+    /** Spectator layout: banner, single player row (elo before→after), no divider/buttons at the bottom. */
+    private VBox buildSpectatorCard(GameOverInfo info, GameFound.Player spectatedPlayer) {
+        VBox card = new VBox(0);
+        card.setAlignment(Pos.CENTER);
+        card.setPrefSize(CARD_SIZE, CARD_SIZE);
+        card.setMinSize(CARD_SIZE, CARD_SIZE);
+        card.setMaxSize(CARD_SIZE, CARD_SIZE);
+        card.setStyle(
+                "-fx-background-color: " + CARD_BG + ";" +
+                        "-fx-background-radius: 14;" +
+                        "-fx-border-color: " + CARD_BORDER + ";" +
+                        "-fx-border-radius: 14;" +
+                        "-fx-border-width: 1;"
+        );
+
+        Region topSpacer = new Region();
+        Region bottomSpacer = new Region();
+        VBox.setVgrow(topSpacer, Priority.ALWAYS);
+        VBox.setVgrow(bottomSpacer, Priority.ALWAYS);
+
+        HBox playerRow = buildPlayerRow(spectatedPlayer.getAvatarUrl(), spectatedPlayer.getUsername(),
+                spectatedPlayer.getElo(), info.getNewElo());
+        VBox.setMargin(playerRow, new Insets(0, 20, 26, 20));
+
+        card.getChildren().addAll(
+                buildResultBanner(info.getResult(), info.getEndReason()),
+                topSpacer,
+                playerRow,
+                bottomSpacer
+        );
+
+        return card;
+    }
+
     // ── Glow (static, no ongoing animation — cheap) ────────────────────
 
     private Color resultGlowColor(GameOverInfo.GameResult result) {
@@ -252,7 +327,12 @@ public class GameOverCard {
 
     // ── Player row (avatar, name, elo before → after) ──────────────────
 
-    private HBox buildPlayerRow(GameOverInfo info,UserSession session) {
+    private HBox buildPlayerRow(GameOverInfo info, UserSession session) {
+        return buildPlayerRow(session.getAvatarUrl(), session.getUsername(), session.getElo(), info.getNewElo());
+    }
+
+    /** Shared row builder: avatar, name, and elo before → after (diff colored/signed). */
+    private HBox buildPlayerRow(String avatarUrl, String username, int eloBefore, int eloAfter) {
         HBox row = new HBox(12);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(10, 14, 10, 14));
@@ -263,21 +343,18 @@ public class GameOverCard {
                         "-fx-background-radius: 8;"
         );
 
-        StackPane avatar = buildAvatar(session.getAvatarUrl(), initials(session.getUsername()),
-                avatarColor(session.getUsername()), 40);
+        StackPane avatar = buildAvatar(avatarUrl, initials(username), avatarColor(username), 40);
 
         VBox nameBlock = new VBox(3);
         nameBlock.setAlignment(Pos.CENTER_LEFT);
 
-        Label nameLbl = new Label(session.getUsername());
+        Label nameLbl = new Label(username);
         nameLbl.setStyle(
                 "-fx-text-fill: " + TEXT_PRIMARY + ";" +
                         "-fx-font-size: 14px;" +
                         "-fx-font-weight: 700;"
         );
 
-        int eloBefore = session.getElo();
-        int eloAfter  = info.getNewElo();
         int diff = eloAfter - eloBefore;
 
         String diffColor = diff > 0 ? WIN_COLOR : (diff < 0 ? LOSE_COLOR : TEXT_SECONDARY);
@@ -315,7 +392,7 @@ public class GameOverCard {
         return divider;
     }
 
-    // ── Action buttons ────────────────────────────────────────────────
+    // ── Action buttons (2-player mode only — spectator card has none) ──
 
     private HBox buildActionButtons(Runnable onNewGame, Runnable onReturnToLobby) {
         HBox box = new HBox(10);

@@ -13,20 +13,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-/**
- * Confirmation overlay shown when a player clicks "Offer Draw". Same shape
- * and styling as ResignConfirmCard — attaches itself on top of the given
- * parent StackPane, removes itself once the person picks Cancel or confirms.
- *
- * Usage (wiring up GameView's existing draw button):
- *
- *   drawBtn = buildActionBtn("½", DRAW_COLOR, "Offer draw", () -> {
- *       if (myTurn) return; // per the turn-restriction rule — button should already be disabled here
- *       new DrawOfferConfirmCard(root, () -> {
- *           stompSession.send("/app/game/" + gameId + "/offerDraw", new DrawOfferMessage(gameId));
- *       });
- *   });
- */
 public class DrawOfferConfirmCard {
 
     // ── Palette (matches GameView's wood/gold theme) ───────────────────

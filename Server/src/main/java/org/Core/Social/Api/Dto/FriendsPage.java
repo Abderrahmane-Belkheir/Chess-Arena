@@ -18,11 +18,12 @@ public class FriendsPage  {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class FriendEntry{
-       private String username;
-       private   int    elo;
-       private Status status;
-       private String avatarUrl;
-       private String avatarColor;
+        private int id;
+        private String username;
+        private   int    elo;
+        private Status status;
+        private String avatarUrl;
+        private String avatarColor;
     }
     public enum Status{InGame,InLobby,Offline}
 }

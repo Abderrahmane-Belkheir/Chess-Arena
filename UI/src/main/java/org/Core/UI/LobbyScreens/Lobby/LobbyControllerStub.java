@@ -3,7 +3,6 @@ package org.Core.UI.LobbyScreens.Lobby;
 
 import javafx.scene.layout.StackPane;
 import org.Core.Auth.DTO.UserSession;
-import org.Core.Game.Services.GameActions;
 import org.Core.Social.FriendShipClient;
 import org.Core.UI.Game.MatchmakingHandler;
 import org.Core.UI.LobbyScreens.Friends.Avatar;
@@ -36,7 +35,6 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
                 Avatar.initials(userSession.getUsername()),
                 userSession.getAvatarUrl()
         );
-        friendShipClient.spectate(677387);
         return lobbyView.getView();
     }
 
@@ -47,10 +45,14 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
         card.show();
     }
 
+    @Override
+    public StackPane getOverlay() {
+        return lobbyView.getOverlay();
+    }
+
 
     @Override
     public void onChangeAvatar() {
-        // TODO: open file picker, upload to server, update avatar URL
         System.out.println("[Profile] Change avatar clicked");
     }
 
@@ -59,14 +61,12 @@ public class LobbyControllerStub implements LobbyController, ProfileCardControll
         matchmakingHandler.startGameSearching(lobbyView.getView());
     }
 
-    @Override
-    public void onFriendClicked(String username) {
-        System.out.println("[LobbyController] Friend clicked: " + username);
-    }
+
 
     @Override
     public void onGameClicked(String gameId) {
-        System.out.println("[LobbyController] Game clicked: " + gameId);
+
     }
+
 
 }

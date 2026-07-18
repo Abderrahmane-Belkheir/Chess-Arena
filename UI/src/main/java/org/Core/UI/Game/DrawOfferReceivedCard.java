@@ -92,24 +92,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-/**
- * Small toast shown to the RECEIVER of a draw offer — pinned to the top-right
- * of the given parent StackPane, auto-dismisses after 10 seconds if ignored.
- * Unlike ResignConfirmCard/DrawOfferConfirmCard, this is non-modal: no scrim,
- * doesn't block the board, since the receiver should still be free to just
- * keep playing (their move implicitly declines the offer server-side anyway).
- *
- * Usage (wherever the client receives the "opponent offered a draw" STOMP event):
- *
- *   Platform.runLater(() ->
- *       new DrawOfferReceivedCard(root,
- *           () -> stompSession.send("/app/game/" + gameId + "/respondDraw",
- *                   new DrawResponseMessage(gameId, true)),   // accept
- *           () -> stompSession.send("/app/game/" + gameId + "/respondDraw",
- *                   new DrawResponseMessage(gameId, false))   // decline
- *       )
- *   );
- */
+
+
 public class DrawOfferReceivedCard {
 
     private static final Duration VISIBLE_DURATION = Duration.seconds(10);

@@ -160,9 +160,10 @@ UI/src/main/java/org/Core/
 ├── UI/LobbyScreens/    → lobby, friends panel, profile
 ├── UI/Game/             → live game board, draw/resign/spectate dialogs, recent games
 ├── Auth/                 → Auth0 token exchange & secure keyring storage
-└── Realtime/               → WebSocket gateway to the server
-```
+├── Realtime/               → WebSocket gateway to the server
+├── Auth/                 → Auth0 token exchange & secure keyring storage
+└──Config                → ApiClient,DI objects creation
+├── Social              → FriendShipClient handling all social interactions
 
-## License
 
 No license file is currently included in this repository. Add a `LICENSE` file to clarify usage terms before distributing or accepting external contributions.

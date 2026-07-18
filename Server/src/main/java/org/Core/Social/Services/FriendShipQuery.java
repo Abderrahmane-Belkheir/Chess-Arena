@@ -16,7 +16,6 @@ public class FriendShipQuery {
     private final FriendShip_RequestRepo friendShip_requestRepo;
 
     public FriendsPage getOnlineFriends(String cursor){
-
         return null;
     }
 

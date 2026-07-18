@@ -6,15 +6,17 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.Core.Social.DTO.FriendsPage;
+import org.Core.Social.FriendShipClient;
 import org.Core.UI.LobbyScreens.Lobby.LobbyController;
 
 public final class FriendRow {
 
     private FriendRow() {}
 
-    public static HBox build(FriendsPage.FriendEntry f, LobbyController controller) {
+    public static HBox build(FriendsPage.FriendEntry f, FriendShipClient client,LobbyController controller) {
         HBox row = new HBox(12);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(10, 16, 10, 16));
@@ -63,7 +65,11 @@ public final class FriendRow {
                 row.setStyle("-fx-background-color: #1a1a1a; -fx-cursor: hand;");
         });
         row.setOnMouseExited(e -> row.setStyle("-fx-cursor: hand;"));
-        row.setOnMouseClicked(e -> controller.onFriendClicked(f.getUsername()));
+        row.setOnMouseClicked(e -> {
+            StackPane overlay = controller.getOverlay();
+            FriendCard card = new FriendCard(f, client, overlay);
+            card.show();
+        });
         return row;
     }
 

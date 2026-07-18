@@ -11,7 +11,6 @@ public class OfflineFriendsSection extends FriendSection<FriendsPage.FriendEntry
 
     private final FriendShipClient client;
     private final LobbyController controller;
-    /** (count, hasMore) -> update tab label, e.g. "Offline 12+" */
     private final BiConsumer<Integer, Boolean> onCountChanged;
 
     public OfflineFriendsSection(FriendShipClient client,
@@ -30,7 +29,7 @@ public class OfflineFriendsSection extends FriendSection<FriendsPage.FriendEntry
 
     @Override
     protected Node buildRow(FriendsPage.FriendEntry f) {
-        return FriendRow.build(f, controller);
+        return FriendRow.build(f,client, controller);
     }
 
     @Override

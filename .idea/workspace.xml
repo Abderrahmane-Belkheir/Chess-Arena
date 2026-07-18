@@ -5,7 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/SpectateJoinOverlay.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendCard.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/FriendsPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/FriendsPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferConfirmCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferConfirmCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferReceivedCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferReceivedCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameOverCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameOverCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/SpectateRequestCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/SpectateRequestCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendRow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendsPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OfflineFriendsSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OfflineFriendsSection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OnlineFriendsSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OnlineFriendsSection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyControllerStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyControllerStub.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCard.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,7 +164,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java</url>
-          <line>14</line>
+          <line>15</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">

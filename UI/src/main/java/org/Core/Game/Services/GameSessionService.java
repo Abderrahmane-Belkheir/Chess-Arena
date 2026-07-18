@@ -8,6 +8,7 @@ import org.Core.Auth.UserSessionManager;
 import org.Core.Game.Events.*;
 import org.Core.UI.Game.GameView;
 import org.Core.UI.Game.MatchmakingHandler;
+import org.Core.UI.Game.SpectateJoinOverlay;
 import org.Core.UI.OpeningScreens.GameController;
 import org.Core.UI.Shared.ViewNavigator;
 
@@ -35,8 +36,11 @@ public class GameSessionService{
 
     @Subscribe
     public void onMatchFound(GameFound event){
-        Platform.runLater(()-> {
 
+        Platform.runLater(()-> {
+            if (this.gameView != null) {
+                this.gameView.stopClocks();
+            }
             try {
                 this.gameView = new GameView(event.getId(),event.getFen(),
                         userSessionManager.getUserSession(false),
@@ -62,6 +66,10 @@ public class GameSessionService{
     @Subscribe
     public void onGameOver(GameOverInfo gameOverInfo){
         gameView.gameOver(gameOverInfo);
+        if(gameView.isSpectatorMode()){
+
+        }
+
     }
 
     @Subscribe
@@ -83,12 +91,20 @@ public class GameSessionService{
 
     @Subscribe
     public void onSpectateAccepted(SpectatorResponse response){
-        System.out.println(response);
+        if (this.gameView != null) {
+            return;
+        }
+
         Platform.runLater(()-> {
-                this.gameView = new GameView(response.getFen(),response.getSpectatedSide(),
-                        response.getSpectatedPlayer(),response.getOpponent(),response.getSpectatedTimeMs(),
-                        response.getOtherTimeMs(),response.getTurn(),returnToLobby());
-            viewNavigator.transitionTo(gameView.getView());
+
+            SpectateJoinOverlay hookOverlay = new SpectateJoinOverlay(response.getSpectatedPlayer().getUsername());
+            viewNavigator.transitionTo(hookOverlay.getView());
+
+            this.gameView = new GameView(response.getFen(), response.getSpectatedSide(),
+                    response.getSpectatedPlayer(), response.getOpponent(), response.getSpectatedTimeMs(),
+                    response.getOtherTimeMs(), response.getTurn(), returnToLobby());
+
+            hookOverlay.playThenRun(() -> viewNavigator.transitionTo(gameView.getView()));
         });
     }
 
