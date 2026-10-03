@@ -1,7 +1,8 @@
 package org.Core.Social.Api.Controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.Core.Social.Api.Dto.FriendsPage;
+import org.Core.Social.Api.Dto.FriendsList;
+import org.Core.Social.Api.Dto.InvitationsList;
 import org.Core.Social.Services.FriendShipQuery;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,13 @@ public class FriendShipQueryController {
     private final FriendShipQuery friendShipQuery;
 
     @GetMapping("/friends")
-    public ResponseEntity<FriendsPage> get(@RequestParam(required = false) String cursor) {
-        return ResponseEntity.ok(new FriendsPage(List.of(new FriendsPage.FriendEntry(677387,"ilham",1200, FriendsPage.Status.InGame,"","")), "", false));
+    public ResponseEntity<FriendsList> getFriends() {
+        return ResponseEntity.ok(friendShipQuery.getFriends());
+    }
+
+    @GetMapping("/invitations")
+    public ResponseEntity<InvitationsList> getInvitations(){
+        return ResponseEntity.ok(friendShipQuery.getInvitations());
     }
 
 }

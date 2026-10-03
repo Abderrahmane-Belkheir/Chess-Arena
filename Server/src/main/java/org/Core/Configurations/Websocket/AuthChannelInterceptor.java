@@ -4,7 +4,8 @@ package org.Core.Configurations.Websocket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.Core.Social.Game.GameSpectator;
+
+import org.Core.Game.Social.GameSpectatorService;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
@@ -28,7 +29,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 
 
 
-    private final GameSpectator spectator;
+    private final GameSpectatorService spectator;
     private static final String SPECTATE_PREFIX = "/topic/spectate/";
 
     @Override
@@ -66,9 +67,10 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 
             String targetUserId = destination.substring(SPECTATE_PREFIX.length());
 
-//            if (!spectator.isApproved(Integer.parseInt(targetUserId),accessor.getUser().getName())) {
-//                return null;
-//            }
+            if (!spectator.isApproved(Integer.parseInt(targetUserId),accessor.getUser().getName())) {
+                return null;
+            }
+
         }
 
         return message;

@@ -20,6 +20,18 @@ public interface UserRepo extends JpaRepository<User,String> {
     @Query("UPDATE User u  SET u.status=:status WHERE u.id=:userOneId OR u.id=:userTwoId")
     void updateUsersStatus(@Param("status")User.Status status,@Param("userOneId") String id1,@Param("userTwoId") String id2);
 
+    @Transactional
+    @Modifying
+    @Query("UPDATE User u SET u.status=:status WHERE u.id=:userId")
+    void updateUserStatus(@Param("status") User.Status status, @Param("userId") String userId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE User u SET u.status=:status, u.elo = CASE WHEN u.id=:userOneId THEN :eloOne WHEN u.id=:userTwoId THEN :eloTwo END WHERE u.id=:userOneId OR u.id=:userTwoId")
+    void updateUsersStatusAndElo(@Param("status") User.Status status,
+                                  @Param("userOneId") String userOneId, @Param("eloOne") int eloOne,
+                                  @Param("userTwoId") String userTwoId, @Param("eloTwo") int eloTwo);
+
     Optional<User> findByPublicId(int userId);
 
     @Query(value = "SELECT u.id As UserId FROM users u WHERE u.public_id=:publicId",nativeQuery = true)

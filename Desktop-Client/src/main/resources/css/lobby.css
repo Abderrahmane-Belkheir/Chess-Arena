@@ -1,0 +1,450 @@
+/*
+ * Chess Arena — Lobby stylesheet.
+ * Scoped to the lobby's root node only (see LobbyView), so it has no effect
+ * on the chessboard, in-game screens, or any other part of the app.
+ *
+ * Elevation system: a warm near-black shell (L0) with progressively
+ * brighter, gradient-lit surfaces on top (L1 panels -> L2 cards -> L3
+ * modal), instead of one flat near-black repeated everywhere. Muted text
+ * is kept warm and legible rather than near-invisible dark grey.
+ *
+ * Visual-polish pass: every surface keeps its exact prior size (same
+ * padding/border-width/font-size throughout) — only paint (gradients,
+ * border color, effects) and interaction states changed. The recurring
+ * trick for a "premium embossed" edge is a 4-value border-color with a
+ * lighter top edge (a faint highlight, as if lit from above) instead of a
+ * flat single-tone border.
+ */
+
+/* ================= APP ENVIRONMENT (warm surrounding + centered surface) =================
+ * Shared by the Lobby and the Matchmaking screen so the two feel like the
+ * same application surface rather than differently-sized dialogs.
+ * Uses the same wood-wallpaper color recipe (WOOD_MID/WOOD_DARK/WOOD_HIGHLIGHT)
+ * as the chessboard's own wallpaper in GameView, so the Lobby's surrounding
+ * environment is visually identical to the gameplay screen's, not just
+ * "inspired by" it. Values are duplicated here (not shared code) because
+ * GameView's constants are private and out of scope to touch. */
+.lobby-environment {
+    -fx-background-color:
+        linear-gradient(from 0% 0% to 100% 100%, #b98550 0%, #7a4d29 45%, #3e2415 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0.32), rgba(0,0,0,0.52)),
+        linear-gradient(from 0px 0px to 4px 4px, repeat, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.12) 50%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.03) 100%),
+        linear-gradient(from 0px 0px to 110px 110px, repeat, rgba(122,77,41,0.26) 0%, rgba(122,77,41,0.26) 50%, rgba(185,133,80,0.14) 50%, rgba(185,133,80,0.14) 100%),
+        radial-gradient(center 50% 32%, radius 65%, rgba(232,207,138,0.04), rgba(232,207,138,0) 70%),
+        radial-gradient(center 50% 42%, radius 78%, rgba(0,0,0,0) 42%, rgba(20,12,6,0.5) 100%);
+}
+.lobby-surface-frame { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #17130d 0%, #110e09 100%);
+                        -fx-background-radius: 20;
+                        -fx-border-color: rgba(232,210,160,0.20) rgba(201,169,97,0.55) rgba(201,169,97,0.55) rgba(201,169,97,0.55);
+                        -fx-border-radius: 20; -fx-border-width: 2;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.72), 60, 0, 0, 22); }
+
+/* A card-like section within the centered content column (friends list,
+ * recent games) — bordered/rounded/shadowed on all sides, unlike the old
+ * edge-to-edge sidebar panels. Lightened a touch from the surface shell so
+ * cards read as distinct warm surfaces rather than more near-black void. */
+.compact-card { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2a2419 0%, #1e1911 55%, #1a150e 100%);
+                 -fx-background-radius: 14;
+                 -fx-border-color: rgba(255,242,214,0.16) rgba(201,169,97,0.45) rgba(201,169,97,0.45) rgba(201,169,97,0.45);
+                 -fx-border-radius: 14; -fx-border-width: 1;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.38), 20, 0, 0, 7); }
+.view-all-link      { -fx-text-fill: #d8b876; -fx-font-size: 11px; -fx-font-weight: 700; -fx-cursor: hand; }
+.view-all-link:hover { -fx-text-fill: #f0d49a; -fx-underline: true; }
+
+/* ================= NAVBAR ================= */
+.lobby-navbar        { -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #241e15 0%, #1c1710 100%);
+                        -fx-background-radius: 14;
+                        -fx-border-color: rgba(255,242,214,0.16) rgba(201,169,97,0.45) rgba(201,169,97,0.45) rgba(201,169,97,0.45);
+                        -fx-border-radius: 14; -fx-border-width: 1;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.38), 20, 0, 0, 7); }
+.lobby-crown          { -fx-text-fill: linear-gradient(to bottom, #f0d692 0%, #c9a961 55%, #a9834a 100%); -fx-font-size: 17px;
+                         -fx-effect: dropshadow(gaussian, rgba(201,169,97,0.35), 6, 0, 0, 0); }
+.lobby-app-name        { -fx-text-fill: #f5f0e8; -fx-font-size: 13px; -fx-font-weight: 800; -fx-letter-spacing: 0.4px; }
+
+.profile-chip        { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #322a1e 0%, #241e15 100%);
+                        -fx-background-radius: 11;
+                        -fx-border-color: rgba(255,242,214,0.14) rgba(245,240,232,0.10) rgba(245,240,232,0.10) rgba(245,240,232,0.10);
+                        -fx-border-radius: 11; -fx-border-width: 1; -fx-cursor: hand;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 14, 0, 0, 4); }
+.profile-chip:hover  { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #3a3122 0%, #2a2318 100%);
+                        -fx-border-color: rgba(201,169,97,0.45) rgba(201,169,97,0.3) rgba(201,169,97,0.3) rgba(201,169,97,0.3);
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.42), 18, 0, 0, 6); }
+.profile-chip:pressed { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #241e15 0%, #1c170f 100%);
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2); }
+
+.nav-username        { -fx-text-fill: #f5f0e8; -fx-font-size: 11px; -fx-font-weight: 700; }
+.nav-status-online   { -fx-text-fill: #86c26c; -fx-font-size: 9px; -fx-font-weight: 600; }
+
+.elo-badge           { -fx-background-color: linear-gradient(to bottom, rgba(201,169,97,0.22), rgba(201,169,97,0.10));
+                        -fx-background-radius: 6;
+                        -fx-border-color: rgba(226,196,132,0.4); -fx-border-radius: 6; -fx-border-width: 1; }
+.elo-star            { -fx-text-fill: #e2c583; -fx-font-size: 9px; }
+.elo-value           { -fx-text-fill: #e2c583; -fx-font-size: 11px; -fx-font-weight: 800; }
+
+/* ================= HERO ================= */
+.hero-card       { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #302819 0%, #221b11 55%, #1a150d 100%);
+                    -fx-background-radius: 16;
+                    -fx-border-color: rgba(255,240,205,0.18) rgba(201,169,97,0.45) rgba(201,169,97,0.45) rgba(201,169,97,0.45);
+                    -fx-border-radius: 16; -fx-border-width: 1;
+                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.58), 38, 0, 0, 15); }
+.hero-glow       { -fx-background-color: radial-gradient(center 50% 50%, radius 50%, rgba(201,169,97,0.22) 0%, rgba(201,169,97,0.07) 45%, transparent 70%); }
+.hero-live-pill  { -fx-background-color: linear-gradient(to bottom, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+                    -fx-background-radius: 20; -fx-border-color: rgba(255,255,255,0.16); -fx-border-radius: 20; -fx-border-width: 1; }
+.hero-live-dot   { -fx-background-color: #7aab63; -fx-background-radius: 4;
+                    -fx-effect: dropshadow(gaussian, rgba(122,171,99,0.85), 6, 0.4, 0, 0); }
+.hero-live-label { -fx-text-fill: #d6d2c6; -fx-font-size: 9px; -fx-font-weight: 700; -fx-letter-spacing: 1.2; }
+.hero-title      { -fx-text-fill: linear-gradient(to bottom, #ffffff 0%, #f2e6cd 100%); -fx-font-size: 29px; -fx-font-weight: 900; -fx-letter-spacing: -0.4px; }
+.hero-subtitle   { -fx-text-fill: #b6afa0; -fx-font-size: 12px; -fx-text-alignment: center; }
+
+.play-button       { -fx-background-color: linear-gradient(to bottom, #ffffff 0%, #eee4d0 100%); -fx-text-fill: #14110c; -fx-background-radius: 40;
+                      -fx-font-size: 14px; -fx-font-weight: 800; -fx-cursor: hand;
+                      -fx-border-color: rgba(255,255,255,0.5); -fx-border-radius: 40; -fx-border-width: 1;
+                      -fx-effect: dropshadow(gaussian, rgba(201,169,97,0.32), 18, 0, 0, 6); }
+.play-button:hover { -fx-background-color: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%);
+                      -fx-effect: dropshadow(gaussian, rgba(201,169,97,0.48), 24, 0, 0, 8); }
+.play-button:pressed { -fx-background-color: linear-gradient(to bottom, #eee4d0 0%, #e2d4b4 100%);
+                      -fx-effect: dropshadow(gaussian, rgba(201,169,97,0.3), 10, 0, 0, 3); }
+
+.hero-stat     { -fx-text-fill: #b6afa0; -fx-font-size: 10px; }
+.hero-stat-sep { -fx-text-fill: #4d4a40; -fx-font-size: 10px; }
+
+.hero-tile-light { -fx-background-color: #f5f0e8; }
+.hero-tile-dark  { -fx-background-color: #000000; }
+
+/* ================= SIDE PANELS (Friends / Recent Games) ================= */
+.friends-panel { -fx-background-color: #1a1814; -fx-border-color: transparent rgba(245,240,232,0.07) transparent transparent; -fx-border-width: 1; }
+.recent-panel  { -fx-background-color: #1a1814; -fx-border-color: transparent transparent transparent rgba(245,240,232,0.07); -fx-border-width: 1; }
+.panel-separator { -fx-background-color: linear-gradient(to right, transparent, rgba(245,240,232,0.12) 15%, rgba(245,240,232,0.12) 85%, transparent); }
+.panel-title     { -fx-text-fill: #f5f0e8; -fx-font-size: 12px; -fx-font-weight: 800; -fx-letter-spacing: 0.3px; }
+
+.transparent-scroll              { -fx-background: transparent; -fx-background-color: transparent; -fx-padding: 0; }
+.transparent-scroll .viewport    { -fx-background-color: transparent; }
+/* Themed scrollbar (default Modena gray otherwise clashes hard with the
+ * dark/gold palette) — a gold-tinted thumb that's clearly visible at rest,
+ * not just on hover, so the section reads as scrollable at a glance. */
+.transparent-scroll .scroll-bar:vertical   { -fx-background-color: transparent; -fx-padding: 0 1 0 1; -fx-pref-width: 10; }
+.transparent-scroll .scroll-bar:horizontal { -fx-background-color: transparent; -fx-padding: 1 0 1 0; -fx-pref-height: 10; }
+.transparent-scroll .scroll-bar .track { -fx-background-color: rgba(245,240,232,0.06); -fx-background-insets: 0; -fx-background-radius: 5; -fx-border-width: 0; }
+.transparent-scroll .scroll-bar .thumb { -fx-background-color: rgba(201,169,97,0.6); -fx-background-insets: 0; -fx-background-radius: 5; }
+.transparent-scroll .scroll-bar .thumb:hover { -fx-background-color: rgba(201,169,97,0.8); }
+.transparent-scroll .scroll-bar .thumb:pressed { -fx-background-color: rgba(201,169,97,0.95); }
+.transparent-scroll .scroll-bar .increment-button,
+.transparent-scroll .scroll-bar .decrement-button { -fx-background-color: transparent; -fx-padding: 0; }
+.transparent-scroll .scroll-bar .increment-arrow,
+.transparent-scroll .scroll-bar .decrement-arrow { -fx-shape: " "; -fx-padding: 0; }
+
+/* ================= SOCIAL CARD TOGGLE (Friends / Recent Games) =================
+ * The header of the .compact-card the toggle now lives inside — flush with
+ * the card's own top corners (each tab rounds only the outer corner it
+ * touches, so the pair reads as one card's tab-strip, not two pill buttons
+ * floating above it) and separated from the list below by a hairline, not
+ * a gap. Deliberately flatter than .tab-btn's own pill style: this is a
+ * card header, not a row of buttons inside the card. */
+.social-toggle    { -fx-background-color: transparent; }
+.social-tab       { -fx-background-color: transparent; -fx-text-fill: #8f8a78; -fx-font-size: 10px; -fx-font-weight: 700;
+                     -fx-padding: 11 0 10 0; -fx-cursor: hand;
+                     -fx-border-color: transparent transparent transparent transparent; -fx-border-width: 0 0 2 0; }
+.social-tab:hover { -fx-text-fill: #cbc5b4; -fx-background-color: rgba(245,240,232,0.04); }
+.social-tab.active { -fx-text-fill: #f0e9d8;
+                      -fx-background-color: linear-gradient(to bottom, rgba(201,169,97,0.16), rgba(201,169,97,0.05));
+                      -fx-border-color: transparent transparent #d8b876 transparent; }
+.social-tab.active:hover { -fx-background-color: linear-gradient(to bottom, rgba(201,169,97,0.2), rgba(201,169,97,0.07)); }
+.social-tab-left  { -fx-background-radius: 14 0 0 0; }
+.social-tab-right { -fx-background-radius: 0 14 0 0; }
+
+/* ================= FRIENDS TAB BAR ================= */
+.tab-btn            { -fx-background-color: transparent; -fx-text-fill: #8f8a78; -fx-background-radius: 7; -fx-border-color: rgba(245,240,232,0.06); -fx-border-radius: 7;
+                       -fx-border-width: 1; -fx-font-size: 9px; -fx-font-weight: 700; -fx-padding: 6 0; -fx-cursor: hand; }
+.tab-btn:hover       { -fx-background-color: #241f18; -fx-text-fill: #cbc5b4; -fx-border-color: rgba(245,240,232,0.12); }
+.tab-btn:pressed     { -fx-background-color: #1c1712; }
+.tab-btn.active      { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #332b1e 0%, #241d14 100%); -fx-text-fill: #f0e9d8;
+                        -fx-border-color: rgba(226,196,132,0.32) rgba(245,240,232,0.16) rgba(245,240,232,0.16) rgba(245,240,232,0.16);
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 6, 0, 0, 2); }
+.tab-btn.active:hover{ -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #372e20 0%, #282015 100%); -fx-text-fill: #f6efdd; }
+.tab-btn.tab-pending { -fx-text-fill: #e6746b; }
+
+/* Small circular "unseen" bubble — see RequestsSection.getUnseenBadge().
+ * Clicking it resets the count back to 0. */
+.unseen-badge {
+    -fx-background-color: #e6746b;
+    -fx-background-radius: 100;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 10px;
+    -fx-font-weight: 800;
+    -fx-padding: 1 5 1 5;
+    -fx-cursor: hand;
+}
+
+/* ================= RECENT GAMES ROWS =================
+ * Each row is its own small bordered/rounded card, matching
+ * Chess-UI-Refactoring.png exactly — not a flat row sharing edges with its
+ * neighbors (that's now handled by RecentGames' listContainer spacing). */
+.recent-row       { -fx-cursor: hand;
+                     -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #211c14 0%, #191510 100%);
+                     -fx-background-radius: 10;
+                     -fx-border-color: rgba(255,242,214,0.12) rgba(245,240,232,0.07) rgba(245,240,232,0.07) rgba(245,240,232,0.07);
+                     -fx-border-radius: 10; -fx-border-width: 1; }
+.recent-row:hover { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #292219 0%, #1e1912 100%);
+                     -fx-border-color: rgba(255,242,214,0.18) rgba(201,169,97,0.28) rgba(201,169,97,0.28) rgba(201,169,97,0.28); }
+.recent-row:pressed { -fx-background-color: #1c1712; }
+.recent-name      { -fx-text-fill: #ece6d8; -fx-font-size: 11px; -fx-font-weight: 600; }
+.recent-opponent-elo { -fx-text-fill: #8f8a78; -fx-font-size: 10px; -fx-font-weight: 600; }
+.recent-time      { -fx-text-fill: #8f8a78; -fx-font-size: 10px; }
+
+/* A colored pill carrying only the elo delta — the background color alone
+ * communicates win/loss/draw, matching the reference (no separate
+ * "Win"/"Loss" text label next to it). */
+.delta-pill    { -fx-font-size: 11px; -fx-font-weight: 800; -fx-padding: 4 9 4 9; -fx-background-radius: 6; }
+.result-win    { -fx-text-fill: #8fc876; -fx-background-color: rgba(122,171,99,0.18); }
+.result-loss   { -fx-text-fill: #ea8c84; -fx-background-color: rgba(230,116,107,0.16); }
+.result-draw   { -fx-text-fill: #b7b2a4; -fx-background-color: rgba(161,156,140,0.16); }
+
+.accent-bar-win  { -fx-background-color: linear-gradient(to bottom, #93cf79, #6a9955); -fx-background-radius: 3; }
+.accent-bar-loss { -fx-background-color: linear-gradient(to bottom, #ee9089, #c65b52); -fx-background-radius: 3; }
+.accent-bar-draw { -fx-background-color: linear-gradient(to bottom, #b7b2a4, #8f8a78); -fx-background-radius: 3; }
+
+/* ================= FRIENDS LIST ROWS =================
+ * Same "own small bordered card" treatment as .recent-row, so the two
+ * lists sharing the toggle read as one consistent design language. */
+.friend-row               { -fx-cursor: hand;
+                             -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #211c14 0%, #191510 100%);
+                             -fx-background-radius: 10;
+                             -fx-border-color: rgba(255,242,214,0.12) rgba(245,240,232,0.07) rgba(245,240,232,0.07) rgba(245,240,232,0.07);
+                             -fx-border-radius: 10; -fx-border-width: 1; }
+.friend-row.hoverable:hover { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #292219 0%, #1e1912 100%);
+                               -fx-border-color: rgba(255,242,214,0.18) rgba(201,169,97,0.28) rgba(201,169,97,0.28) rgba(201,169,97,0.28); }
+.friend-row.hoverable:pressed { -fx-background-color: #1c1712; }
+.friend-name              { -fx-text-fill: #ece6d8; -fx-font-size: 11px; -fx-font-weight: 600; }
+.friend-elo               { -fx-text-fill: #8f8a78; -fx-font-size: 10px; }
+.friend-elo-ingame        { -fx-text-fill: #e6b84a; -fx-font-size: 10px; -fx-font-weight: 600; }
+
+/* Watch / Invite — same pill-chip shape as the reference's outlined
+ * icon+label button; the two are color-coded (gold = spectating a live
+ * game, green = challenging someone free to play) so the row's action is
+ * legible at a glance without reading the status text. */
+.btn-watch         { -fx-background-color: linear-gradient(to bottom, #241f18 0%, #1c1712 100%); -fx-text-fill: #e2c583;
+                      -fx-background-radius: 8; -fx-border-color: rgba(226,197,131,0.32); -fx-border-radius: 8; -fx-border-width: 1;
+                      -fx-font-size: 10px; -fx-font-weight: 700; -fx-padding: 6 10 6 10; -fx-cursor: hand; }
+.btn-watch:hover   { -fx-border-color: rgba(226,197,131,0.55); -fx-text-fill: #f0d49a; }
+.btn-watch:pressed { -fx-background-color: #17130d; }
+
+.btn-invite         { -fx-background-color: linear-gradient(to bottom, #1e2418 0%, #171c12 100%); -fx-text-fill: #9fcf86;
+                       -fx-background-radius: 8; -fx-border-color: rgba(134,194,108,0.32); -fx-border-radius: 8; -fx-border-width: 1;
+                       -fx-font-size: 10px; -fx-font-weight: 700; -fx-padding: 6 10 6 10; -fx-cursor: hand; }
+.btn-invite:hover   { -fx-border-color: rgba(134,194,108,0.55); -fx-text-fill: #b8e39f; }
+.btn-invite:pressed { -fx-background-color: #121710; }
+
+/* Status dot as a small badge overlapping the avatar's edge (see FriendRow)
+ * rather than a dot sitting beside it — the border ring color matches the
+ * row's own card background so it reads as a cutout, not a floating dot. */
+.status-dot-inlobby { -fx-background-color: #7aab63; -fx-background-radius: 6; -fx-border-color: #191510; -fx-border-radius: 6; -fx-border-width: 2;
+                       -fx-effect: dropshadow(gaussian, rgba(122,171,99,0.75), 4, 0.5, 0, 0); }
+.status-dot-ingame  { -fx-background-color: #e6b84a; -fx-background-radius: 6; -fx-border-color: #191510; -fx-border-radius: 6; -fx-border-width: 2;
+                       -fx-effect: dropshadow(gaussian, rgba(230,184,74,0.75), 4, 0.5, 0, 0); }
+.status-dot-offline { -fx-background-color: #4a453a; -fx-background-radius: 6; -fx-border-color: #191510; -fx-border-radius: 6; -fx-border-width: 2; }
+
+/* Collapsed search entry point in the Friends header — replaces the old
+ * always-open search bar; clicking it reveals .search-wrap below instead. */
+.search-toggle-btn         { -fx-background-color: transparent; -fx-text-fill: #8f8a78; -fx-font-size: 13px;
+                              -fx-background-radius: 7; -fx-border-color: rgba(245,240,232,0.10); -fx-border-radius: 7; -fx-border-width: 1;
+                              -fx-cursor: hand; -fx-padding: 3 9 3 9; }
+.search-toggle-btn:hover   { -fx-text-fill: #cbc5b4; -fx-border-color: rgba(201,169,97,0.28); }
+.search-toggle-btn.active  { -fx-text-fill: #d8b876; -fx-border-color: rgba(201,169,97,0.45);
+                              -fx-background-color: rgba(201,169,97,0.12); }
+
+/* Per-row "more" menu (recent games list) — quiet until hovered, so it
+ * doesn't compete with the delta pill for attention. */
+.row-menu-btn        { -fx-background-color: transparent; -fx-text-fill: #6f6a5c; -fx-font-size: 13px;
+                        -fx-font-weight: 800; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 2 6 2 6; }
+.row-menu-btn:hover  { -fx-text-fill: #d8b876; -fx-background-color: rgba(201,169,97,0.12); }
+
+/* ================= SEARCH BAR ================= */
+.search-wrap                  { -fx-border-color: transparent transparent rgba(245,240,232,0.07) transparent; -fx-border-width: 1; }
+.search-box                   { -fx-background-color: linear-gradient(to bottom, #1c170f 0%, #17130d 100%); -fx-background-radius: 8;
+                                 -fx-border-color: rgba(201,169,97,0.35); -fx-border-radius: 8; -fx-border-width: 1; }
+.search-box.input-focused     { -fx-border-color: #d8b876; -fx-effect: dropshadow(gaussian, rgba(201,169,97,0.28), 8, 0, 0, 0); }
+.search-icon                  { -fx-text-fill: #857f6c; -fx-font-size: 12px; }
+.search-field                 { -fx-background-color: transparent; -fx-text-fill: #ece6d8; -fx-prompt-text-fill: #6b6656; -fx-font-size: 11px;
+                                 -fx-border-color: transparent; -fx-padding: 0; }
+.search-results               { -fx-background-color: #201d17; -fx-border-color: rgba(245,240,232,0.10); -fx-border-radius: 10; -fx-background-radius: 10;
+                                 -fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 18, 0, 0, 6); }
+
+/* shared loading / empty / error rows */
+.state-muted        { -fx-text-fill: #8f8a78; -fx-font-size: 12px; }
+.state-muted-sm     { -fx-text-fill: #8f8a78; -fx-font-size: 11px; }
+.state-error-icon   { -fx-text-fill: #ea8c84; -fx-font-size: 12px; }
+.state-warn-icon    { -fx-text-fill: #e6b84a; -fx-font-size: 12px; }
+.state-warn-text    { -fx-text-fill: #e6b84a; -fx-font-size: 11px; }
+.footer-row-clickable { -fx-cursor: hand; }
+.empty-icon         { -fx-text-fill: #3a352c; -fx-font-size: 28px; }
+
+/* ================= REQUEST ROW ================= */
+.request-card { -fx-border-color: transparent transparent rgba(245,240,232,0.07) transparent; -fx-border-width: 1; }
+.request-name { -fx-text-fill: #ece6d8; -fx-font-size: 12px; -fx-font-weight: 700; }
+.request-elo  { -fx-text-fill: #8f8a78; -fx-font-size: 10px; }
+
+/* ================= SEARCH RESULT CARD ================= */
+.search-result-card { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #26221a 0%, #1c1913 100%);
+                       -fx-background-radius: 10;
+                       -fx-border-color: rgba(255,242,214,0.14) rgba(245,240,232,0.09) rgba(245,240,232,0.09) rgba(245,240,232,0.09);
+                       -fx-border-radius: 10; -fx-border-width: 1;
+                       -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.32), 14, 0, 0, 5); }
+.search-result-name { -fx-text-fill: #f0e9d8; -fx-font-size: 13px; -fx-font-weight: 700; }
+.search-result-id   { -fx-text-fill: #8f8a78; -fx-font-size: 10px; -fx-font-weight: 600; }
+.search-result-star { -fx-text-fill: #e6b84a; -fx-font-size: 11px; }
+.search-result-elo  { -fx-text-fill: #b6afa0; -fx-font-size: 11px; -fx-font-weight: 600; }
+
+/* ================= SHARED ACTION BUTTONS ================= */
+.btn-add          { -fx-background-color: #241f18; -fx-text-fill: #b6afa0; -fx-background-radius: 8; -fx-border-color: rgba(245,240,232,0.14); -fx-border-radius: 8;
+                     -fx-border-width: 1; -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 9 0; -fx-cursor: hand; }
+.btn-add:hover    { -fx-border-color: rgba(226,196,132,0.35); -fx-text-fill: #ece6d8; -fx-background-color: #2a251c; }
+.btn-add:pressed  { -fx-background-color: #1e1a14; }
+
+.btn-already-friend { -fx-background-color: transparent; -fx-text-fill: #86c26c; -fx-background-radius: 8; -fx-border-color: #7aab63; -fx-border-radius: 8;
+                       -fx-border-width: 1; -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 9 0; }
+
+.btn-pending       { -fx-background-color: transparent; -fx-text-fill: #e6b84a; -fx-background-radius: 8; -fx-border-color: #e6b84a; -fx-border-radius: 8;
+                      -fx-border-width: 1; -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 9 0; -fx-cursor: hand; }
+.btn-pending:hover { -fx-opacity: 0.80; }
+.btn-pending:pressed { -fx-opacity: 0.65; }
+
+.btn-accept-lg       { -fx-background-color: linear-gradient(to bottom, #8fcf76 0%, #6a9955 100%); -fx-text-fill: #12190d; -fx-background-radius: 8;
+                        -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 9 0; -fx-cursor: hand;
+                        -fx-effect: dropshadow(gaussian, rgba(106,153,85,0.28), 8, 0, 0, 2); }
+.btn-accept-lg:hover { -fx-effect: dropshadow(gaussian, rgba(106,153,85,0.4), 10, 0, 0, 3); -fx-opacity: 0.94; }
+.btn-accept-lg:pressed { -fx-opacity: 0.82; -fx-effect: none; }
+.btn-accept-sm       { -fx-background-color: linear-gradient(to bottom, #8fcf76 0%, #6a9955 100%); -fx-text-fill: #12190d; -fx-background-radius: 7;
+                        -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 8 0; -fx-cursor: hand; }
+.btn-accept-sm:hover { -fx-opacity: 0.90; }
+.btn-accept-sm:pressed { -fx-opacity: 0.76; }
+
+.btn-reject-lg       { -fx-background-color: #241f18; -fx-text-fill: #948d7c; -fx-background-radius: 8; -fx-border-color: rgba(245,240,232,0.14); -fx-border-radius: 8;
+                        -fx-border-width: 1; -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 9 0; -fx-cursor: hand; }
+.btn-reject-lg:hover { -fx-background-color: #2f291f; -fx-text-fill: #f5f0e8; }
+.btn-reject-lg:pressed { -fx-background-color: #1e1a14; }
+.btn-reject-sm       { -fx-background-color: #241f18; -fx-text-fill: #948d7c; -fx-background-radius: 7; -fx-border-color: rgba(245,240,232,0.14); -fx-border-radius: 7;
+                        -fx-border-width: 1; -fx-font-size: 11px; -fx-font-weight: 700; -fx-padding: 8 0; -fx-cursor: hand; }
+.btn-reject-sm:hover { -fx-background-color: #2f291f; -fx-text-fill: #f5f0e8; }
+.btn-reject-sm:pressed { -fx-background-color: #1e1a14; }
+
+.btn-cancel-request       { -fx-background-color: transparent; -fx-text-fill: #948d7c; -fx-background-radius: 7; -fx-border-color: rgba(245,240,232,0.12); -fx-border-radius: 7;
+                             -fx-border-width: 1; -fx-font-size: 11px; -fx-font-weight: 600; -fx-padding: 8 0; -fx-cursor: hand; }
+.btn-cancel-request:hover { -fx-border-color: rgba(245,240,232,0.24); -fx-text-fill: #ece6d8; }
+
+/* ================= FRIEND CARD MODAL (profile card) ================= */
+.modal-overlay        { -fx-background-color: rgba(0,0,0,0.74); }
+.friend-card-modal    { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #322a20 0%, #1e1a14 100%);
+                         -fx-background-radius: 20;
+                         -fx-border-color: rgba(255,242,214,0.16) rgba(245,240,232,0.11) rgba(245,240,232,0.11) rgba(245,240,232,0.11);
+                         -fx-border-radius: 20; -fx-border-width: 1;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.62), 46, 0, 0, 20); }
+.modal-eyebrow         { -fx-text-fill: #8f8a78; -fx-font-size: 12px; -fx-font-weight: bold; -fx-letter-spacing: 1px; }
+.modal-close-btn       { -fx-background-color: #271f19; -fx-text-fill: #948d7c; -fx-background-radius: 7; -fx-border-color: rgba(245,240,232,0.13); -fx-border-radius: 7;
+                          -fx-border-width: 1; -fx-font-size: 11px; -fx-cursor: hand; -fx-padding: 0; }
+.modal-close-btn:hover { -fx-background-color: #332a21; -fx-text-fill: #f5f0e8; }
+.modal-close-btn:pressed { -fx-background-color: #201a15; }
+.modal-section-border  { -fx-border-color: transparent transparent rgba(245,240,232,0.08) transparent; -fx-border-width: 1; }
+.modal-username        { -fx-text-fill: #f8f3ea; -fx-font-size: 21px; -fx-font-weight: 900; }
+.modal-avatar-initials { -fx-text-fill: #ffffff; -fx-font-size: 28px; -fx-font-weight: 900; }
+.modal-id-text         { -fx-text-fill: #8f8a78; -fx-font-size: 11px; -fx-font-weight: 600; }
+.modal-status-text     { -fx-font-size: 12px; -fx-font-weight: 700; }
+.modal-avatar-glow     { -fx-background-color: radial-gradient(center 50% 50%, radius 50%, rgba(201,169,97,0.26) 0%, rgba(201,169,97,0.08) 45%, transparent 70%); }
+
+.modal-elo-badge { -fx-background-color: linear-gradient(to bottom, rgba(230,184,74,0.22), rgba(230,184,74,0.10)); -fx-background-radius: 7;
+                    -fx-border-color: rgba(230,184,74,0.34); -fx-border-radius: 7; -fx-border-width: 1; }
+.modal-elo-star  { -fx-text-fill: #e6b84a; -fx-font-size: 12px; }
+.modal-elo-value { -fx-text-fill: #e6b84a; -fx-font-size: 13px; -fx-font-weight: 700; }
+
+.status-accent-inlobby { -fx-text-fill: #86c26c; }
+.status-accent-ingame  { -fx-text-fill: #e6b84a; }
+.status-accent-offline { -fx-text-fill: #948d7c; }
+
+.status-dotshape-inlobby { -fx-background-color: #7aab63; -fx-background-radius: 3.5; -fx-effect: dropshadow(gaussian, rgba(122,171,99,0.7), 4, 0.5, 0, 0); }
+.status-dotshape-ingame  { -fx-background-color: #e6b84a; -fx-background-radius: 3.5; -fx-effect: dropshadow(gaussian, rgba(230,184,74,0.7), 4, 0.5, 0, 0); }
+.status-dotshape-offline { -fx-background-color: #4a453a; -fx-background-radius: 3.5; }
+
+.status-ring-inlobby { -fx-background-color: transparent; -fx-background-radius: 50; -fx-border-color: #7aab63; -fx-border-radius: 50; -fx-border-width: 2; }
+.status-ring-ingame  { -fx-background-color: transparent; -fx-background-radius: 50; -fx-border-color: #e6b84a; -fx-border-radius: 50; -fx-border-width: 2; }
+.status-ring-offline { -fx-background-color: transparent; -fx-background-radius: 50; -fx-border-color: #4a453a; -fx-border-radius: 50; -fx-border-width: 2; }
+
+.btn-challenge       { -fx-background-color: linear-gradient(to bottom, #8fcf76 0%, #6a9955 100%); -fx-text-fill: #12190d; -fx-background-radius: 11;
+                        -fx-font-size: 14px; -fx-font-weight: 700; -fx-padding: 12 0; -fx-cursor: hand;
+                        -fx-effect: dropshadow(gaussian, rgba(106,153,85,0.3), 12, 0, 0, 3); }
+.btn-challenge:hover { -fx-opacity: 0.92; -fx-effect: dropshadow(gaussian, rgba(106,153,85,0.42), 15, 0, 0, 4); }
+.btn-challenge:pressed { -fx-opacity: 0.8; -fx-effect: none; }
+.btn-spectate        { -fx-background-color: linear-gradient(to bottom, #edc568 0%, #d9a83f 100%); -fx-text-fill: #221805; -fx-background-radius: 11;
+                        -fx-font-size: 14px; -fx-font-weight: 700; -fx-padding: 12 0; -fx-cursor: hand;
+                        -fx-effect: dropshadow(gaussian, rgba(217,168,63,0.3), 12, 0, 0, 3); }
+.btn-spectate:hover  { -fx-opacity: 0.92; -fx-effect: dropshadow(gaussian, rgba(217,168,63,0.42), 15, 0, 0, 4); }
+.btn-spectate:pressed { -fx-opacity: 0.8; -fx-effect: none; }
+.btn-secondary       { -fx-background-color: transparent; -fx-text-fill: #8f8a78; -fx-background-radius: 11; -fx-border-color: rgba(245,240,232,0.10); -fx-border-radius: 11;
+                        -fx-border-width: 1; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 11 0; -fx-cursor: hand; }
+.btn-secondary:hover { -fx-border-color: rgba(245,240,232,0.2); -fx-text-fill: #ece6d8; }
+.btn-danger          { -fx-background-color: transparent; -fx-text-fill: #c98680; -fx-background-radius: 11; -fx-border-color: rgba(245,240,232,0.10); -fx-border-radius: 11;
+                        -fx-border-width: 1; -fx-font-size: 13px; -fx-font-weight: 600; -fx-padding: 11 0; -fx-cursor: hand; }
+.btn-danger:hover    { -fx-background-color: rgba(224,100,90,0.14); -fx-text-fill: #ea8c84; -fx-border-color: rgba(224,100,90,0.4); }
+.btn-danger:pressed  { -fx-background-color: rgba(224,100,90,0.22); }
+
+/* ================= PREFERENCES BAR ================= */
+.prefs-bar    { -fx-border-color: transparent transparent rgba(245,240,232,0.07) transparent; -fx-border-width: 1; }
+.prefs-chip   { -fx-background-color: linear-gradient(to bottom, #241e16 0%, #1c170f 100%); -fx-background-radius: 7;
+                -fx-border-color: rgba(245,240,232,0.11); -fx-border-radius: 7; -fx-border-width: 1; }
+.prefs-chip-text { -fx-text-fill: #cbc5b4; -fx-font-size: 9px; -fx-font-weight: 600; }
+.prefs-chip-icon { -fx-text-fill: #cbc5b4; -fx-font-size: 10px; }
+.prefs-swatch { -fx-background-radius: 3; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 2, 0, 0, 1); }
+.prefs-gear-btn       { -fx-background-color: linear-gradient(to bottom, #241e16 0%, #1c170f 100%); -fx-background-radius: 7;
+                         -fx-border-color: rgba(245,240,232,0.11); -fx-border-radius: 7;
+                         -fx-border-width: 1; -fx-text-fill: #8f8a78; -fx-font-size: 11px; -fx-cursor: hand; }
+.prefs-gear-btn:hover { -fx-text-fill: #f0d49a; -fx-border-color: rgba(201,169,97,0.4); -fx-background-color: linear-gradient(to bottom, #2c2519 0%, #221c13 100%); }
+.prefs-gear-btn:pressed { -fx-background-color: #191510; }
+
+/* ================= BOTTOM NAVIGATION =================
+ * A standalone rounded card (same language as .compact-card / .hero-card),
+ * not fused to the surface's own bottom corners — separated from whatever's
+ * active above it by real margin (see LobbyView), not just a border line. */
+.bottom-nav          { -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #241e15 0%, #1a150e 100%);
+                        -fx-background-radius: 14;
+                        -fx-border-color: rgba(255,242,214,0.16) rgba(201,169,97,0.4) rgba(201,169,97,0.4) rgba(201,169,97,0.4);
+                        -fx-border-radius: 14; -fx-border-width: 1;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 18, 0, 0, 6); }
+.bottom-nav-item      { -fx-background-color: transparent; -fx-background-radius: 10; -fx-text-fill: #8f8a78; -fx-font-size: 9px; -fx-font-weight: 700; -fx-cursor: hand; }
+.bottom-nav-item:hover        { -fx-text-fill: #cbc5b4; -fx-background-color: rgba(245,240,232,0.05); }
+.bottom-nav-item.active       { -fx-text-fill: #e2c583; -fx-background-color: rgba(226,197,131,0.08); }
+.bottom-nav-icon              { -fx-text-fill: #8f8a78; -fx-font-size: 15px; }
+.bottom-nav-icon:hover         { -fx-text-fill: #cbc5b4; }
+.bottom-nav-icon.active       { -fx-text-fill: #e2c583; -fx-effect: dropshadow(gaussian, rgba(226,197,131,0.5), 6, 0, 0, 0); }
+
+/* ================= COMING SOON PANEL ================= */
+.coming-soon-card     { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2a2419 0%, #1e1911 55%, #191410 100%);
+                         -fx-background-radius: 16;
+                         -fx-border-color: rgba(255,242,214,0.14) rgba(245,240,232,0.08) rgba(245,240,232,0.08) rgba(245,240,232,0.08);
+                         -fx-border-radius: 16; -fx-border-width: 1;
+                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 30, 0, 0, 12); }
+.coming-soon-icon     { -fx-text-fill: linear-gradient(to bottom, #f0d692, #a9834a); -fx-font-size: 40px;
+                         -fx-effect: dropshadow(gaussian, rgba(201,169,97,0.3), 10, 0, 0, 0); }
+.coming-soon-badge    { -fx-background-color: linear-gradient(to bottom, rgba(201,169,97,0.2), rgba(201,169,97,0.1)); -fx-background-radius: 20;
+                         -fx-border-color: rgba(226,196,132,0.32);
+                         -fx-border-radius: 20; -fx-border-width: 1; -fx-text-fill: #e2c583; -fx-font-size: 11px; -fx-font-weight: 700; -fx-letter-spacing: 1px; }
+.coming-soon-title    { -fx-text-fill: #f8f3ea; -fx-font-size: 26px; -fx-font-weight: 800; }
+.coming-soon-subtitle { -fx-text-fill: #b6afa0; -fx-font-size: 13px; }
+
+/* ================= MATCHMAKING ================= */
+.matchmaking-card         { -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2a2419 0%, #1e1911 55%, #191410 100%);
+                             -fx-background-radius: 18;
+                             -fx-border-color: rgba(255,242,214,0.15) rgba(245,240,232,0.10) rgba(245,240,232,0.10) rgba(245,240,232,0.10);
+                             -fx-border-radius: 18; -fx-border-width: 1;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 30, 0, 0, 12); }
+.matchmaking-title        { -fx-text-fill: #f5f0e8; -fx-font-size: 18px; -fx-font-weight: 800; }
+.matchmaking-msg          { -fx-text-fill: #b6afa0; -fx-font-size: 13px; -fx-text-alignment: center; }
+.matchmaking-timer        { -fx-text-fill: #8f8a78; -fx-font-size: 12px; -fx-font-weight: 700; }
+.matchmaking-cancel-btn       { -fx-background-color: transparent; -fx-text-fill: #8f8a78; -fx-background-radius: 9;
+                                 -fx-border-color: rgba(245,240,232,0.14); -fx-border-radius: 9; -fx-border-width: 1;
+                                 -fx-font-size: 12px; -fx-font-weight: 700; -fx-padding: 11 0; -fx-cursor: hand; }
+.matchmaking-cancel-btn:hover { -fx-border-color: rgba(245,240,232,0.28); -fx-text-fill: #ece6d8; }
+.matchmaking-cancel-btn:pressed { -fx-background-color: #191510; }
+.matchmaking-spinner-track    { -fx-background-color: transparent; -fx-border-color: rgba(245,240,232,0.12); -fx-border-radius: 40; -fx-border-width: 3; }
+.matchmaking-dot-active   { -fx-background-color: #e2c583; -fx-background-radius: 3; -fx-effect: dropshadow(gaussian, rgba(226,197,131,0.6), 4, 0, 0, 0); }
+.matchmaking-dot-inactive { -fx-background-color: #2a251d; -fx-background-radius: 3; }
+.matchmaking-piece        { -fx-text-fill: #f5f0e8; -fx-font-size: 26px; }
+.matchmaking-tile-light   { -fx-background-color: #f5f0e8; }
+.matchmaking-tile-dark    { -fx-background-color: #000000; }

@@ -1,0 +1,23 @@
+& "$env:JAVA_HOME\bin\jpackage.exe" `
+>>   --type exe `
+>>   --name ChessArena `
+>>   --input target\libs `
+>>   --main-jar Chess-UI-1.0-SNAPSHOT.jar `
+>>   --main-class org.Core.Launcher `
+>>   --runtime-image target\runtime `
+>>   --icon src\main\resources\icons\ChessArena.ico `
+>>   --win-menu `
+>>   --win-shortcut `
+>>   --win-dir-chooser `
+>>   --app-version 1.0 `
+>>   --vendor "Chess-Arena" `
+>>   --verbose
+
+
+jlink `
+>>   --module-path "$env:JAVA_HOME\jmods" `
+>>   --add-modules java.base,java.desktop,java.naming,java.scripting,java.management,java.net.http,jdk.crypto.ec,jdk.unsupported,jdk.jfr,jdk.httpserver `
+>>   --output ".\target\runtime" `
+>>   --strip-debug `
+>>   --no-header-files `
+>>   --no-man-pages

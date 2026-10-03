@@ -5,29 +5,143 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f6babc50-9478-4dea-a82c-27871427e240" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/SpectateJoinOverlay.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendCard.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/History/Api/Controllers/GameHistoryController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/History/Api/Dto/GameDetails.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/History/Api/Dto/GameHistory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/History/Services/GamesHistoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Dto/MoveOutCome.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/Event.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/MoveResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GamePair.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Matchmaking/MatchedPair.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/MoveValidation/GameOverResult.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Events/FriendStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Events/Invitation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Events/SocialEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/.claude/skills/Chess-Arena-Client-Enhancing/SKILL.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/Chess-UI-Refactoring.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/Events/FriendStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/Events/Invitation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/Events/SocialEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Core/src/main/java/org/Core/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Server/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/ChessServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/ChessServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Websocket/AuthChannelInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Configurations/Websocket/AuthChannelInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Controllers/GameActionsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Controllers/GameActionsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Controllers/GameMoveController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Controllers/GameMoveController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Controllers/MatchmakingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Controllers/MatchmakingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/GameActionRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Dto/GameActionRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/GameFound.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Dto/GameFound.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/MoveOutCome.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/MoveRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Dto/MoveRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Api/Dto/UserSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Api/Dto/UserSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Exceptions/GameNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Exceptions/GameNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Exceptions/IllegalMoveException.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Exceptions/IllegalMoveException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Exceptions/PlayerTimeExpired.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Exceptions/PlayerTimeExpired.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Exceptions/WrongTurnException.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Exceptions/WrongTurnException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Models/Color.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Models/Color.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Models/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Models/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Models/GameMove.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Models/GameMove.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Models/GameSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Models/GameSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Models/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Models/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Persistence/GameMoveRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Persistence/GameMoveRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Persistence/GameRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Persistence/GameRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/DrawOffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/DrawOffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/DrawOfferStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/DrawOfferStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/DrawOfferEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/DrawOfferEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/Event.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/GameCreatedEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/GameCreatedEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/GameEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/GameEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/GameOverEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/GameOverEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/GameOverInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/GameOverInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/Id.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/Id.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/MoveConfirmation.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/MoveConfirmation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/MoveResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/SpectateRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/SpectatedResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/SpectatedResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/Events/SpectatorResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/Events/SpectatorResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GameActionsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GameActionsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GameAuthorizationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GameAuthorizationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GameBroadcaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GameBroadcaster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GameFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GameFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GameLogicService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GameLogicService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GameOverHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GameOverHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GamePair.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Game/GameSessionStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Game/GameSessionStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/MatchedPair.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/MatchmakerJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Matchmaking/MatchmakerJob.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/MatchmakingEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Matchmaking/MatchmakingEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/MatchmakingQueueService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Matchmaking/MatchmakingQueueService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/Matchmaking/QueueEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/Matchmaking/QueueEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/MoveValidation/GameMoveValidation.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/MoveValidation/GameMoveValidation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/MoveValidation/GameOverResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Services/MoveValidation/GameSessionRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Services/MoveValidation/GameSessionRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/GameLogic/Utilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Logic/Utilities.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipManagerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/FriendsPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/FriendsPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/GameSpectatorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Social/GameSpectatorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/FriendsPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/FriendsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/InvitationsPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Dto/InvitationsList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Game/GameSpectator.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Social/GameSpectatorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Game/PendingSpectateRequestStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Social/PendingSpectateRequestStore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Game/SpectatorApprovalRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Game/Social/SpectatorApprovalRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShipRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShipRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Services/FriendShipQuery.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Controllers/LobbyPingingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Api/Controllers/LobbyPingingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Persistence/UserRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/Server/src/main/java/org/Core/User/Persistence/UserRepo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/UI/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/ApiClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/ApiClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/AppModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/AppModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/GameEventPublisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Config/GameEventPublisher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/GameOverInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/GameOverInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Events/Spectate.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameActions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Game/Services/GameSessionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Realtime/GameRealtimeGatewayStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Realtime/GameRealtimeGatewayStub.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Realtime/RealtimeGateway.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Realtime/RealtimeGateway.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/FriendsPage.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/DTO/InvitationsPage.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/Social/FriendShipClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferConfirmCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferConfirmCard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferReceivedCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/DrawOfferReceivedCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/ChessArenaEntry.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameOverCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameOverCard.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/GameView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/MatchmakingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/MatchmakingHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/MatchmakingView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/MatchmakingView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/RecentGames.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/RecentGames.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/ResignConfirmCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/ResignConfirmCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/SpectateJoinOverlay.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/SpectateRequestCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Game/SpectateRequestCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Center/HeroPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Center/HeroPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/Avatar.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/Avatar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FooterViews.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FooterViews.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendCard.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendRow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendSection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/FriendsPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OfflineFriendsSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OfflineFriendsSection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OnlineFriendsSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OnlineFriendsSection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/OnlineFriendsSection.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/PageResult.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/PlayerSearchBar.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/PlayerSearchBar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestRow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestsSection.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/RequestsSection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SearchResultCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SearchResultCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SectionState.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/SectionState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/Styles.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/TabBar.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Friends/TabBar.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyControllerStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyControllerStub.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyView.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Lobby/LobbyView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/NavBar.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/NavBar.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/LobbyScreens/Profile/ProfileCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/GameControllerStub.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/OpeningScreens/GameControllerStub.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Shared/ViewNavigator.java" beforeDir="false" afterPath="$PROJECT_DIR$/UI/src/main/java/org/Core/UI/Shared/ViewNavigator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,8 +154,8 @@
         <option value="Exception" />
         <option value="Interface" />
         <option value="Dockerfile" />
-        <option value="Class" />
         <option value="Record" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -70,8 +184,11 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/Server/src/main/java/org/Core/Social&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/Server/src/main/java/org/Core/Game/Spectating&quot;,
     &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/HP/IdeaProjects/Chess/src/main/java/org/example/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
@@ -84,18 +201,21 @@
       <recent name="org.Core.Matchmaking.Exceptions" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\Game\Spectating" />
+      <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\Game\Replay" />
+      <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\Game\Logic" />
       <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\Social" />
       <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\GameLogic\Services\Game" />
-      <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\GameLogic\Services\GameOver" />
-      <recent name="C:\Users\HP\IdeaProjects\Chess\Server\src\main\java\org\Core\Configurations\Websocket" />
-      <recent name="C:\Users\HP\IdeaProjects\Chess\UI\src\main\java\org\Core\UI\LobbyScreens\Friends" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\HP\IdeaProjects\Chess\UI" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.Core.Game.Spectating" />
       <recent name="org.Core.GameLogic.Services.Game.Events" />
       <recent name="org.Core.Social.Services.Game" />
       <recent name="org.Core.GameLogic.Services.Game" />
       <recent name="org.Core.GameLogic.Services.GameOver" />
-      <recent name="org.Core.UI.Game" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Chess-UI">
@@ -159,12 +279,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Persistence/FriendShip_RequestRepo.java</url>
-          <line>8</line>
+          <line>12</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Server/src/main/java/org/Core/Social/Api/Controllers/FriendShipQueryController.java</url>
-          <line>15</line>
+          <line>16</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
